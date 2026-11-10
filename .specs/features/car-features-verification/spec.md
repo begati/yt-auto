@@ -124,32 +124,32 @@ O que depende de WebView, do YouTube real ou do Android Auto fica fora (escopo "
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| FEED-01 | P1: Histórico e inscrições | T2 | Implementing |
-| FEED-02 | P1: Histórico e inscrições | T2 | Implementing |
-| FEED-03 | P1: Histórico e inscrições | T2 | Implementing |
-| FEED-04 | P1: Histórico e inscrições | T2 | Implementing |
-| FEED-05 | P1: Histórico e inscrições | T2 | Implementing |
-| FEED-06 | P1: Histórico e inscrições | T2 | Implementing |
-| FEED-07 | P1: Histórico e inscrições | T2 | Implementing |
-| FEED-08 | P1: Histórico e inscrições | T2 | Implementing |
-| FEED-09 | P1: Histórico e inscrições | T2 | Implementing |
-| SET-01 | P1: Configurações | T3 | Implementing |
-| SET-02 | P1: Configurações | T3 | Implementing |
-| SET-03 | P1: Configurações | T3 | Implementing |
-| SET-04 | P1: Configurações | T3 | Implementing |
-| SET-05 | P1: Configurações | T3 | Implementing |
-| SET-06 | P1: Configurações | T3 | Implementing |
-| SET-07 | P1: Configurações | T3 | Implementing |
-| SET-08 | P1: Configurações | T3 | Implementing |
-| HOME-01 | P2: Botão home | T4 | Implementing |
-| HOME-02 | P2: Botão home | T4 | Implementing |
-| HOME-03 | P2: Botão home | T4 | Implementing |
-| ART-01 | P2: Capa e thumbnails | T5 | Implementing |
-| ART-02 | P2: Capa e thumbnails | T5 | Implementing |
-| THUMB-01 | P2: Capa e thumbnails | T6 | Implementing |
-| THUMB-02 | P2: Capa e thumbnails | T6 | Implementing |
+| FEED-01 | P1: Histórico e inscrições | T2 | Verified |
+| FEED-02 | P1: Histórico e inscrições | T2 | Verified |
+| FEED-03 | P1: Histórico e inscrições | T2 | Verified |
+| FEED-04 | P1: Histórico e inscrições | T2 | Verified |
+| FEED-05 | P1: Histórico e inscrições | T2 | Verified |
+| FEED-06 | P1: Histórico e inscrições | T2 | Verified |
+| FEED-07 | P1: Histórico e inscrições | T2 | Verified |
+| FEED-08 | P1: Histórico e inscrições | T2 | Verified |
+| FEED-09 | P1: Histórico e inscrições | T2 | Verified |
+| SET-01 | P1: Configurações | T3 | Verified |
+| SET-02 | P1: Configurações | T3 | Verified |
+| SET-03 | P1: Configurações | T3 | Verified |
+| SET-04 | P1: Configurações | T3 | Verified |
+| SET-05 | P1: Configurações | T3 | Verified |
+| SET-06 | P1: Configurações | T3 | Verified |
+| SET-07 | P1: Configurações | T3 | Verified |
+| SET-08 | P1: Configurações | T3 | Verified |
+| HOME-01 | P2: Botão home | T4 | Verified |
+| HOME-02 | P2: Botão home | T4 | Verified |
+| HOME-03 | P2: Botão home | T4 | Verified |
+| ART-01 | P2: Capa e thumbnails | T5 | Verified |
+| ART-02 | P2: Capa e thumbnails | T5 | Verified |
+| THUMB-01 | P2: Capa e thumbnails | T6 | Verified |
+| THUMB-02 | P2: Capa e thumbnails | T6 | Verified |
 
-**Coverage:** 24 total, 0 mapped to tasks, 24 unmapped ⚠️
+**Coverage:** 24 total, 24 mapped to tasks, 0 unmapped
 
 ## Sources
 

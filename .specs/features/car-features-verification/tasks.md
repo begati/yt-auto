@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: none - extração de funções puras, sem decisão de arquitetura
-**Status**: In Progress
+**Status**: Done
 **Approved**: 2026-11-10 - user: "aprovado, pode seguir"
 **Build**: `./gradlew assembleDebug`
 **Run unit**: `./gradlew testDebugUnitTest --rerun`
