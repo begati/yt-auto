@@ -20,6 +20,14 @@ android {
     kotlinOptions { jvmTarget = "17" }
 }
 
+// One line per passed test: the spec checks are proven by these lines.
+tasks.withType<Test>().configureEach {
+    testLogging { events("passed", "failed", "skipped") }
+}
+
 dependencies {
     implementation("androidx.car.app:app:1.4.0")
+    testImplementation("junit:junit:4.13.2")
+    // android.jar's org.json is a throwing stub on the JVM; the real one runs the feed parser in tests.
+    testImplementation("org.json:json:20240303")
 }
