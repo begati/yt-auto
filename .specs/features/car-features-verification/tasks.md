@@ -255,7 +255,7 @@ Proof: run unit | THUMB-02 rejects ids with slash dot or wrong length PASSED
 ## Handoff
 
 **Settled mid-build:** none
-**Dispatched:** none
+**Dispatched:** Verifier round 1 at `b2f858f` (no screens sub-agent: no criterion cites a capture) - returned
 **Walked:** none - escopo só JVM, sem tela testada
 
 ---

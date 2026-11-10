@@ -73,8 +73,15 @@ class FeedParserTest {
 
     @Test
     fun `FEED-08 skips videoIds without a title`() {
-        val html = page("""[{"watchEndpoint":{"videoId":"sssssssssss"}},${video("aaaaaaaaaaa", "Com título")}]""")
-        assertEquals(listOf(FeedVideo("aaaaaaaaaaa", "Com título", "")), parseFeed(html))
+        val html = page(
+            """[{"watchEndpoint":{"videoId":"sssssssssss"}},${video("aaaaaaaaaaa", "Com título")},""" +
+                // headline is the third title source FEED-08 names (mobile renderers use it).
+                """{"videoId":"hhhhhhhhhhh","headline":{"simpleText":"Só headline"}}]"""
+        )
+        assertEquals(
+            listOf(FeedVideo("aaaaaaaaaaa", "Com título", ""), FeedVideo("hhhhhhhhhhh", "Só headline", "")),
+            parseFeed(html),
+        )
     }
 
     @Test
