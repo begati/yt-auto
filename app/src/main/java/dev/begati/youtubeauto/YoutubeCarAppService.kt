@@ -7,6 +7,7 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.hardware.display.DisplayManager
@@ -114,18 +115,18 @@ private const val JS_NEXT =
     "document.querySelector('.ytp-next-button,button[aria-label^=\"Próximo\"],button[aria-label^=\"Next\"]')?.click()"
 
 // Player quality names (YouTube's) -> labels. "medium" (360p) is the bandwidth-saving default.
-private val QUALITIES = linkedMapOf(
+internal val QUALITIES = linkedMapOf(
     // Six options: car hosts truncate lists while driving, and 144p isn't worth a slot.
     "auto" to "Automática", "small" to "240p", "medium" to "360p",
     "large" to "480p", "hd720" to "720p", "hd1080" to "1080p",
 )
 
 // Settings, shared by the car's SettingsScreen and the phone's menu. Stored values are the option keys.
-private class Choice(val key: String, val title: String, val options: Map<String, String>, val default: String)
-private class Flag(val key: String, val title: String)
+internal class Choice(val key: String, val title: String, val options: Map<String, String>, val default: String)
+internal class Flag(val key: String, val title: String)
 
-private val QUALITY = Choice("quality", "Qualidade do vídeo", QUALITIES, "medium")
-private val HOME_PAGE = Choice(
+internal val QUALITY = Choice("quality", "Qualidade do vídeo", QUALITIES, "medium")
+internal val HOME_PAGE = Choice(
     "home", "Página inicial",
     linkedMapOf(
         "https://m.youtube.com" to "Início",
@@ -134,22 +135,27 @@ private val HOME_PAGE = Choice(
     ),
     "https://m.youtube.com",
 )
-private val TEXT_ZOOM = Choice("textZoom", "Tamanho do texto", linkedMapOf("100" to "100%", "115" to "115%", "130" to "130%", "150" to "150%"), "130")
-private val CHOICES = listOf(QUALITY, HOME_PAGE, TEXT_ZOOM)
+internal val TEXT_ZOOM = Choice("textZoom", "Tamanho do texto", linkedMapOf("100" to "100%", "115" to "115%", "130" to "130%", "150" to "150%"), "130")
+internal val CHOICES = listOf(QUALITY, HOME_PAGE, TEXT_ZOOM)
 // All flags default to on (the behavior before they were settings).
-private val FLAGS = listOf(
+internal val FLAGS = listOf(
     Flag("skipAds", "Pular anúncios"),
     Flag("fullscreen", "Tela cheia ao abrir vídeo"),
     Flag("background", "Tocar com outro app na tela"),
 )
 
 private fun prefs(ctx: Context) = ctx.getSharedPreferences("settings", Context.MODE_PRIVATE)
-private fun choice(ctx: Context, c: Choice) = prefs(ctx).getString(c.key, null)?.takeIf { it in c.options } ?: c.default
-private fun setChoice(ctx: Context, c: Choice, v: String) {
-    if (v in c.options) prefs(ctx).edit().putString(c.key, v).apply()
+internal fun choice(prefs: SharedPreferences, c: Choice) = prefs.getString(c.key, null)?.takeIf { it in c.options } ?: c.default
+internal fun setChoice(prefs: SharedPreferences, c: Choice, v: String) {
+    if (v in c.options) prefs.edit().putString(c.key, v).apply()
 }
-private fun flag(ctx: Context, key: String) = prefs(ctx).getBoolean(key, true)
-private fun setFlag(ctx: Context, key: String, on: Boolean) = prefs(ctx).edit().putBoolean(key, on).apply()
+internal fun flag(prefs: SharedPreferences, key: String) = prefs.getBoolean(key, true)
+internal fun setFlag(prefs: SharedPreferences, key: String, on: Boolean) = prefs.edit().putBoolean(key, on).apply()
+
+private fun choice(ctx: Context, c: Choice) = choice(prefs(ctx), c)
+private fun setChoice(ctx: Context, c: Choice, v: String) = setChoice(prefs(ctx), c, v)
+private fun flag(ctx: Context, key: String) = flag(prefs(ctx), key)
+private fun setFlag(ctx: Context, key: String, on: Boolean) = setFlag(prefs(ctx), key, on)
 
 class YoutubeCarAppService : CarAppService() {
     // ponytail: accepts any host, fine for a sideloaded personal app; restrict to Google's hosts if ever published

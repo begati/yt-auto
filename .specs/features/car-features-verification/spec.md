@@ -133,14 +133,14 @@ O que depende de WebView, do YouTube real ou do Android Auto fica fora (escopo "
 | FEED-07 | P1: Histórico e inscrições | T2 | Implementing |
 | FEED-08 | P1: Histórico e inscrições | T2 | Implementing |
 | FEED-09 | P1: Histórico e inscrições | T2 | Implementing |
-| SET-01 | P1: Configurações | Tasks | Pending |
-| SET-02 | P1: Configurações | Tasks | Pending |
-| SET-03 | P1: Configurações | Tasks | Pending |
-| SET-04 | P1: Configurações | Tasks | Pending |
-| SET-05 | P1: Configurações | Tasks | Pending |
-| SET-06 | P1: Configurações | Tasks | Pending |
-| SET-07 | P1: Configurações | Tasks | Pending |
-| SET-08 | P1: Configurações | Tasks | Pending |
+| SET-01 | P1: Configurações | T3 | Implementing |
+| SET-02 | P1: Configurações | T3 | Implementing |
+| SET-03 | P1: Configurações | T3 | Implementing |
+| SET-04 | P1: Configurações | T3 | Implementing |
+| SET-05 | P1: Configurações | T3 | Implementing |
+| SET-06 | P1: Configurações | T3 | Implementing |
+| SET-07 | P1: Configurações | T3 | Implementing |
+| SET-08 | P1: Configurações | T3 | Implementing |
 | HOME-01 | P2: Botão home | Tasks | Pending |
 | HOME-02 | P2: Botão home | Tasks | Pending |
 | HOME-03 | P2: Botão home | Tasks | Pending |
