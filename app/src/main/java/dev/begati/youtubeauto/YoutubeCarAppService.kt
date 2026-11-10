@@ -282,6 +282,12 @@ private fun fetchFeed(url: String): List<MediaBrowser.MediaItem> {
     }
 }
 
+/** Artwork size capped at 320 px on the longest side, proportion kept; smaller art is left as is. */
+internal fun artSize(w: Int, h: Int): Pair<Int, Int> {
+    val scale = 320.0 / maxOf(w, h)
+    return if (scale >= 1) w to h else Math.round(w * scale).toInt() to Math.round(h * scale).toInt()
+}
+
 private const val THUMBS_AUTHORITY = "dev.begati.youtubeauto.thumbs"
 private val VIDEO_ID = Regex("[A-Za-z0-9_-]{11}")
 
@@ -431,8 +437,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             val bmp = runCatching {
                 val full = URL(art).openStream().use(BitmapFactory::decodeStream)
                 // Metadata crosses Binder (~1 MB limit), so cap the artwork size.
-                val scale = 320f / maxOf(full.width, full.height)
-                if (scale < 1) Bitmap.createScaledBitmap(full, (full.width * scale).toInt(), (full.height * scale).toInt(), true) else full
+                val (w, h) = artSize(full.width, full.height)
+                if (w != full.width || h != full.height) Bitmap.createScaledBitmap(full, w, h, true) else full
             }.getOrNull()
             carContext.mainExecutor.execute { publish(bmp) }
         }
