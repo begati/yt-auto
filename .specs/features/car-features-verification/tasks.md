@@ -166,8 +166,8 @@ T1 → T2 → T3 → T4 → T5 → T6
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
-- [ ] Test count: 24 tests pass
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Test count: 24 tests pass
 
 **Tests**: unit
 **Gate**: build

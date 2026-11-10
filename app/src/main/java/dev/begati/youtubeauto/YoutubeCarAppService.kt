@@ -291,6 +291,9 @@ internal fun artSize(w: Int, h: Int): Pair<Int, Int> {
 private const val THUMBS_AUTHORITY = "dev.begati.youtubeauto.thumbs"
 private val VIDEO_ID = Regex("[A-Za-z0-9_-]{11}")
 
+/** YouTube video id: exactly 11 of A-Z a-z 0-9 _ -. Guards the exported ThumbProvider against path tricks. */
+internal fun isVideoId(s: String) = VIDEO_ID.matches(s)
+
 /**
  * Serves content://…thumbs/<videoId> as the video's i.ytimg.com thumbnail: Android Auto only loads
  * browse-list artwork from content:// URIs. Exported because the car host reads it; it only ever
@@ -301,7 +304,7 @@ class ThumbProvider : ContentProvider() {
     override fun onCreate() = true
 
     override fun openFile(uri: Uri, mode: String): ParcelFileDescriptor {
-        val id = uri.lastPathSegment?.takeIf(VIDEO_ID::matches) ?: throw java.io.FileNotFoundException(uri.toString())
+        val id = uri.lastPathSegment?.takeIf(::isVideoId) ?: throw java.io.FileNotFoundException(uri.toString())
         val file = File(context!!.cacheDir, "thumbs/$id.jpg")
         if (!file.exists()) {
             file.parentFile?.mkdirs()

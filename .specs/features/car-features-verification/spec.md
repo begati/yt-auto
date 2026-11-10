@@ -146,8 +146,8 @@ O que depende de WebView, do YouTube real ou do Android Auto fica fora (escopo "
 | HOME-03 | P2: Botão home | T4 | Implementing |
 | ART-01 | P2: Capa e thumbnails | T5 | Implementing |
 | ART-02 | P2: Capa e thumbnails | T5 | Implementing |
-| THUMB-01 | P2: Capa e thumbnails | Tasks | Pending |
-| THUMB-02 | P2: Capa e thumbnails | Tasks | Pending |
+| THUMB-01 | P2: Capa e thumbnails | T6 | Implementing |
+| THUMB-02 | P2: Capa e thumbnails | T6 | Implementing |
 
 **Coverage:** 24 total, 0 mapped to tasks, 24 unmapped ⚠️
 
