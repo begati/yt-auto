@@ -237,6 +237,18 @@ private fun collectVideos(v: Any?, out: LinkedHashMap<String, Pair<String, Strin
     }
 }
 
+internal data class FeedVideo(val id: String, val title: String, val channel: String)
+
+/** Videos of a feed page's ytInitialData, in page order, first occurrence only, at most 50. */
+internal fun parseFeed(html: String): List<FeedVideo> {
+    val marker = "var ytInitialData = "
+    val start = html.indexOf(marker).takeIf { it >= 0 } ?: return emptyList()
+    val data = JSONTokener(html.substring(start + marker.length)).nextValue()
+    val videos = LinkedHashMap<String, Pair<String, String>>()
+    collectVideos(data, videos)
+    return videos.entries.take(50).map { (id, info) -> FeedVideo(id, info.first, info.second) }
+}
+
 /**
  * Scrapes a signed-in feed page with the WebView's cookies (shared with the login screen) and
  * returns its videos. Desktop page because it embeds ytInitialData as a JSON literal.
@@ -252,15 +264,10 @@ private fun fetchFeed(url: String): List<MediaBrowser.MediaItem> {
         readTimeout = 15_000
     }
     val html = conn.getInputStream().bufferedReader().use { it.readText() }
-    val marker = "var ytInitialData = "
-    val start = html.indexOf(marker).takeIf { it >= 0 } ?: return emptyList()
-    val data = JSONTokener(html.substring(start + marker.length)).nextValue()
-    val videos = LinkedHashMap<String, Pair<String, String>>()
-    collectVideos(data, videos)
-    return videos.entries.take(50).map { (id, info) ->
+    return parseFeed(html).map { v ->
         MediaBrowser.MediaItem(
-            MediaDescription.Builder().setMediaId(id).setTitle(info.first).setSubtitle(info.second)
-                .setIconUri(Uri.parse("content://$THUMBS_AUTHORITY/$id")).build(),
+            MediaDescription.Builder().setMediaId(v.id).setTitle(v.title).setSubtitle(v.channel)
+                .setIconUri(Uri.parse("content://$THUMBS_AUTHORITY/${v.id}")).build(),
             MediaBrowser.MediaItem.FLAG_PLAYABLE
         )
     }

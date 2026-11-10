@@ -86,8 +86,8 @@ T1 → T2 → T3 → T4 → T5 → T6
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew testDebugUnitTest`
-- [ ] Test count: 9 tests pass
+- [x] Gate check passes: `./gradlew testDebugUnitTest`
+- [x] Test count: 9 tests pass
 
 **Tests**: unit
 **Gate**: quick

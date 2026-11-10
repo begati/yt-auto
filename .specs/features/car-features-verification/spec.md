@@ -124,15 +124,15 @@ O que depende de WebView, do YouTube real ou do Android Auto fica fora (escopo "
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| FEED-01 | P1: Histórico e inscrições | Tasks | Pending |
-| FEED-02 | P1: Histórico e inscrições | Tasks | Pending |
-| FEED-03 | P1: Histórico e inscrições | Tasks | Pending |
-| FEED-04 | P1: Histórico e inscrições | Tasks | Pending |
-| FEED-05 | P1: Histórico e inscrições | Tasks | Pending |
-| FEED-06 | P1: Histórico e inscrições | Tasks | Pending |
-| FEED-07 | P1: Histórico e inscrições | Tasks | Pending |
-| FEED-08 | P1: Histórico e inscrições | Tasks | Pending |
-| FEED-09 | P1: Histórico e inscrições | Tasks | Pending |
+| FEED-01 | P1: Histórico e inscrições | T2 | Implementing |
+| FEED-02 | P1: Histórico e inscrições | T2 | Implementing |
+| FEED-03 | P1: Histórico e inscrições | T2 | Implementing |
+| FEED-04 | P1: Histórico e inscrições | T2 | Implementing |
+| FEED-05 | P1: Histórico e inscrições | T2 | Implementing |
+| FEED-06 | P1: Histórico e inscrições | T2 | Implementing |
+| FEED-07 | P1: Histórico e inscrições | T2 | Implementing |
+| FEED-08 | P1: Histórico e inscrições | T2 | Implementing |
+| FEED-09 | P1: Histórico e inscrições | T2 | Implementing |
 | SET-01 | P1: Configurações | Tasks | Pending |
 | SET-02 | P1: Configurações | Tasks | Pending |
 | SET-03 | P1: Configurações | Tasks | Pending |
