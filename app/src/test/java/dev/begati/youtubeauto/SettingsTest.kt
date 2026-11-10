@@ -100,4 +100,21 @@ class SettingsTest {
         assertEquals(listOf("Início", "Inscrições", "Histórico"), HOME_PAGE.options.values.toList())
         assertEquals(listOf("100%", "115%", "130%", "150%"), TEXT_ZOOM.options.values.toList())
     }
+
+    @Test
+    fun `HOME-01 subscriptions home page labels the button`() {
+        val prefs = MemoryPrefs().apply { map["home"] = "https://m.youtube.com/feed/subscriptions" }
+        assertEquals("Inscrições", homeLabel(prefs))
+    }
+
+    @Test
+    fun `HOME-02 history home page labels the button`() {
+        val prefs = MemoryPrefs().apply { map["home"] = "https://m.youtube.com/feed/history" }
+        assertEquals("Histórico", homeLabel(prefs))
+    }
+
+    @Test
+    fun `HOME-03 default home page labels the button`() {
+        assertEquals("Início", homeLabel(MemoryPrefs()))
+    }
 }

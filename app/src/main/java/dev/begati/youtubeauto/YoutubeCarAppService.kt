@@ -152,6 +152,9 @@ internal fun setChoice(prefs: SharedPreferences, c: Choice, v: String) {
 internal fun flag(prefs: SharedPreferences, key: String) = prefs.getBoolean(key, true)
 internal fun setFlag(prefs: SharedPreferences, key: String, on: Boolean) = prefs.edit().putBoolean(key, on).apply()
 
+// Home button label: the chosen home page's name (Início / Inscrições / Histórico).
+internal fun homeLabel(prefs: SharedPreferences) = HOME_PAGE.options.getValue(choice(prefs, HOME_PAGE))
+
 private fun choice(ctx: Context, c: Choice) = choice(prefs(ctx), c)
 private fun setChoice(ctx: Context, c: Choice, v: String) = setChoice(prefs(ctx), c, v)
 private fun flag(ctx: Context, key: String) = flag(prefs(ctx), key)
@@ -440,7 +443,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             ActionStrip.Builder()
                 .addAction(Action.Builder().setTitle("Voltar").setOnClickListener { exitFullscreen?.onCustomViewHidden() ?: webView?.goBack() }.build())
                 // Named after the chosen home page (Início / Inscrições / Histórico).
-                .addAction(Action.Builder().setTitle(HOME_PAGE.options.getValue(choice(carContext, HOME_PAGE))).setOnClickListener {
+                .addAction(Action.Builder().setTitle(homeLabel(prefs(carContext))).setOnClickListener {
                     pageUrl = choice(carContext, HOME_PAGE)
                     webView?.loadUrl(pageUrl)
                 }.build())
