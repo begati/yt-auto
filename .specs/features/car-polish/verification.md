@@ -26,6 +26,7 @@
 | C18 | `./gradlew assembleDebug && test -f app/build/outputs/apk/debug/yt-auto-0.5-debug.apk` | yes - the old `youtube-auto-0.5-debug.apk` is gone from the output dir, so Gradle clears stale APKs and a reverted `archivesName` would fail `test -f` |
 | C19 | walk - Pausar/Tocar/Pausar com `paused` false/true/false (Walked) | yes - round 2, author walk: rótulo e estado do vídeo principal lidos juntos |
 | C20 | walk - `#movie_player video` tocando em `/` = Pausar, pausado = some (Walked) | yes - round 2, author walk: lê o estado do player principal na página, não a função pura |
+| C21 | walk - Início e vídeo em tela cheia e no split sem faixa no topo (Walked) | yes - author walk depois do fechamento (regressão relatada pelo usuário, sem Verifier novo): cabeçalho do YouTube em y=0 e `innerHeight` 400 |
 
 ## Findings
 

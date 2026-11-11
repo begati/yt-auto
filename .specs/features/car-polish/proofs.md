@@ -1,9 +1,9 @@
 # car-polish proofs
 
-**HEAD**: 39116c8
+**HEAD**: 874ce4e
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 19 pass, 0 fail
+**Result**: 20 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -25,6 +25,7 @@
 | C18 | `./gradlew assembleDebug && test -f app/build/outputs/apk/debug/yt-auto-0.5-debug.apk` | pass |
 | C19 | `walk - DHU: vídeo aberto = Pausar com paused false; toque em Pausar = Tocar com paused true; toque em Tocar = ` | pass (Walked) |
 | C20 | `walk - DHU no Início (/), DevTools do carro #movie_player video.play(): barra com Pausar; .pause(): barra sem ` | pass (Walked) |
+| C21 | `walk - DHU: Início em tela cheia com o cabeçalho do YouTube em y=0 e innerHeight 400; vídeo em tela cheia e no` | pass (Walked) |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output
@@ -71,6 +72,6 @@ BUILD SUCCESSFUL in 1s
 > Task :app:createDebugApkListingFileRedirect UP-TO-DATE
 > Task :app:assembleDebug UP-TO-DATE
 
-BUILD SUCCESSFUL in 750ms
+BUILD SUCCESSFUL in 772ms
 33 actionable tasks: 33 up-to-date
 ```
