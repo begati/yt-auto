@@ -1,9 +1,9 @@
 # car-polish proofs
 
-**HEAD**: 4ebe7ad
+**HEAD**: fc155f6
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 20 pass, 0 fail
+**Result**: 21 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -26,6 +26,7 @@
 | C19 | `walk - DHU: vídeo aberto = Pausar com paused false; toque em Pausar = Tocar com paused true; toque em Tocar = ` | pass (Walked) |
 | C20 | `walk - DHU no Início (/), DevTools do carro #movie_player video.play(): barra com Pausar; .pause(): barra sem ` | pass (Walked) |
 | C21 | `walk - DHU: Início em tela cheia com o cabeçalho do YouTube em y=0 e innerHeight 400; vídeo em tela cheia e no` | pass (Walked) |
+| C22 | `walk - vídeo tocando no DHU com a barra do celular mostrando capa, título e 0:07; Início na barra do carro: ba` | pass (Walked) |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output
@@ -72,6 +73,6 @@ BUILD SUCCESSFUL in 1s
 > Task :app:createDebugApkListingFileRedirect UP-TO-DATE
 > Task :app:assembleDebug UP-TO-DATE
 
-BUILD SUCCESSFUL in 766ms
+BUILD SUCCESSFUL in 739ms
 33 actionable tasks: 33 up-to-date
 ```
