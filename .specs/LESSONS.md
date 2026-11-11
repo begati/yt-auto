@@ -66,6 +66,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: YoutubeCarAppService.kt:171 (webview)
 - last seen: 2026-11-11T17:15:45Z
 
+### L-010 - A theme given to a Presentation or window brings its decor too; pick a NoActionBar variant and walk the screen edges after a theme change.
+- signal: `gate_fail` · recurrence: 1 feature(s) · scope: `webview` · harmful: 0
+- features: car-polish
+- evidence: THEME-01 / C21 (webview)
+- last seen: 2026-11-11T17:18:32Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
