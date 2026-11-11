@@ -34,6 +34,7 @@ import android.widget.FrameLayout
 import androidx.car.app.AppManager
 import androidx.car.app.CarAppService
 import androidx.car.app.CarContext
+import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.Session
 import androidx.car.app.SurfaceCallback
@@ -544,6 +545,17 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         )
         .setMapActionStrip(
             ActionStrip.Builder()
+                // Video aspect: Ajustar -> Preencher -> Esticar, for this run only (the default is a setting).
+                .addAction(
+                    Action.Builder()
+                        .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_aspect_ratio)).build())
+                        .setOnClickListener {
+                            val prefs = prefs(carContext)
+                            aspectTap = tapAspect(prefs, aspectTap)
+                            CarToast.makeText(carContext, ASPECT.options.getValue(aspect(prefs, aspectTap)), CarToast.LENGTH_SHORT).show()
+                        }
+                        .build()
+                )
                 .addAction(
                     Action.Builder()
                         .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_settings)).build())

@@ -7,7 +7,7 @@
 
 1. [x] Superfície inteira em `/watch` (FILL-01..04) - files: `YoutubeCarAppService.kt`, `VideoFillTest.kt`, `SettingsTest.kt` - verify: run unit - commit: `feat: fill the car surface with the video on watch pages`
 2. [x] Proporção padrão e CSS (ASPECT-03, 05..09) - files: `YoutubeCarAppService.kt`, `VideoFillTest.kt` - verify: run unit + build - commit: `feat: add video aspect setting`
-3. [ ] Botão de proporção (ASPECT-01, 02, 04) - files: `YoutubeCarAppService.kt`, `ic_aspect_ratio.xml`, `VideoFillTest.kt` - verify: run unit + build + walk - commit: `feat: add aspect ratio button to the car map strip`
+3. [x] Botão de proporção (ASPECT-01, 02, 04) - files: `YoutubeCarAppService.kt`, `ic_aspect_ratio.xml`, `VideoFillTest.kt` - verify: run unit + build + walk - commit: `feat: add aspect ratio button to the car map strip`
 
 ## Checks
 
@@ -53,4 +53,4 @@ Proof: run unit | ASPECT-09 changing the default drops the tapped mode PASSED
 ## Handoff
 
 **Dispatched:** none yet
-**Walked:** pending
+**Walked:** 2026-11-11, DHU (800x480) + telefone motorola_signature via USB, app já logado. P1 sem margem: Início mostra a lista dentro da área visível (barras do host em volta); tocar no 1º vídeo abre `/watch` ocupando a superfície inteira, botões "Voltar/Início/Pausar/Pesquisar" e os botões do mapa por cima, sem encolher o vídeo; "Início" (dois toques: o 1º só revela a barra) volta à lista na área visível; abrir outro vídeo ocupa a superfície de novo (C4). P1 botão: ícone de proporção acima da engrenagem; três toques mostram os toasts "Preencher", "Esticar", "Ajustar", e `getComputedStyle(video).objectFit` via DevTools da WebView lê `cover`, `fill`, `contain` a cada toque (C6, C7); com Preencher o vídeo 16:9 é recortado, com Esticar distorcido, com Ajustar tem barras laterais.

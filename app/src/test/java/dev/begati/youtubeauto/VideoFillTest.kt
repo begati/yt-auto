@@ -58,4 +58,24 @@ class VideoFillTest {
         setChoice(prefs, ASPECT, "fill")
         assertEquals("fill", aspect(prefs, tap))
     }
+
+    @Test
+    fun `ASPECT-01 tapping cycles contain cover fill contain`() {
+        val prefs = MemoryPrefs()
+        var tap: Pair<String, String>? = null
+        val seen = (1..4).map { tap = tapAspect(prefs, tap); aspect(prefs, tap) }
+        assertEquals(listOf("cover", "fill", "contain", "cover"), seen)
+        // The cycle starts from the saved default, not from Ajustar.
+        val esticar = MemoryPrefs().apply { map["aspect"] = "fill" }
+        assertEquals("contain", aspect(esticar, tapAspect(esticar, null)))
+    }
+
+    @Test
+    fun `ASPECT-04 tapping leaves the saved default unchanged`() {
+        val prefs = MemoryPrefs().apply { map["aspect"] = "cover" }
+        var tap: Pair<String, String>? = null
+        repeat(2) { tap = tapAspect(prefs, tap) }
+        assertEquals("contain", aspect(prefs, tap))
+        assertEquals(mapOf<String, Any?>("aspect" to "cover"), prefs.map)
+    }
 }
