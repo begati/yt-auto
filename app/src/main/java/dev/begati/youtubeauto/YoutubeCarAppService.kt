@@ -232,6 +232,16 @@ private var pendingUrl: String? = null
 // Last watch position reported by the page (videoId to seconds); process-wide like pageUrl.
 private var resumeAt: Pair<String, Int>? = null
 
+// The live car screen, for what the phone remote controls beyond the media session; null while there's none.
+private var carLink: YoutubeScreen? = null
+
+// Next aspect for this run (car button and phone remote); returns its label. The page picks it up on its next poll.
+private fun cycleAspect(ctx: Context): String {
+    val p = prefs(ctx)
+    aspectTap = tapAspect(p, aspectTap)
+    return ASPECT.options.getValue(aspect(p, aspectTap))
+}
+
 // See aspect(); process-wide like pageUrl.
 @Volatile private var aspectTap: String? = null
 // Held here because SharedPreferences keeps listeners only weakly.
@@ -519,6 +529,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
 
     init {
+        carLink = this
         ctx.getCarService(AppManager::class.java).setSurfaceCallback(this)
         pendingUrl?.let { pageUrl = it }
         pendingUrl = null
@@ -528,11 +539,18 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onDestroy(owner: LifecycleOwner) {
                 teardown()
+                if (carLink === this@YoutubeScreen) carLink = null
                 // Session is process-wide (MediaService holds its token): detach, don't release.
                 session.setCallback(idleCallback)
                 session.setPlaybackState(playbackState(false))
             }
         })
+    }
+
+    /** Re-applies the saved quality and speed to the current video (after the car settings or the phone change them). */
+    fun applyPlayback() {
+        js(JS_APPLY_QUALITY)
+        js(JS_APPLY_PLAYBACK)
     }
 
     private fun js(code: String) {
@@ -609,11 +627,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 .addAction(
                     Action.Builder()
                         .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_aspect_ratio)).build())
-                        .setOnClickListener {
-                            val prefs = prefs(carContext)
-                            aspectTap = tapAspect(prefs, aspectTap)
-                            CarToast.makeText(carContext, ASPECT.options.getValue(aspect(prefs, aspectTap)), CarToast.LENGTH_SHORT).show()
-                        }
+                        .setOnClickListener { CarToast.makeText(carContext, cycleAspect(carContext), CarToast.LENGTH_SHORT).show() }
                         .build()
                 )
                 .addAction(
@@ -623,8 +637,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                             screenManager.push(SettingsScreen(carContext) {
                                 // Flags are read live by the page; zoom, quality, speed and captions need a push.
                                 webView?.settings?.textZoom = choice(carContext, TEXT_ZOOM).toInt()
-                                js(JS_APPLY_QUALITY)
-                                js(JS_APPLY_PLAYBACK)
+                                applyPlayback()
                                 invalidate() // home button label
                             })
                         }

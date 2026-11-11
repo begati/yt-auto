@@ -128,8 +128,8 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
-- [ ] Botão de proporção do carro segue funcionando (walk)
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Botão de proporção do carro segue funcionando (walk)
 
 **Tests**: none
 **Gate**: build
