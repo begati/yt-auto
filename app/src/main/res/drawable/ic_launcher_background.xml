@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Cyan to royal blue: far from YouTube's and YouTube Music's red. -->
+<!-- Red to dark red; the steering wheel shape, not the color, sets it apart from YouTube and YouTube Music. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
@@ -14,8 +14,8 @@
                 android:startY="0"
                 android:endX="108"
                 android:endY="108">
-                <item android:offset="0" android:color="#FF00D2E6" />
-                <item android:offset="1" android:color="#FF1A3FD1" />
+                <item android:offset="0" android:color="#FFFF4B3E" />
+                <item android:offset="1" android:color="#FFA3001B" />
             </gradient>
         </aapt:attr>
     </path>

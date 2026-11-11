@@ -11,7 +11,7 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 ## Goals
 
 - [ ] O botão Tocar/Pausar só aparece quando há vídeo para controlar.
-- [ ] O app tem um ícone próprio e colorido que não se confunde com o YouTube nem com o YouTube Music.
+- [ ] O app tem um ícone próprio e vermelho que, pela forma (volante), não se confunde com o YouTube nem com o YouTube Music.
 - [ ] O app fica sempre no tema escuro, no celular e no carro, qualquer que seja o tema do celular ou da central.
 
 ## Out of Scope
@@ -32,7 +32,7 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 | --------------------- | -------------- | --------- | ---------- |
 | Quando o botão Tocar/Pausar aparece | Numa página de vídeo (`/watch`) ou enquanto um vídeo toca fora dela (miniplayer); some no Início, na busca e nas listas sem vídeo | Resposta do usuário | y - user: "Vídeo aberto ou tocando (Recomendado)" |
 | Prévia do feed tocando sozinha (muda) no Início do carro | Não conta como "vídeo tocando": o botão continua escondido | Prévia não é um vídeo que o usuário abriu; mostrar "Pausar" no Início é o problema relatado | n |
-| Cores do ícone | Gradiente ciano → azul-royal; sem vermelho e sem fundo branco | Resposta do usuário | y - user: "Ciano → azul (Recomendado)" |
+| Cores do ícone | Gradiente vermelho → vermelho-escuro, sem fundo branco (antes ciano → azul) | Pedido do usuário depois de ver o azul | y - user: "pode fazer o icone vermelho ao inves de azul" |
 | Símbolo do ícone | Volante estilizado com um triângulo de play no centro; sem o retângulo arredondado com play (YouTube) e sem o círculo com play (YouTube Music) | Resposta do usuário | y - user: "Volante com play (Recomendado)" |
 | Formato do ícone | Ícone adaptativo em vetor (fundo com gradiente + símbolo branco), usado no celular e no Android Auto | `minSdk` 29 suporta ícone adaptativo; vetor dispensa PNGs por densidade | n |
 | Tema do app | Sempre escuro, no celular (página do YouTube e Configurações) e no carro, ignorando o tema do celular e o dia/noite da central | Pedido do usuário | y - user: "vou mudar de ideia, mantenha tema tanto do app quanto no carro sempre em dark" |
@@ -71,8 +71,8 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 
 **Acceptance Criteria**:
 
-6. The app SHALL usar como ícone, no celular e no Android Auto, um volante estilizado branco com um triângulo de play no centro, sobre um fundo em gradiente ciano → azul-royal
-7. The app SHALL ter um ícone sem vermelho, sem fundo branco, sem a forma de retângulo arredondado com play e sem a de círculo com play
+6. The app SHALL usar como ícone, no celular e no Android Auto, um volante estilizado branco com um triângulo de play no centro, sobre um fundo em gradiente vermelho → vermelho-escuro
+7. The app SHALL ter um ícone sem fundo branco, sem a forma de retângulo arredondado com play e sem a de círculo com play
 
 **Independent Test**: instalar o APK; screenshot da gaveta de apps do celular e do launcher do DHU mostra o ícone novo ao lado do YouTube e do YT Music.
 

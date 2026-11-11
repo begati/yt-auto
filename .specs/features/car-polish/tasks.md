@@ -122,7 +122,7 @@ T5 → T6
 
 ### T4: Ícone adaptativo
 
-**What**: ícone adaptativo em vetor `@mipmap/ic_launcher` - fundo em gradiente ciano → azul-royal, volante branco com triângulo de play no centro - e o manifesto passa a usá-lo
+**What**: ícone adaptativo em vetor `@mipmap/ic_launcher` - fundo em gradiente vermelho → vermelho-escuro, volante branco com triângulo de play no centro - e o manifesto passa a usá-lo
 **Where**: `app/src/main/res/mipmap-anydpi/ic_launcher.xml` (com `drawable/ic_launcher_foreground.xml`, `drawable/ic_launcher_background.xml` e `android:icon` no manifesto)
 **Depends on**: None
 **Reuses**: -
@@ -203,10 +203,10 @@ Proof: run unit | PLAYBTN-05 leaving the watch page paused hides the button PASS
 **C7** - Sair de `/watch` pausado esconde o botão na barra do carro (PLAYBTN-05, AC 5)
 Proof: walk - pausar um vídeo no DHU, tocar no botão da página inicial: barra sem Tocar
 
-**C8** - Ícone do celular e do Android Auto é o volante branco com play sobre gradiente ciano → azul-royal (ICON-01, AC 6)
+**C8** - Ícone do celular e do Android Auto é o volante branco com play sobre gradiente vermelho → vermelho-escuro (ICON-01, AC 6)
 Proof: walk - screenshots do launcher do DHU e da gaveta do celular
 
-**C9** - Ícone sem vermelho, sem fundo branco, sem retângulo com play e sem círculo com play (ICON-02, AC 7)
+**C9** - Ícone sem fundo branco, sem retângulo com play e sem círculo com play (ICON-02, AC 7)
 Proof: walk - screenshot da gaveta do celular com o ícone ao lado do YouTube e do YT Music
 
 **C10** - Celular no claro: página do carro escura (THEME-01, AC 8)
@@ -225,6 +225,6 @@ Proof: walk - DevTools do carro antes e depois da troca: mesmo `performance.time
 
 ## Handoff
 
-**Settled mid-build:** tema sempre escuro no celular e no carro - user: "vou mudar de ideia, mantenha tema tanto do app quanto no carro sempre em dark. pode ver os demais."
+**Settled mid-build:** ícone vermelho em vez de azul - user: "pode fazer o icone vermelho ao inves de azul"; tema sempre escuro no celular e no carro - user: "vou mudar de ideia, mantenha tema tanto do app quanto no carro sempre em dark. pode ver os demais."
 **Dispatched:** none
-**Walked:** DHU 800x480 (config padrão, conta logada), barra de ações aberta com um toque na aba Início do próprio YouTube (100,380) - um toque em (400,20) cai no Voltar da barra. T2: Início = Voltar, Início, Pesquisar; vídeo aberto pelo Início = Pausar; Pausar pela barra = Tocar; botão Início com o vídeo pausado = Voltar, Início, Pesquisar. Primeiro walk achou dois furos, corrigidos: o template agora compara com o que mostrou por último (`toggleShown`), porque o botão Início muda `pageUrl` antes do `loadUrl`; e a página nova reporta o estado na primeira leitura (T3). T3: no Início, um `<video>` escondido num card do feed (fora do `#movie_player`) recebendo `play` via DevTools = barra sem Tocar/Pausar; o carro não tocou prévias reais do feed ao rolar o Início (só o `<video>` do `#movie_player`, parado) T4: gaveta do celular (busca "you") = YouTube (vermelho/branco) ao lado do YouTube Auto (volante branco com play sobre gradiente ciano → azul); launcher do DHU = YouTube Auto entre WhatsApp e YT Music com o ícone novo - o Android Auto guarda o ícone antigo até reconectar o DHU (reiniciado para o walk)
+**Walked:** DHU 800x480 (config padrão, conta logada), barra de ações aberta com um toque na aba Início do próprio YouTube (100,380) - um toque em (400,20) cai no Voltar da barra. T2: Início = Voltar, Início, Pesquisar; vídeo aberto pelo Início = Pausar; Pausar pela barra = Tocar; botão Início com o vídeo pausado = Voltar, Início, Pesquisar. Primeiro walk achou dois furos, corrigidos: o template agora compara com o que mostrou por último (`toggleShown`), porque o botão Início muda `pageUrl` antes do `loadUrl`; e a página nova reporta o estado na primeira leitura (T3). T3: no Início, um `<video>` escondido num card do feed (fora do `#movie_player`) recebendo `play` via DevTools = barra sem Tocar/Pausar; o carro não tocou prévias reais do feed ao rolar o Início (só o `<video>` do `#movie_player`, parado) T4: gaveta do celular (busca "you") = YouTube (vermelho/branco) ao lado do YouTube Auto (volante branco com play sobre gradiente ciano → azul); launcher do DHU = YouTube Auto entre WhatsApp e YT Music com o ícone novo - o Android Auto guarda o ícone antigo até reconectar o DHU (reiniciado para o walk) Ícone refeito em vermelho a pedido do usuário: gaveta do celular = YouTube (retângulo vermelho em fundo branco) ao lado do volante branco em gradiente vermelho; dock do DHU = volante vermelho ao lado do Spotify, depois de reconectar o DHU
