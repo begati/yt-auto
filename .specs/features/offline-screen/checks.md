@@ -7,7 +7,7 @@
 
 1. [x] Tela de carregamento e novas tentativas a cada 5 s (OFF-01, 02, 04..07) - files: `YoutubeCarAppService.kt` - verify: build + walk - commit: `feat: show a loading screen and retry when the car page fails offline`
 2. [x] Nova tentativa ao voltar a rede, lógica numa classe reaproveitável (OFF-03) - files: `YoutubeCarAppService.kt`, `AndroidManifest.xml` - verify: build + walk - commit: `feat: retry the failed page as soon as the network returns`
-3. [ ] Mesma tela no app do celular (OFF-08) - files: `YoutubeCarAppService.kt` - verify: build + walk - commit: `feat: show the loading screen on the phone too`
+3. [x] Mesma tela no app do celular (OFF-08) - files: `YoutubeCarAppService.kt` - verify: build + walk - commit: `feat: show the loading screen on the phone too`
 
 Sem teste JVM: todo o comportamento está nos callbacks da WebView e do `ConnectivityManager` (o projeto só testa na JVM, sem Robolectric); a prova é o walk no DHU com a rede do telefone cortada por `adb shell svc wifi/data`.
 
@@ -40,4 +40,4 @@ Proof: walk - rede desligada, abrir o app no celular: screenshot com a tela de c
 ## Handoff
 
 **Dispatched:** none yet
-**Walked:** pending
+**Walked:** 2026-11-11, DHU 800x480 + telefone motorola_signature via USB, rede cortada com `adb shell svc wifi disable` e `svc data disable` (o DHU segue pelo ADB). Carro: sem rede, "Início" (dois toques: o 1º revela a barra) mostra fundo preto, animação girando e "Sem conexão. Tentando de novo…", sem a página "Página da Web não disponível" que fica por baixo (`location.href` `chrome-error://chromewebdata/` via DevTools) (C1, C5). `performance.timeOrigin` do documento lido a cada 2 s muda a cada 5 s: 73, 78, 83, 88 (C2). Religar a rede logo após uma tentativa: o YouTube carrega 2,3 s depois, antes da próxima tentativa agendada (C3); a tela some e o documento para de ser recriado (C4). Com a página carregada e rede ligada, a tela não aparece (C6). Vídeo aberto, rede cortada, "Início" falha, rede religada, Início carrega; "Voltar" leva ao `/watch`, `history.length` 3 (C7). Celular: rede cortada, `am start -S` da `LoginActivity`: a mesma tela abaixo da barra "YouTube Auto"; religada, o Início do YouTube aparece sozinho em menos de 10 s (C8).

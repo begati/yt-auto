@@ -916,15 +916,27 @@ class SearchScreen(ctx: CarContext, private val onQuery: (String) -> Unit) : Scr
  */
 // ponytail: UA trick can break if Google tightens WebView detection; fallback is a cookie export from a real browser
 class LoginActivity : Activity() {
+    private var client: OfflineRetry? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(WebView(this).apply {
-            settings.javaScriptEnabled = true
-            settings.domStorageEnabled = true
-            settings.userAgentString = settings.userAgentString.replace("; wv", "")
-            webViewClient = WebViewClient()
-            loadUrl("https://accounts.google.com/ServiceLogin?service=youtube&continue=https://m.youtube.com")
+        val offline = offlineView(this)
+        val retrying = OfflineRetry(this, offline).also { client = it }
+        setContentView(FrameLayout(this).apply {
+            addView(WebView(context).apply {
+                settings.javaScriptEnabled = true
+                settings.domStorageEnabled = true
+                settings.userAgentString = settings.userAgentString.replace("; wv", "")
+                webViewClient = retrying
+                loadUrl("https://accounts.google.com/ServiceLogin?service=youtube&continue=https://m.youtube.com")
+            })
+            addView(offline)
         })
+    }
+
+    override fun onDestroy() {
+        client?.release()
+        super.onDestroy()
     }
 
     override fun onPause() {
