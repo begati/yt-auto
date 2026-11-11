@@ -57,8 +57,8 @@ de carregamento e tentar de novo sozinho até o YouTube carregar.
 5. IF a página falha de novo numa tentativa THEN the app SHALL manter a tela de carregamento visível, sem mostrar a página de erro da WebView entre as tentativas
 6. IF um recurso que não é a página principal falha THEN the app SHALL manter a página como está, sem a tela de carregamento
 7. WHEN o motorista toca "Voltar" depois de reconectar THEN the app SHALL voltar à página anterior à que falhou, sem passar por páginas de erro
-9. IF a página principal falha por um erro que não é de rede (link de outro app `intent://`, esquema desconhecido, URL inválida, SSL) THEN the app SHALL mostrar a página de erro da WebView, sem a tela de carregamento nem novas tentativas
 8. WHERE a página é a tela do app no celular (login do YouTube) the app SHALL aplicar os critérios 1-6 do mesmo jeito
+9. IF a página principal falha por um erro que não é de rede (link de outro app `intent://`, esquema desconhecido, URL inválida, SSL) THEN the app SHALL mostrar a página de erro da WebView, sem a tela de carregamento nem novas tentativas
 
 **Independent Test**: no DHU, desligar Wi-Fi e dados do telefone e abrir o app: tela de carregamento; religar: o Início do YouTube aparece sozinho em até 5 s.
 
@@ -75,15 +75,15 @@ de carregamento e tentar de novo sozinho até o YouTube carregar.
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| OFF-01 | P1 (AC 1) | Execute | Pending |
-| OFF-02 | P1 (AC 2) | Execute | Pending |
-| OFF-03 | P1 (AC 3) | Execute | Pending |
-| OFF-04 | P1 (AC 4) | Execute | Pending |
-| OFF-05 | P1 (AC 5) | Execute | Pending |
-| OFF-06 | P1 (AC 6) | Execute | Pending |
-| OFF-07 | P1 (AC 7) | Execute | Pending |
-| OFF-08 | P1 (AC 8) | Execute | Pending |
-| OFF-09 | P1 (AC 9) | Execute | Pending |
+| OFF-01 | P1 (AC 1) | Execute | Verified |
+| OFF-02 | P1 (AC 2) | Execute | Verified |
+| OFF-03 | P1 (AC 3) | Execute | Verified |
+| OFF-04 | P1 (AC 4) | Execute | Verified |
+| OFF-05 | P1 (AC 5) | Execute | Verified |
+| OFF-06 | P1 (AC 6) | Execute | Verified |
+| OFF-07 | P1 (AC 7) | Execute | Verified |
+| OFF-08 | P1 (AC 8) | Execute | Verified |
+| OFF-09 | P1 (AC 9) | Execute | Verified |
 
 **Coverage:** 9 total, 9 mapped to tasks, 0 unmapped
 
