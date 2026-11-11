@@ -765,12 +765,15 @@ internal open class OfflineRetry(ctx: Context, private val overlay: View) : WebV
     private var web: WebView? = null
     // Set when the main frame fails, cleared when a new load starts, so the error page's onPageFinished keeps the overlay.
     private var failed = false
-    private val retry = Runnable { web?.reload() } // reload, not loadUrl: no error entries in the back history
+    // After release the WebView is gone or going: nothing may reload it any more.
+    private var released = false
+    private val retry = Runnable { if (!released) web?.reload() } // reload, not loadUrl: no error entries in the back history
     private val connectivity = ctx.getSystemService(android.net.ConnectivityManager::class.java)
     private val network = object : android.net.ConnectivityManager.NetworkCallback() {
         override fun onAvailable(n: android.net.Network) {
             handler.post {
-                if (overlay.visibility != View.VISIBLE) return@post
+                // Only while the current load is the failed one: a new navigation (Início, search) must not be replaced.
+                if (released || !failed) return@post
                 handler.removeCallbacks(retry)
                 retry.run()
             }
@@ -788,6 +791,8 @@ internal open class OfflineRetry(ctx: Context, private val overlay: View) : WebV
     }
 
     fun release() {
+        released = true
+        web = null
         handler.removeCallbacks(retry)
         connectivity.unregisterNetworkCallback(network)
     }
@@ -796,13 +801,15 @@ internal open class OfflineRetry(ctx: Context, private val overlay: View) : WebV
     open fun onLoaded(view: WebView) {}
 
     override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
+        if (released) return
         web = view
         failed = false
+        handler.removeCallbacks(retry) // a new load (or the retry itself) is under way
     }
 
     // HTTP errors come through onReceivedHttpError; this one is the network (DNS, connection, timeout).
     override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
-        if (!request.isForMainFrame) return
+        if (released || !request.isForMainFrame) return
         web = view
         failed = true
         overlay.visibility = View.VISIBLE
@@ -917,13 +924,14 @@ class SearchScreen(ctx: CarContext, private val onQuery: (String) -> Unit) : Scr
 // ponytail: UA trick can break if Google tightens WebView detection; fallback is a cookie export from a real browser
 class LoginActivity : Activity() {
     private var client: OfflineRetry? = null
+    private var web: WebView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val offline = offlineView(this)
         val retrying = OfflineRetry(this, offline).also { client = it }
         setContentView(FrameLayout(this).apply {
-            addView(WebView(context).apply {
+            addView(WebView(context).also { web = it }.apply {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
                 settings.userAgentString = settings.userAgentString.replace("; wv", "")
@@ -936,6 +944,7 @@ class LoginActivity : Activity() {
 
     override fun onDestroy() {
         client?.release()
+        web?.destroy() // e.g. on rotation: the old page must not keep loading in the background
         super.onDestroy()
     }
 
