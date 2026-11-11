@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Follows the system light/dark theme. The opt-out keeps content below the action bar instead of
+    <!-- Always dark, whatever the phone's theme: WebViews then ask YouTube for its dark theme
+         (prefers-color-scheme follows the theme's isLightTheme). The opt-out keeps content below the action bar instead of
          under it (Android 15+ forces edge-to-edge); it is ignored once targetSdk reaches 36, then pad
          android.R.id.content with the system bar + action bar insets instead. -->
-    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.DayNight">
+    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault">
         <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
 </resources>

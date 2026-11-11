@@ -21,7 +21,7 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 | Camada monocromática do ícone (ícones temáticos do Android 13+) | Não pedido; sem ela o Android mostra o ícone colorido |
 | Tema claro, ou seguir o dia/noite da central | O usuário mudou de ideia: sempre escuro |
 | Sobrepor a "Aparência" fixada em "Tema claro" na conta do YouTube | É uma escolha explícita feita dentro do próprio YouTube; o padrão da conta ("Usar tema do dispositivo") fica escuro |
-| Trocar o nome "YouTube Auto" | Não pedido; o pedido é sobre o visual do ícone |
+| Trocar o `applicationId` / pacote `dev.begati.youtubeauto` e o nome da pasta do repositório | Trocar o `applicationId` instala outro app e perde login e configurações; a pasta não aparece para o usuário |
 | Outros botões da barra de ações (Voltar, Início, Pesquisar) | Não pedido |
 
 ---
@@ -34,6 +34,7 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 | Prévia do feed tocando sozinha (muda) no Início do carro | Não conta como "vídeo tocando": o botão continua escondido | Prévia não é um vídeo que o usuário abriu; mostrar "Pausar" no Início é o problema relatado | n |
 | Cores do ícone | Gradiente vermelho → vermelho-escuro, sem fundo branco (antes ciano → azul) | Pedido do usuário depois de ver o azul | y - user: "pode fazer o icone vermelho ao inves de azul" |
 | Símbolo do ícone | Volante estilizado com um triângulo de play no centro; sem o retângulo arredondado com play (YouTube) e sem o círculo com play (YouTube Music) | Resposta do usuário | y - user: "Volante com play (Recomendado)" |
+| Nome do projeto | "YT Auto" em vez de "YouTube Auto": nome do app, mensagens ao usuário, APK (`yt-auto-<versão>-<tipo>.apk`) e projeto Gradle (`yt-auto`) | Pedido do usuário no meio da execução | y - user: "vamos também chamar todo o projeto de YT Auto ao invés de YouTube Auto" |
 | Formato do ícone | Ícone adaptativo em vetor (fundo com gradiente + símbolo branco), usado no celular e no Android Auto | `minSdk` 29 suporta ícone adaptativo; vetor dispensa PNGs por densidade | n |
 | Tema do app | Sempre escuro, no celular (página do YouTube e Configurações) e no carro, ignorando o tema do celular e o dia/noite da central | Pedido do usuário | y - user: "vou mudar de ideia, mantenha tema tanto do app quanto no carro sempre em dark" |
 | A central troca dia/noite com o app aberto (faróis acesos/apagados) | A página do carro continua escura e o vídeo em reprodução continua tocando, sem recarregar | Pedido do usuário | y - user: "ao acender faróis, central muda tema pra escuro, app tem que ser capaz de suportar isso, mas sem dar reload em vídeo em reprodução" |
@@ -95,6 +96,22 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 
 ---
 
+### P1: Nome "YT Auto" ⭐ MVP
+
+**User Story**: Como usuário, quero ver o app chamado "YT Auto" em todo lugar.
+
+**Why P1**: Pedido do usuário no meio da execução.
+
+**Acceptance Criteria**:
+
+12. The app SHALL se chamar "YT Auto" no launcher do celular, no launcher do Android Auto e na barra de título do celular
+13. The app SHALL escrever "YT Auto", nunca "YouTube Auto", nas mensagens ao usuário (avisos do celular e erro do card de mídia)
+14. The build SHALL gerar o APK como `yt-auto-<versão>-<tipo>.apk`
+
+**Independent Test**: instalar o APK `yt-auto-0.5-debug.apk`; a gaveta do celular e o launcher do DHU mostram "YT Auto".
+
+---
+
 ## Edge Cases
 
 - WHEN o app do carro abre direto num vídeo guardado pelo celular THEN the app SHALL mostrar o botão "Tocar" ou "Pausar" desde o início (é `/watch`)
@@ -116,8 +133,11 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 | THEME-02 | P1: App sempre escuro (AC 9) | Execute | Pending |
 | THEME-03 | P1: App sempre escuro (AC 10) | Execute | Pending |
 | THEME-04 | P1: App sempre escuro (AC 11) | Execute | Pending |
+| NAME-01 | P1: Nome "YT Auto" (AC 12) | Execute | Pending |
+| NAME-02 | P1: Nome "YT Auto" (AC 13) | Execute | Pending |
+| NAME-03 | P1: Nome "YT Auto" (AC 14) | Execute | Pending |
 
-**Coverage:** 11 total, 11 mapped to tasks, 0 unmapped
+**Coverage:** 14 total, 14 mapped to tasks, 0 unmapped
 
 ---
 

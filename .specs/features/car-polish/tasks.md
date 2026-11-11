@@ -56,6 +56,12 @@ T4
 T5 → T6
 ```
 
+### Phase 4: Nome
+
+```
+T7
+```
+
 ---
 
 ## Task Breakdown
@@ -150,8 +156,8 @@ T5 → T6
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
-- [ ] Walk: `cmd uimode night no`; DevTools do celular com `prefers-color-scheme: dark`; screenshots da página e das Configurações escuras
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Walk: `cmd uimode night no`; DevTools do celular com `prefers-color-scheme: dark`; screenshots da página e das Configurações escuras
 
 **Tests**: none
 **Gate**: build
@@ -177,6 +183,27 @@ T5 → T6
 **Gate**: build
 
 **Commit**: `feat: keep the car page dark regardless of phone and car mode`
+
+---
+
+### T7: Projeto renomeado para YT Auto
+
+**What**: "YouTube Auto" vira "YT Auto" no `android:label`, nas mensagens ao usuário e na tag da `MediaSession`; APK `yt-auto-<versão>-<tipo>.apk`; `rootProject.name = "yt-auto"`; `applicationId` e pacote ficam
+**Where**: `app/src/main/AndroidManifest.xml` (com as mensagens em `YoutubeCarAppService.kt`, `app/build.gradle.kts` e `settings.gradle.kts`)
+**Depends on**: None
+**Reuses**: -
+**Requirement**: NAME-01, NAME-02, NAME-03
+
+**Done when**:
+
+- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [ ] `grep -rn "YouTube Auto" app/src` sem resultados; `app/build/outputs/apk/debug/yt-auto-0.5-debug.apk` existe
+- [ ] Walk: gaveta do celular, barra de título e launcher do DHU mostram "YT Auto"
+
+**Tests**: none
+**Gate**: build
+
+**Commit**: `feat: rename the app to YT Auto`
 
 ---
 
@@ -221,10 +248,19 @@ Proof: walk - `cmd uimode night no`: screenshot das Configurações escuras
 **C13** - Troca dia/noite da central com vídeo tocando mantém a página escura e não recarrega (THEME-04, AC 11)
 Proof: walk - DevTools do carro antes e depois da troca: mesmo `performance.timeOrigin`, `paused` false, `currentTime` maior e `prefers-color-scheme: dark`
 
+**C16** - "YT Auto" no launcher do celular, no launcher do DHU e na barra de título (NAME-01, AC 12)
+Proof: walk - screenshots da gaveta do celular, da barra de título do app e do launcher do DHU
+
+**C17** - Nenhuma mensagem do app diz "YouTube Auto" (NAME-02, AC 13)
+Proof: `! grep -rn "YouTube Auto" app/src && grep -q '"Abra o YT Auto no carro para tocar"' app/src/main/java/dev/begati/youtubeauto/YoutubeCarAppService.kt`
+
+**C18** - O APK sai como `yt-auto-<versão>-<tipo>.apk` (NAME-03, AC 14)
+Proof: `./gradlew assembleDebug && test -f app/build/outputs/apk/debug/yt-auto-0.5-debug.apk`
+
 ---
 
 ## Handoff
 
 **Settled mid-build:** ícone vermelho em vez de azul - user: "pode fazer o icone vermelho ao inves de azul"; tema sempre escuro no celular e no carro - user: "vou mudar de ideia, mantenha tema tanto do app quanto no carro sempre em dark. pode ver os demais."
 **Dispatched:** none
-**Walked:** DHU 800x480 (config padrão, conta logada), barra de ações aberta com um toque na aba Início do próprio YouTube (100,380) - um toque em (400,20) cai no Voltar da barra. T2: Início = Voltar, Início, Pesquisar; vídeo aberto pelo Início = Pausar; Pausar pela barra = Tocar; botão Início com o vídeo pausado = Voltar, Início, Pesquisar. Primeiro walk achou dois furos, corrigidos: o template agora compara com o que mostrou por último (`toggleShown`), porque o botão Início muda `pageUrl` antes do `loadUrl`; e a página nova reporta o estado na primeira leitura (T3). T3: no Início, um `<video>` escondido num card do feed (fora do `#movie_player`) recebendo `play` via DevTools = barra sem Tocar/Pausar; o carro não tocou prévias reais do feed ao rolar o Início (só o `<video>` do `#movie_player`, parado) T4: gaveta do celular (busca "you") = YouTube (vermelho/branco) ao lado do YouTube Auto (volante branco com play sobre gradiente ciano → azul); launcher do DHU = YouTube Auto entre WhatsApp e YT Music com o ícone novo - o Android Auto guarda o ícone antigo até reconectar o DHU (reiniciado para o walk) Ícone refeito em vermelho a pedido do usuário: gaveta do celular = YouTube (retângulo vermelho em fundo branco) ao lado do volante branco em gradiente vermelho; dock do DHU = volante vermelho ao lado do Spotify, depois de reconectar o DHU
+**Walked:** DHU 800x480 (config padrão, conta logada), barra de ações aberta com um toque na aba Início do próprio YouTube (100,380) - um toque em (400,20) cai no Voltar da barra. T2: Início = Voltar, Início, Pesquisar; vídeo aberto pelo Início = Pausar; Pausar pela barra = Tocar; botão Início com o vídeo pausado = Voltar, Início, Pesquisar. Primeiro walk achou dois furos, corrigidos: o template agora compara com o que mostrou por último (`toggleShown`), porque o botão Início muda `pageUrl` antes do `loadUrl`; e a página nova reporta o estado na primeira leitura (T3). T3: no Início, um `<video>` escondido num card do feed (fora do `#movie_player`) recebendo `play` via DevTools = barra sem Tocar/Pausar; o carro não tocou prévias reais do feed ao rolar o Início (só o `<video>` do `#movie_player`, parado) T4: gaveta do celular (busca "you") = YouTube (vermelho/branco) ao lado do YouTube Auto (volante branco com play sobre gradiente ciano → azul); launcher do DHU = YouTube Auto entre WhatsApp e YT Music com o ícone novo - o Android Auto guarda o ícone antigo até reconectar o DHU (reiniciado para o walk) Ícone refeito em vermelho a pedido do usuário: gaveta do celular = YouTube (retângulo vermelho em fundo branco) ao lado do volante branco em gradiente vermelho; dock do DHU = volante vermelho ao lado do Spotify, depois de reconectar o DHU T5: `cmd uimode night no`, app aberto no celular = DevTools do celular `prefers-color-scheme: dark` true, página do YouTube escura; engrenagem = Configurações escuras
