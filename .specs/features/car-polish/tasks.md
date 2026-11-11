@@ -130,8 +130,8 @@ T5 → T6
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
-- [ ] Walk: screenshot do launcher do DHU e da gaveta do celular com o ícone novo ao lado do YouTube e do YT Music
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Walk: screenshot do launcher do DHU e da gaveta do celular com o ícone novo ao lado do YouTube e do YT Music
 
 **Tests**: none
 **Gate**: build
@@ -227,4 +227,4 @@ Proof: walk - DevTools do carro antes e depois da troca: mesmo `performance.time
 
 **Settled mid-build:** tema sempre escuro no celular e no carro - user: "vou mudar de ideia, mantenha tema tanto do app quanto no carro sempre em dark. pode ver os demais."
 **Dispatched:** none
-**Walked:** DHU 800x480 (config padrão, conta logada), barra de ações aberta com um toque na aba Início do próprio YouTube (100,380) - um toque em (400,20) cai no Voltar da barra. T2: Início = Voltar, Início, Pesquisar; vídeo aberto pelo Início = Pausar; Pausar pela barra = Tocar; botão Início com o vídeo pausado = Voltar, Início, Pesquisar. Primeiro walk achou dois furos, corrigidos: o template agora compara com o que mostrou por último (`toggleShown`), porque o botão Início muda `pageUrl` antes do `loadUrl`; e a página nova reporta o estado na primeira leitura (T3). T3: no Início, um `<video>` escondido num card do feed (fora do `#movie_player`) recebendo `play` via DevTools = barra sem Tocar/Pausar; o carro não tocou prévias reais do feed ao rolar o Início (só o `<video>` do `#movie_player`, parado)
+**Walked:** DHU 800x480 (config padrão, conta logada), barra de ações aberta com um toque na aba Início do próprio YouTube (100,380) - um toque em (400,20) cai no Voltar da barra. T2: Início = Voltar, Início, Pesquisar; vídeo aberto pelo Início = Pausar; Pausar pela barra = Tocar; botão Início com o vídeo pausado = Voltar, Início, Pesquisar. Primeiro walk achou dois furos, corrigidos: o template agora compara com o que mostrou por último (`toggleShown`), porque o botão Início muda `pageUrl` antes do `loadUrl`; e a página nova reporta o estado na primeira leitura (T3). T3: no Início, um `<video>` escondido num card do feed (fora do `#movie_player`) recebendo `play` via DevTools = barra sem Tocar/Pausar; o carro não tocou prévias reais do feed ao rolar o Início (só o `<video>` do `#movie_player`, parado) T4: gaveta do celular (busca "you") = YouTube (vermelho/branco) ao lado do YouTube Auto (volante branco com play sobre gradiente ciano → azul); launcher do DHU = YouTube Auto entre WhatsApp e YT Music com o ícone novo - o Android Auto guarda o ícone antigo até reconectar o DHU (reiniciado para o walk)
