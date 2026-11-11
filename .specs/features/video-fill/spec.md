@@ -4,13 +4,13 @@
 
 ## Problem Statement
 
-Na página do vídeo, a WebView é encolhida para a área visível que o host do Android Auto informa. Isso deixa
+Em todas as páginas, a WebView é encolhida para a área visível que o host do Android Auto informa. Isso deixa
 uma margem preta em volta do vídeo e encolhe o vídeo toda vez que as barras de botões aparecem. Além disso o
 vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 
 ## Goals
 
-- [ ] Na página do vídeo em tela cheia, o vídeo ocupa a superfície inteira do carro, sem margem, e os botões ficam por cima.
+- [ ] Em todas as páginas (vídeo e navegação), a WebView ocupa a superfície inteira do carro, sem margem, e os botões ficam por cima.
 - [ ] O motorista alterna a proporção do vídeo (Ajustar / Preencher / Esticar) com um botão no carro.
 - [ ] A proporção padrão é escolhida nas Configurações do carro e do celular.
 
@@ -18,7 +18,6 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 
 | Feature | Reason |
 | ------- | ------ |
-| Superfície inteira fora da página do vídeo (listas, pesquisa, canais) | Usuário escolheu "só na página do vídeo": listas continuam dentro da área visível para nada ficar sob botões/cards |
 | Tela cheia nativa do player (`onShowCustomView`) | Já ocupa o `FrameLayout` inteiro hoje; a proporção dessa view não é controlada por CSS |
 | Teste instrumentado de WebView/CSS e do template do carro | Projeto testa só na JVM (decisão anterior, "só JVM"); verificação visual no carro/DHU |
 
@@ -29,7 +28,7 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --------------------- | -------------- | --------- | ---------- |
 | O que é a "borda" | A margem entre a superfície do carro e a área visível do host | Resposta do usuário: "Margem da área visível" | y - user: "Margem da área visível (Recomendado)" |
-| Onde o vídeo ocupa a superfície inteira | Só em `/watch` com a opção "Tela cheia ao abrir vídeo" ligada | Resposta do usuário | y - user: "Só na página do vídeo (Recomendado)" |
+| Onde a WebView ocupa a superfície inteira | Em todas as páginas; a opção "Tela cheia ao abrir vídeo" só controla se o player ocupa a página. Mudado no meio da execução: a resposta anterior era "Só na página do vídeo (Recomendado)" | Usuário, depois de ver o walk: a tela de navegação também deve ficar em tela cheia | y - user: "o vídeo ficou em tela cheia, mas a tela de navegação dos vídeos, ainda não" |
 | Modos do botão | Ciclo Ajustar (`contain`) → Preencher (`cover`) → Esticar (`fill`) → Ajustar | Resposta do usuário | y - user: "Ajustar / Preencher / Esticar" |
 | O botão muda o padrão salvo? | Não: vale até o processo do app terminar; o padrão só muda nas Configurações | Resposta do usuário | y - user: "Não, só até fechar o app (Recomendado)" |
 | Padrão de fábrica da proporção | Ajustar (`contain`) | É o comportamento atual | y - user: "aprovado" |
@@ -52,12 +51,12 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 
 **Acceptance Criteria**:
 
-1. WHILE a página é `/watch` e a opção "Tela cheia ao abrir vídeo" está ligada the app SHALL dispor a WebView sobre a superfície inteira do carro, ignorando a área visível do host
-2. WHILE a página não é `/watch` the app SHALL dispor a WebView dentro da área visível do host, como hoje
-3. WHILE a opção "Tela cheia ao abrir vídeo" está desligada the app SHALL dispor a WebView dentro da área visível do host, inclusive em `/watch`
-4. WHEN a navegação troca entre `/watch` e outra página THEN the app SHALL refazer a disposição da WebView pela regra dos critérios 1-3
+1. WHILE a página é `/watch` the app SHALL dispor a WebView sobre a superfície inteira do carro, ignorando a área visível do host
+2. WHILE a página não é `/watch` (início, inscrições, pesquisa, canais) the app SHALL dispor a WebView sobre a superfície inteira do carro, ignorando a área visível do host
+3. WHILE a opção "Tela cheia ao abrir vídeo" está desligada the app SHALL manter a WebView sobre a superfície inteira do carro
+4. WHEN a navegação troca entre `/watch` e outra página THEN the app SHALL manter a WebView sobre a superfície inteira, sem mudar de tamanho
 
-**Independent Test**: no DHU, abrir um vídeo: sem margem preta; tocar na tela para mostrar os botões: o vídeo não muda de tamanho.
+**Independent Test**: no DHU, a lista do Início e um vídeo aberto sem margem preta; tocar na tela para mostrar os botões: o vídeo não muda de tamanho.
 
 ---
 
@@ -107,19 +106,19 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| FILL-01 | P1: Vídeo sem margem (AC 1) | Execute | Implementing |
-| FILL-02 | P1: Vídeo sem margem (AC 2) | Execute | Implementing |
-| FILL-03 | P1: Vídeo sem margem (AC 3) | Execute | Implementing |
-| FILL-04 | P1: Vídeo sem margem (AC 4) | Execute | Implementing |
-| ASPECT-01 | P1: Botão de proporção (AC 5) | Execute | Implementing |
-| ASPECT-02 | P1: Botão de proporção (AC 6) | Execute | Implementing |
-| ASPECT-03 | P1: Botão de proporção (AC 7) | Execute | Implementing |
-| ASPECT-04 | P1: Botão de proporção (AC 8) | Execute | Implementing |
-| ASPECT-05 | P1: Botão de proporção (AC 9) | Execute | Implementing |
-| ASPECT-06 | P1: Proporção padrão (AC 10) | Execute | Implementing |
-| ASPECT-07 | P1: Proporção padrão (AC 11) | Execute | Implementing |
-| ASPECT-08 | P1: Proporção padrão (AC 12) | Execute | Implementing |
-| ASPECT-09 | P1: Proporção padrão (AC 13) | Execute | Implementing |
+| FILL-01 | P1: Vídeo sem margem (AC 1) | Execute | Verified |
+| FILL-02 | P1: Vídeo sem margem (AC 2) | Execute | Verified |
+| FILL-03 | P1: Vídeo sem margem (AC 3) | Execute | Verified |
+| FILL-04 | P1: Vídeo sem margem (AC 4) | Execute | Verified |
+| ASPECT-01 | P1: Botão de proporção (AC 5) | Execute | Verified |
+| ASPECT-02 | P1: Botão de proporção (AC 6) | Execute | Verified |
+| ASPECT-03 | P1: Botão de proporção (AC 7) | Execute | Verified |
+| ASPECT-04 | P1: Botão de proporção (AC 8) | Execute | Verified |
+| ASPECT-05 | P1: Botão de proporção (AC 9) | Execute | Verified |
+| ASPECT-06 | P1: Proporção padrão (AC 10) | Execute | Verified |
+| ASPECT-07 | P1: Proporção padrão (AC 11) | Execute | Verified |
+| ASPECT-08 | P1: Proporção padrão (AC 12) | Execute | Verified |
+| ASPECT-09 | P1: Proporção padrão (AC 13) | Execute | Verified |
 
 **Coverage:** 13 total, 13 mapped to tasks, 0 unmapped
 
@@ -135,6 +134,6 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 
 ## Success Criteria
 
-- [ ] Na página do vídeo não há margem preta entre o vídeo e a borda da tela do carro.
+- [ ] Em nenhuma página há margem preta entre o vídeo e a borda da tela do carro.
 - [ ] Mostrar/esconder os botões não muda o tamanho do vídeo.
 - [ ] Os três modos são alcançáveis pelo botão e pelas Configurações.

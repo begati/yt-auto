@@ -1,32 +1,11 @@
 package dev.begati.youtubeauto
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** FILL-01..04 and ASPECT-01..09 (spec video-fill). */
+/** ASPECT-01..09 (spec video-fill). FILL-01..03 are layout, proven by the walk. */
 class VideoFillTest {
-    @Test
-    fun `FILL-01 watch page with fullscreen fills the surface`() {
-        assertTrue(fillsSurface("https://m.youtube.com/watch?v=dQw4w9WgXcQ", fullscreen = true))
-        assertTrue(fillsSurface("https://m.youtube.com/watch?v=dQw4w9WgXcQ&t=42", fullscreen = true))
-    }
-
-    @Test
-    fun `FILL-02 other pages stay in the visible area`() {
-        assertFalse(fillsSurface("https://m.youtube.com", fullscreen = true))
-        assertFalse(fillsSurface("https://m.youtube.com/feed/subscriptions", fullscreen = true))
-        assertFalse(fillsSurface("https://m.youtube.com/results?search_query=watch", fullscreen = true))
-        assertFalse(fillsSurface("https://m.youtube.com/watchlater", fullscreen = true))
-        assertFalse(fillsSurface("", fullscreen = true))
-    }
-
-    @Test
-    fun `FILL-03 fullscreen off keeps watch in the visible area`() {
-        assertFalse(fillsSurface("https://m.youtube.com/watch?v=dQw4w9WgXcQ", fullscreen = false))
-    }
-
     @Test
     fun `ASPECT-05 without a tap the saved default applies`() {
         assertEquals("cover", aspect(MemoryPrefs().apply { map["aspect"] = "cover" }, null))
@@ -53,16 +32,23 @@ class VideoFillTest {
     @Test
     fun `ASPECT-09 changing the default drops the tapped mode`() {
         val prefs = MemoryPrefs()
-        val tap = tapAspect(prefs, null) // contain -> cover
+        var tap: String? = tapAspect(prefs, null) // Ajustar -> Preencher
         assertEquals("cover", aspect(prefs, tap))
         setChoice(prefs, ASPECT, "fill")
+        tap = tapAfterChange(ASPECT.key, tap)
         assertEquals("fill", aspect(prefs, tap))
+        // Back to the old default: the old pick stays dropped.
+        setChoice(prefs, ASPECT, "contain")
+        tap = tapAfterChange(ASPECT.key, tap)
+        assertEquals("contain", aspect(prefs, tap))
+        // Other settings keep the pick.
+        assertEquals("fill", tapAfterChange(QUALITY.key, "fill"))
     }
 
     @Test
     fun `ASPECT-01 tapping cycles contain cover fill contain`() {
         val prefs = MemoryPrefs()
-        var tap: Pair<String, String>? = null
+        var tap: String? = null
         val seen = (1..4).map { tap = tapAspect(prefs, tap); aspect(prefs, tap) }
         assertEquals(listOf("cover", "fill", "contain", "cover"), seen)
         // The cycle starts from the saved default, not from Ajustar.
@@ -73,7 +59,7 @@ class VideoFillTest {
     @Test
     fun `ASPECT-04 tapping leaves the saved default unchanged`() {
         val prefs = MemoryPrefs().apply { map["aspect"] = "cover" }
-        var tap: Pair<String, String>? = null
+        var tap: String? = null
         repeat(2) { tap = tapAspect(prefs, tap) }
         assertEquals("contain", aspect(prefs, tap))
         assertEquals(mapOf<String, Any?>("aspect" to "cover"), prefs.map)

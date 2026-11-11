@@ -186,18 +186,18 @@ internal fun flag(prefs: SharedPreferences, key: String) =
     prefs.getBoolean(key, FLAGS.find { it.key == key }?.default ?: true)
 internal fun setFlag(prefs: SharedPreferences, key: String, on: Boolean) = prefs.edit().putBoolean(key, on).apply()
 
-// Aspect picked with the car button: (saved default when tapped, mode). Not saved, so it lasts until the
-// process dies; it also stops applying once the saved default changes, from the car or the phone.
-internal fun aspect(prefs: SharedPreferences, tap: Pair<String, String>?): String {
-    val saved = choice(prefs, ASPECT)
-    return tap?.takeIf { it.first == saved }?.second ?: saved
+// Aspect picked with the car button, over the saved default. Not saved, so it lasts until the process dies
+// or the saved default changes (tapAfterChange).
+internal fun aspect(prefs: SharedPreferences, tap: String?) = tap ?: choice(prefs, ASPECT)
+
+// Next mode in ASPECT's order: Ajustar -> Preencher -> Esticar -> Ajustar.
+internal fun tapAspect(prefs: SharedPreferences, tap: String?): String {
+    val keys = ASPECT.options.keys.toList()
+    return keys[(keys.indexOf(aspect(prefs, tap)) + 1) % keys.size]
 }
 
-// Next mode in ASPECT's order (Ajustar -> Preencher -> Esticar -> Ajustar), remembered against the saved default.
-internal fun tapAspect(prefs: SharedPreferences, tap: Pair<String, String>?): Pair<String, String> {
-    val keys = ASPECT.options.keys.toList()
-    return choice(prefs, ASPECT) to keys[(keys.indexOf(aspect(prefs, tap)) + 1) % keys.size]
-}
+// A new default, set from the car or the phone, drops the button's pick.
+internal fun tapAfterChange(key: String?, tap: String?) = if (key == ASPECT.key) null else tap
 
 // Home button label: the chosen home page's name (Início / Inscrições / Histórico).
 internal fun homeLabel(prefs: SharedPreferences) = HOME_PAGE.options.getValue(choice(prefs, HOME_PAGE))
@@ -231,7 +231,9 @@ private var pendingUrl: String? = null
 private var resumeAt: Pair<String, Int>? = null
 
 // See aspect(); process-wide like pageUrl.
-@Volatile private var aspectTap: Pair<String, String>? = null
+@Volatile private var aspectTap: String? = null
+// Held here because SharedPreferences keeps listeners only weakly.
+private val dropAspectTap = SharedPreferences.OnSharedPreferenceChangeListener { _, key -> aspectTap = tapAfterChange(key, aspectTap) }
 
 /** [url] with `t=` set to the saved position when it is a watch page of that same video, else [url]. */
 internal fun withResume(url: String, at: Pair<String, Int>?): String {
@@ -240,11 +242,6 @@ internal fun withResume(url: String, at: Pair<String, Int>?): String {
     if (id != at.first || !url.contains("/watch?")) return url
     return url.replace(Regex("&t=[^&#]*"), "") + "&t=${at.second}s"
 }
-
-// Same rule as the page's `yta-watch` class: on /watch with "fullscreen" on, the video takes the whole surface
-// and the host's buttons float over it instead of shrinking it.
-internal fun fillsSurface(url: String, fullscreen: Boolean) =
-    fullscreen && runCatching { java.net.URI(url).path == "/watch" }.getOrDefault(false)
 
 private fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + Uri.encode(videoId)
 
@@ -450,8 +447,6 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var presentation: Presentation? = null
     private var webView: WebView? = null
     private var root: FrameLayout? = null
-    // Part of the surface not covered by the host's UI (e.g. the media card beside the map on wide screens).
-    private var area: android.graphics.Rect? = null
     // Set while a video is fullscreen; calling it exits fullscreen.
     private var exitFullscreen: WebChromeClient.CustomViewCallback? = null
     private var playing = false
@@ -477,6 +472,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         pendingUrl?.let { pageUrl = it }
         pendingUrl = null
         if (pageUrl.isEmpty()) pageUrl = choice(ctx, HOME_PAGE)
+        prefs(ctx).registerOnSharedPreferenceChangeListener(dropAspectTap) // same listener: registering again is a no-op
         setPlaying(false)
         lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onDestroy(owner: LifecycleOwner) {
@@ -565,7 +561,6 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                                 webView?.settings?.textZoom = choice(carContext, TEXT_ZOOM).toInt()
                                 js(JS_APPLY_QUALITY)
                                 js(JS_APPLY_PLAYBACK)
-                                fitToArea() // "fullscreen" flag
                                 invalidate() // home button label
                             })
                         }
@@ -633,7 +628,6 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
                     override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
                         url?.let { pageUrl = it }
-                        fitToArea()
                     }
                 }
                 webChromeClient = object : WebChromeClient() {
@@ -655,8 +649,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             }
             webView = wv
             root = frame
+            // Whole surface on every page: the host's buttons and cards float over the page instead of shrinking it.
             frame.addView(wv)
-            fitToArea()
             setContentView(frame)
             show()
         }
@@ -678,28 +672,6 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         presentation = null
         display = null
         displaySize = null
-    }
-
-    // Visible, not stable, area: stable also gives up the auto-hiding action strips' space, shrinking the video
-    // for buttons that are hidden most of the time. Both exclude a media card beside the map.
-    override fun onVisibleAreaChanged(visibleArea: android.graphics.Rect) {
-        area = visibleArea
-        fitToArea()
-    }
-
-    // Lays the WebView out inside [area] only, so pages fit the free space instead of running under the host's
-    // cards; a fullscreen video page takes the whole surface instead (see fillsSurface).
-    private fun fitToArea() {
-        val wv = webView ?: return
-        if (fillsSurface(pageUrl, flag(carContext, "fullscreen"))) {
-            wv.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-            return
-        }
-        val a = area?.takeUnless { it.isEmpty } ?: return
-        wv.layoutParams = FrameLayout.LayoutParams(a.width(), a.height()).apply {
-            leftMargin = a.left
-            topMargin = a.top
-        }
     }
 
     override fun onScroll(distanceX: Float, distanceY: Float) {
