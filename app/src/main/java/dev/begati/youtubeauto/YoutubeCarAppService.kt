@@ -28,6 +28,8 @@ import android.view.View
 import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
@@ -471,6 +473,13 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var area: List<Int>? = null
     // Uptime of the last template refresh asked to confirm a media card (see onVisibleAreaChanged).
     private var confirmAt = 0L
+    // Loading screen shown over the page while it can't load (no network); see showOffline.
+    private var offline: View? = null
+    // Set when the main frame fails, cleared when a new load starts; keeps onPageFinished of the error page from
+    // hiding the loading screen.
+    private var loadFailed = false
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val retry = Runnable { webView?.reload() } // reload, not loadUrl: no error entries in the back history
     // Set while a video is fullscreen; calling it exits fullscreen.
     private var exitFullscreen: WebChromeClient.CustomViewCallback? = null
     private var playing = false
@@ -646,7 +655,20 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         carContext.mainExecutor.execute { setMeta(title, artist, art) }
                 }, "yta")
                 webViewClient = object : WebViewClient() {
+                    override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
+                        loadFailed = false
+                    }
+
+                    // HTTP errors come through onReceivedHttpError; this one is the network (DNS, connection, timeout).
+                    override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+                        if (!request.isForMainFrame) return
+                        loadFailed = true
+                        showOffline()
+                    }
+
                     override fun onPageFinished(view: WebView, url: String?) {
+                        if (loadFailed) return // WebView's own error page under the loading screen
+                        hideOffline()
                         view.evaluateJavascript(PAGE_JS, null)
                     }
 
@@ -675,6 +697,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             webView = wv
             root = frame
             frame.addView(wv)
+            offline = offlineView(context).also(frame::addView)
             fitToArea()
             setContentView(frame)
             show()
@@ -688,6 +711,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
 
     private fun teardown() {
+        handler.removeCallbacks(retry)
+        offline = null
         webView?.destroy()
         presentation?.dismiss()
         display?.release()
@@ -699,7 +724,18 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         displaySize = null
     }
 
-    // Visible area: it shrinks while the action strips show and when a media card sits beside the app.
+    // Loading screen over the page, retrying it every 5 s until it loads.
+    private fun showOffline() {
+        offline?.visibility = View.VISIBLE
+        handler.removeCallbacks(retry)
+        handler.postDelayed(retry, 5000)
+    }
+
+    private fun hideOffline() {
+        offline?.visibility = View.GONE
+        handler.removeCallbacks(retry)
+    }
+
     // Visible area: it shrinks while the action strips show and when a media card sits beside the app.
     // Going back full screen from the split view, the host sends the full area and then repeats the split one,
     // correcting it only when the strips next hide (~10 s). So an area with a card is confirmed once by a template
@@ -745,6 +781,30 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             e.recycle()
         }
     }
+}
+
+/** Black loading screen with a spinner and "Sem conexão. Tentando de novo…", hidden until a page fails. */
+private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
+    setBackgroundColor(android.graphics.Color.BLACK)
+    visibility = View.GONE
+    isClickable = true // taps don't reach the error page underneath
+    addView(
+        android.widget.LinearLayout(ctx).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            gravity = android.view.Gravity.CENTER_HORIZONTAL
+            addView(android.widget.ProgressBar(ctx, null, android.R.attr.progressBarStyleLarge).apply {
+                isIndeterminate = true
+                indeterminateTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+            })
+            addView(android.widget.TextView(ctx).apply {
+                text = "Sem conexão. Tentando de novo…"
+                setTextColor(android.graphics.Color.WHITE)
+                textSize = 20f
+                setPadding(0, 24, 0, 0)
+            })
+        },
+        FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, android.view.Gravity.CENTER),
+    )
 }
 
 /** Car settings, same values as the phone's "Configurações" menu. [onChanged] re-applies them to the live page. */
