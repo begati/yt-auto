@@ -100,7 +100,7 @@ T5 → T6 → T7
 
 ### T3: Posição, duração e seek na sessão de mídia
 
-**What**: o `PAGE_JS` passa a reportar também a duração (`yta.time(id, t, dur)`); o carro publica posição no `PlaybackState` (com `ACTION_SEEK_TO`) e duração no `MediaMetadata`, e trata `onSeekTo` movendo o `currentTime` do vídeo; publicar posição não chama `invalidate()`
+**What**: o `PAGE_JS` passa a reportar também a duração (`yta.time(id, t, dur)`); o carro publica posição no `PlaybackState` (sem anunciar `ACTION_SEEK_TO`: com ele o Android Auto troca anterior/próximo do card por -10/+10 s, e os extras de reserva de espaço não impedem; `onSeekTo` atende o `seekTo` do celular mesmo assim) e duração no `MediaMetadata`, e trata `onSeekTo` movendo o `currentTime` do vídeo; publicar posição não chama `invalidate()`
 **Where**: `app/src/main/java/dev/begati/youtubeauto/YoutubeCarAppService.kt`
 **Depends on**: None (phase 1 done)
 **Reuses**: `sharedSession`, `playbackState`, `setMeta`, bridge `yta`
@@ -108,8 +108,8 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
-- [ ] Walk: o card de mídia do DHU mostra a barra de progresso andando
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Walk: o card de mídia do DHU mostra a barra de progresso andando
 
 **Tests**: none
 **Gate**: build

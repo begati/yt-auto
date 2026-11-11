@@ -128,7 +128,7 @@ private const val PAGE_JS =
         "if(yta.flag('skipAds'))document.querySelector('.ytp-skip-ad-button,.ytp-ad-skip-button,.ytp-ad-skip-button-modern')?.click();" +
         // Only the URL's own video counts: during an ad the player reports the ad's id and time.
         "const p=document.getElementById('movie_player'),id=new URLSearchParams(location.search).get('v');" +
-        "if(id&&p&&p.getVideoData&&p.getVideoData().video_id===id)yta.time(id,Math.floor(p.getCurrentTime()))},500)})()"
+        "if(id&&p&&p.getVideoData&&p.getVideoData().video_id===id)yta.time(id,Math.floor(p.getCurrentTime()),Math.floor(p.getDuration()||0))},500)})()"
 
 private const val JS_PLAY = "document.querySelector('video')?.play()"
 private const val JS_PAUSE = "document.querySelector('video')?.pause()"
@@ -288,17 +288,18 @@ private fun mediaSession(ctx: Context) = sharedSession
         sharedSession = it
     }
 
-private fun playbackState(playing: Boolean): PlaybackState = PlaybackState.Builder()
-    .setActions(
-        PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE or
-            PlaybackState.ACTION_SKIP_TO_NEXT or PlaybackState.ACTION_SKIP_TO_PREVIOUS or
-            PlaybackState.ACTION_PLAY_FROM_MEDIA_ID
-    )
-    .setState(
-        if (playing) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED,
-        PlaybackState.PLAYBACK_POSITION_UNKNOWN, 1f
-    )
-    .build()
+// [positionMs] is extrapolated by readers (car media card, phone bar) while playing, so a report every 500 ms is enough.
+private fun playbackState(playing: Boolean, positionMs: Long = PlaybackState.PLAYBACK_POSITION_UNKNOWN): PlaybackState =
+    PlaybackState.Builder()
+        .setActions(
+            PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE or
+                PlaybackState.ACTION_SKIP_TO_NEXT or PlaybackState.ACTION_SKIP_TO_PREVIOUS or
+                PlaybackState.ACTION_PLAY_FROM_MEDIA_ID
+            // No ACTION_SEEK_TO: with it Android Auto swaps previous/next for -10/+10 s on its media card (session
+            // extras don't stop it). onSeekTo still runs for the phone bar, which calls seekTo directly.
+        )
+        .setState(if (playing) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED, positionMs, 1f)
+        .build()
 
 // Browse tree: root -> Histórico / Inscrições -> videos (mediaId = videoId).
 private val FEEDS = linkedMapOf(
@@ -495,6 +496,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Set while a video is fullscreen; calling it exits fullscreen.
     private var exitFullscreen: WebChromeClient.CustomViewCallback? = null
     private var playing = false
+    private var positionMs = PlaybackState.PLAYBACK_POSITION_UNKNOWN
+    private var durationMs = 0L
+    // Metadata last published, to add the duration once the page reports it.
+    private var meta: MediaMetadata? = null
     // Title + artwork URL of the metadata last published, to skip duplicate reports and stale downloads.
     private var metaKey = ""
 
@@ -505,6 +510,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             override fun onPause() { js(JS_PAUSE) }
             override fun onSkipToNext() { js(JS_NEXT) }
             override fun onSkipToPrevious() { js(JS_RESTART) }
+            override fun onSeekTo(pos: Long) { js("(v=>v&&(v.currentTime=${pos / 1000.0}))(document.querySelector('video'))") }
             override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
                 pageUrl = watchUrl(mediaId)
                 webView?.loadUrl(pageUrl)
@@ -535,23 +541,36 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
     private fun setPlaying(p: Boolean) {
         playing = p
-        session.setPlaybackState(playbackState(p))
+        session.setPlaybackState(playbackState(p, positionMs))
         invalidate()
+    }
+
+    // Position and duration of the URL's video, from the page every 500 ms. No invalidate(): the template doesn't show them.
+    private fun setTime(id: String, seconds: Int, duration: Int) {
+        resumeAt = id to seconds
+        positionMs = seconds * 1000L
+        session.setPlaybackState(playbackState(playing, positionMs))
+        val ms = duration * 1000L
+        if (ms > 0 && ms != durationMs) {
+            durationMs = ms
+            meta?.let { session.setMetadata(MediaMetadata.Builder(it).putLong(MediaMetadata.METADATA_KEY_DURATION, ms).build()) }
+        }
     }
 
     private fun setMeta(title: String, artist: String, art: String) {
         val key = "$title|$art"
         if (key == metaKey) return
         metaKey = key
+        durationMs = 0L // the next time report brings the new video's duration
         fun publish(bmp: Bitmap?) {
             if (metaKey != key || !lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) return
-            session.setMetadata(
-                MediaMetadata.Builder()
-                    .putString(MediaMetadata.METADATA_KEY_TITLE, title)
-                    .putString(MediaMetadata.METADATA_KEY_ARTIST, artist)
-                    .apply { bmp?.let { putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, it) } }
-                    .build()
-            )
+            meta = MediaMetadata.Builder()
+                .putString(MediaMetadata.METADATA_KEY_TITLE, title)
+                .putString(MediaMetadata.METADATA_KEY_ARTIST, artist)
+                .apply { bmp?.let { putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, it) } }
+                .apply { if (durationMs > 0) putLong(MediaMetadata.METADATA_KEY_DURATION, durationMs) }
+                .build()
+            session.setMetadata(meta)
         }
         publish(null)
         if (!art.startsWith("https://")) return
@@ -655,7 +674,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     fun saveSpeed(r: String) = setChoice(carContext, SPEED, r)
 
                     @JavascriptInterface
-                    fun time(id: String, t: Int) = carContext.mainExecutor.execute { resumeAt = id to t }
+                    fun time(id: String, t: Int, dur: Int) = carContext.mainExecutor.execute { setTime(id, t, dur) }
 
                     @JavascriptInterface
                     fun flag(key: String) = flag(carContext, key)
