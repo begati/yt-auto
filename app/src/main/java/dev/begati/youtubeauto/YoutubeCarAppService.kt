@@ -77,7 +77,7 @@ private const val JS_APPLY_PLAYBACK =
 
 // Injected on every full page load (m.youtube.com is a SPA, so the guard keeps it to once per window):
 // - fakes a visible page so YouTube keeps playing while the car shows another app (Maps etc.), if "background" is on
-// - reports play/pause and the video's title/channel/thumbnail to the app through the `yta` bridge
+// - reports play/pause of the main player (not feed previews) and the video's title/channel/thumbnail to the app through the `yta` bridge
 //   (from the page's navigator.mediaSession, falling back to document.title, the player's author and the ytimg thumbnail)
 // - hides the playlist "Próximo / Mix de ..." bar that covers the player on short car screens
 // - stretches the player over the whole screen on /watch pages (polled, SPA navigation has no load event), if "fullscreen" is on,
@@ -106,8 +106,10 @@ private const val PAGE_JS =
         "const tt=m&&m.title||document.title.replace(/ - YouTube\$/,'');if(tt==='YouTube')return;" +
         "yta.meta(tt,m&&m.artist||vd&&vd.author||''," +
         "m&&m.artwork&&m.artwork.length?m.artwork[m.artwork.length-1].src:(id?'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg':''))};" +
-        "document.addEventListener('play',()=>{yta.playing(true);meta();setTimeout(meta,1500)},true);" +
-        "document.addEventListener('pause',()=>yta.playing(false),true);" +
+        // Only the main player (watch page or miniplayer) counts: a feed preview playing is not "a video playing".
+        "const main=e=>e.target.closest&&!!e.target.closest('#movie_player');" +
+        "document.addEventListener('play',e=>{if(!main(e))return;yta.playing(true);meta();setTimeout(meta,1500)},true);" +
+        "document.addEventListener('pause',e=>main(e)&&yta.playing(false),true);" +
         "let qId='';document.addEventListener('play',()=>{const p=document.getElementById('movie_player');" +
         "const id=p&&p.getVideoData&&p.getVideoData().video_id;" +
         "if(!id||id===qId||!p.setPlaybackQualityRange)return;qId=id;" + JS_APPLY_QUALITY + ";" + JS_APPLY_PLAYBACK + ";" +
@@ -128,13 +130,14 @@ private const val PAGE_JS =
         "html.yta-watch #player-container-id .html5-video-player,html.yta-watch #player-container-id video" +
         "{width:100%!important;height:100%!important;left:0!important;top:0!important;object-fit:var(--yta-fit,contain)!important}';" +
         "document.head.appendChild(s);" +
-        "let umId='',umN=0,pl=false;setInterval(()=>{" +
+        "let umId='',umN=0,pl=null;setInterval(()=>{" +
         // Shorts pages on m.youtube.com block playback behind an "Assistir no app YouTube" dialog; the watch page of
         // the same id plays normally, so open that instead (as videos sent from the phone do).
         "const sh=location.pathname.match(/^\\/shorts\\/([\\w-]{11})/);if(sh){location.replace('/watch?v='+sh[1]);return}" +
         // Play/pause and metadata also by polling: a video that starts before this script is injected (loadUrl from
         // the phone or the media card) fires its play event too early to be heard.
-        "const v=document.querySelector('video'),on=!!v&&!v.paused&&!v.ended;if(on!==pl){pl=on;yta.playing(on)}" +
+        // pl starts unknown so a new document (Início after a video) reports its state even when nothing plays.
+        "const v=document.querySelector('#movie_player video'),on=!!v&&!v.paused&&!v.ended;if(on!==pl){pl=on;yta.playing(on)}" +
         // Title and channel fill in late after a load (document.title is "YouTube" at first): report while playing;
         // the app drops repeats.
         "if(on&&location.pathname==='/watch')meta();" +

@@ -110,8 +110,8 @@ T5 → T6
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
-- [ ] Walk: no Início do carro com uma prévia tocando (ou um `<video>` fora do player tocando via DevTools), o botão continua escondido
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Walk: no Início do carro com uma prévia tocando (ou um `<video>` fora do player tocando via DevTools), o botão continua escondido
 
 **Tests**: none
 **Gate**: build
