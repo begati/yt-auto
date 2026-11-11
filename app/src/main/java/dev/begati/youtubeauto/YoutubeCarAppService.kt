@@ -551,6 +551,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Set while a video is fullscreen; calling it exits fullscreen.
     private var exitFullscreen: WebChromeClient.CustomViewCallback? = null
     private var playing = false
+    // Whether the last template built had Tocar/Pausar: a page change that flips it rebuilds the template.
+    private var toggleShown = false
     private var positionMs = PlaybackState.PLAYBACK_POSITION_UNKNOWN
     private var durationMs = 0L
     private var rate = 1f
@@ -675,7 +677,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     webView?.loadUrl(pageUrl)
                 }.build())
                 .apply {
-                    if (playToggleShown(pageUrl, playing))
+                    toggleShown = playToggleShown(pageUrl, playing)
+                    if (toggleShown)
                         addAction(Action.Builder().setTitle(if (playing) "Pausar" else "Tocar").setOnClickListener { js(JS_TOGGLE) }.build())
                 }
                 .addAction(Action.Builder().setTitle("Pesquisar").setOnClickListener {
@@ -771,9 +774,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
                     override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
                         url ?: return
-                        val shown = playToggleShown(pageUrl, playing)
                         pageUrl = url
-                        if (playToggleShown(url, playing) != shown) invalidate()
+                        if (playToggleShown(url, playing) != toggleShown) invalidate()
                     }
                 }
                 client = webViewClient as OfflineRetry // the object above

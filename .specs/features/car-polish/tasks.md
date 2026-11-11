@@ -91,7 +91,7 @@ T5 → T6
 **Done when**:
 
 - [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
-- [ ] Walk: Início sem Tocar; vídeo aberto mostra Pausar/Tocar; voltar ao Início pausado esconde
+- [x] Walk: Início sem Tocar; vídeo aberto mostra Pausar/Tocar; voltar ao Início pausado esconde
 
 **Tests**: none
 **Gate**: build
@@ -227,4 +227,4 @@ Proof: walk - DevTools do carro antes e depois da troca: mesmo `performance.time
 
 **Settled mid-build:** tema sempre escuro no celular e no carro - user: "vou mudar de ideia, mantenha tema tanto do app quanto no carro sempre em dark. pode ver os demais."
 **Dispatched:** none
-**Walked:** T2 (DHU 800x480, conta logada): Início com a barra aberta = Voltar, Início, Pesquisar (sem Tocar); vídeo aberto pelo Início = Voltar, Início, Pausar, Pesquisar. Botão Início com o vídeo tocando: a página nova (loadUrl) não reporta `playing(false)` e a barra mantém Pausar - corrigido no T3 (estado do player), walk do T2 refeito depois
+**Walked:** DHU 800x480 (config padrão, conta logada), barra de ações aberta com um toque na aba Início do próprio YouTube (100,380) - um toque em (400,20) cai no Voltar da barra. T2: Início = Voltar, Início, Pesquisar; vídeo aberto pelo Início = Pausar; Pausar pela barra = Tocar; botão Início com o vídeo pausado = Voltar, Início, Pesquisar. Primeiro walk achou dois furos, corrigidos: o template agora compara com o que mostrou por último (`toggleShown`), porque o botão Início muda `pageUrl` antes do `loadUrl`; e a página nova reporta o estado na primeira leitura (T3). T3: no Início, um `<video>` escondido num card do feed (fora do `#movie_player`) recebendo `play` via DevTools = barra sem Tocar/Pausar; o carro não tocou prévias reais do feed ao rolar o Início (só o `<video>` do `#movie_player`, parado)
