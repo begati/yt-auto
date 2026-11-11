@@ -88,8 +88,8 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew testDebugUnitTest`
-- [ ] Teste `REMOTE-06` em `RemoteTest.kt` passa
+- [x] Gate check passes: `./gradlew testDebugUnitTest`
+- [x] Teste `REMOTE-06` em `RemoteTest.kt` passa
 
 **Tests**: unit
 **Gate**: quick

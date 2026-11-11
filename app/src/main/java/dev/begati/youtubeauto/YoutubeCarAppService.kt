@@ -387,6 +387,12 @@ internal fun videoIdFromUrl(url: String): String? {
     return m.groupValues[1].takeIf(::isVideoId)
 }
 
+// Playback time on the phone bar: m:ss, or h:mm:ss from one hour on.
+internal fun clock(seconds: Long): String {
+    val s = seconds.coerceAtLeast(0)
+    return if (s >= 3600) "%d:%02d:%02d".format(s / 3600, s % 3600 / 60, s % 60) else "%d:%02d".format(s / 60, s % 60)
+}
+
 // Where a video link from the phone opens in the car: shorts become a plain watch page.
 internal fun castUrl(url: String) = videoIdFromUrl(url)?.let { "https://m.youtube.com/watch?v=$it" }
 

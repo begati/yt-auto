@@ -28,4 +28,15 @@ class RemoteTest {
         assertEquals("https://m.youtube.com/watch?v=dQw4w9WgXcQ", castUrl("https://m.youtube.com/watch?v=dQw4w9WgXcQ&t=42s"))
         assertNull(castUrl("https://m.youtube.com/"))
     }
+
+    @Test
+    fun `REMOTE-06 clock formats m-ss and h-mm-ss`() {
+        assertEquals("0:00", clock(0))
+        assertEquals("0:09", clock(9))
+        assertEquals("1:05", clock(65))
+        assertEquals("59:59", clock(3599))
+        assertEquals("1:00:00", clock(3600))
+        assertEquals("2:03:04", clock(7384))
+        assertEquals("0:00", clock(-5))
+    }
 }
