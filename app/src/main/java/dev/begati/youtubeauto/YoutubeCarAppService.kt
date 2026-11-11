@@ -674,7 +674,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     pageUrl = choice(carContext, HOME_PAGE)
                     webView?.loadUrl(pageUrl)
                 }.build())
-                .addAction(Action.Builder().setTitle(if (playing) "Pausar" else "Tocar").setOnClickListener { js(JS_TOGGLE) }.build())
+                .apply {
+                    if (playToggleShown(pageUrl, playing))
+                        addAction(Action.Builder().setTitle(if (playing) "Pausar" else "Tocar").setOnClickListener { js(JS_TOGGLE) }.build())
+                }
                 .addAction(Action.Builder().setTitle("Pesquisar").setOnClickListener {
                     screenManager.push(SearchScreen(carContext) { query ->
                         pageUrl = "https://m.youtube.com/results?search_query=" + Uri.encode(query)
@@ -767,7 +770,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     }
 
                     override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
-                        url?.let { pageUrl = it }
+                        url ?: return
+                        val shown = playToggleShown(pageUrl, playing)
+                        pageUrl = url
+                        if (playToggleShown(url, playing) != shown) invalidate()
                     }
                 }
                 client = webViewClient as OfflineRetry // the object above

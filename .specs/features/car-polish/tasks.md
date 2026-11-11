@@ -90,7 +90,7 @@ T5 → T6
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
 - [ ] Walk: Início sem Tocar; vídeo aberto mostra Pausar/Tocar; voltar ao Início pausado esconde
 
 **Tests**: none
@@ -227,4 +227,4 @@ Proof: walk - DevTools do carro antes e depois da troca: mesmo `performance.time
 
 **Settled mid-build:** tema sempre escuro no celular e no carro - user: "vou mudar de ideia, mantenha tema tanto do app quanto no carro sempre em dark. pode ver os demais."
 **Dispatched:** none
-**Walked:** none
+**Walked:** T2 (DHU 800x480, conta logada): Início com a barra aberta = Voltar, Início, Pesquisar (sem Tocar); vídeo aberto pelo Início = Voltar, Início, Pausar, Pesquisar. Botão Início com o vídeo tocando: a página nova (loadUrl) não reporta `playing(false)` e a barra mantém Pausar - corrigido no T3 (estado do player), walk do T2 refeito depois
