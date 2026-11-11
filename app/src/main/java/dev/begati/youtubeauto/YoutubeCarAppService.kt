@@ -469,6 +469,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var root: FrameLayout? = null
     // Host's visible area as left, top, right, bottom (see webViewBounds).
     private var area: List<Int>? = null
+    // Uptime of the last template refresh asked to confirm a media card (see onVisibleAreaChanged).
+    private var confirmAt = 0L
     // Set while a video is fullscreen; calling it exits fullscreen.
     private var exitFullscreen: WebChromeClient.CustomViewCallback? = null
     private var playing = false
@@ -595,12 +597,6 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     override fun onSurfaceAvailable(container: SurfaceContainer) {
         val surface = container.surface ?: return
         val size = listOf(container.width, container.height, container.dpi)
-        // Coming back full screen from the split view, the host's last visible area is still the split one; it only
-        // corrects it when the strips next hide (~10 s). A template refresh makes it resend the real area now.
-        // ponytail: host quirk seen on the DHU; drop if the host starts sending the right area on its own
-        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-            if (lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) invalidate()
-        }, 500)
         // Same size: reattach to the live display, page and playback untouched.
         // Different size: Presentation dismisses itself on metric changes, so rebuild (reloads pageUrl).
         if (display != null && size == displaySize) {
@@ -704,9 +700,22 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
 
     // Visible area: it shrinks while the action strips show and when a media card sits beside the app.
+    // Visible area: it shrinks while the action strips show and when a media card sits beside the app.
+    // Going back full screen from the split view, the host sends the full area and then repeats the split one,
+    // correcting it only when the strips next hide (~10 s). So an area with a card is confirmed once by a template
+    // refresh, which makes the host resend the real area; the 2 s window keeps a real card from looping.
+    // ponytail: host quirk seen on the DHU; drop the refresh if the host starts sending the right area on its own
     override fun onVisibleAreaChanged(visibleArea: android.graphics.Rect) {
         area = visibleArea.run { listOf(left, top, right, bottom) }
+        val (w, h) = displaySize ?: return
         fitToArea()
+        val now = SystemClock.uptimeMillis()
+        if (webViewBounds(w, h, area) != listOf(0, 0, w, h) && now - confirmAt > 2000) {
+            confirmAt = now
+            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                if (lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) invalidate()
+            }, 500)
+        }
     }
 
     // Sizes every child of the frame: the WebView and, while shown, the native fullscreen video.
