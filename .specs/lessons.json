@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 2,
+  "next_id": 4,
   "lessons": [
     {
       "id": "L-001",
@@ -22,6 +22,42 @@
       ],
       "created": "2026-11-10T22:34:43Z",
       "last_seen": "2026-11-10T22:34:43Z"
+    },
+    {
+      "id": "L-002",
+      "key": "weak_test::when a criterion says a state is discarded test the round trip change away and back masking it against the current value passes a one way test",
+      "text": "When a criterion says a state is discarded, test the round trip (change away and back); masking it against the current value passes a one-way test.",
+      "signal": "weak_test",
+      "scope": "settings",
+      "status": "candidate",
+      "features": [
+        "video-fill"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "ASPECT-09 / C13 (settings)"
+      ],
+      "created": "2026-11-11T15:19:41Z",
+      "last_seen": "2026-11-11T15:19:41Z"
+    },
+    {
+      "id": "L-003",
+      "key": "ac_gap::a setting shown on both car and phone needs a proof for each surface the phone list is built separately from choices",
+      "text": "A setting shown on both car and phone needs a proof for each surface; the phone list is built separately from CHOICES.",
+      "signal": "ac_gap",
+      "scope": "settings",
+      "status": "candidate",
+      "features": [
+        "video-fill"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "ASPECT-06 / C10 (settings)"
+      ],
+      "created": "2026-11-11T15:19:41Z",
+      "last_seen": "2026-11-11T15:19:41Z"
     }
   ]
 }

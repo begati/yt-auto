@@ -20,6 +20,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: FEED-08 / C8 (parser)
 - last seen: 2026-11-10T22:34:43Z
 
+### L-002 - When a criterion says a state is discarded, test the round trip (change away and back); masking it against the current value passes a one-way test.
+- signal: `weak_test` · recurrence: 1 feature(s) · scope: `settings` · harmful: 0
+- features: video-fill
+- evidence: ASPECT-09 / C13 (settings)
+- last seen: 2026-11-11T15:19:41Z
+
+### L-003 - A setting shown on both car and phone needs a proof for each surface; the phone list is built separately from CHOICES.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `settings` · harmful: 0
+- features: video-fill
+- evidence: ASPECT-06 / C10 (settings)
+- last seen: 2026-11-11T15:19:41Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

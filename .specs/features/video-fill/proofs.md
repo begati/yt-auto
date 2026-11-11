@@ -1,6 +1,6 @@
 # video-fill proofs
 
-**HEAD**: a93ad69
+**HEAD**: 264a2c0
 **Tree**: clean
 **Shell**: /bin/sh
 **Result**: 15 pass, 0 fail
@@ -42,5 +42,5 @@ VideoFillTest > ASPECT-09 changing the default drops the tapped mode PASSED
 VideoFillTest > ASPECT-01 tapping cycles contain cover fill contain PASSED
 
 BUILD SUCCESSFUL in 1s
-22 actionable tasks: 2 executed, 20 up-to-date
+22 actionable tasks: 1 executed, 21 up-to-date
 ```
