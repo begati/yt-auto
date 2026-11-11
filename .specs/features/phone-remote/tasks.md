@@ -164,12 +164,12 @@ T5 → T6 → T7
 **Where**: `app/src/main/java/dev/begati/youtubeauto/YoutubeCarAppService.kt`
 **Depends on**: T5
 **Reuses**: `sharedSession`, `clock`
-**Requirement**: REMOTE-01, REMOTE-02, REMOTE-03, REMOTE-04, REMOTE-05, REMOTE-06, REMOTE-07, REMOTE-11, CAST-02
+**Requirement**: REMOTE-01, REMOTE-02, REMOTE-03, REMOTE-04, REMOTE-05, REMOTE-06, REMOTE-07, REMOTE-11, REMOTE-12, CAST-02, CAST-06
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
-- [ ] Walk: cada controle tem efeito no DHU; barra some antes do primeiro vídeo
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Walk: cada controle tem efeito no DHU; barra some antes do primeiro vídeo
 
 **Tests**: none
 **Gate**: build
@@ -251,13 +251,19 @@ Proof: walk - `getPlaybackQuality()` do player do carro e `quality` em `settings
 **C17** - Velocidade escolhida no celular é aplicada e salva (REMOTE-10, AC 15)
 Proof: walk - `playbackRate` do vídeo do carro e `speed` em `settings.xml` com o valor escolhido
 
-**C18** - Sem vídeo enviado nem tocando, a barra fica escondida (REMOTE-11, AC 16)
-Proof: walk - app recém-aberto (processo novo) no celular sem vídeo no carro: sem barra
+**C18** - Com o app aberto no carro, sem vídeo enviado nem tocando, a barra fica escondida (REMOTE-11, AC 16)
+Proof: walk - processo novo, app aberto no DHU no Início, celular aberto: sem barra
+
+**C19** - Sem o app aberto no carro, a barra avisa "Os vídeos tocam só no carro. Abra o YouTube Auto no Android Auto." (REMOTE-12, AC 17)
+Proof: walk - DHU em outro app, processo novo, celular aberto: barra com o aviso
+
+**C20** - Tocar num vídeo sem o app aberto no carro mostra "Vídeo guardado: ele toca quando você abrir o YouTube Auto no carro" (CAST-06, AC 18)
+Proof: walk - mesmo cenário de C19, toque num vídeo: aviso rápido na tela do celular
 
 ---
 
 ## Handoff
 
-**Settled mid-build:** none. Achado no walk de T5: vídeo aberto no carro sem toque na tela do carro (celular, card de mídia) começava mudo; o `PAGE_JS` desliga o mudo nos primeiros 5 s de reprodução de cada vídeo (critério 1 pede o vídeo tocando no carro)
+**Settled mid-build:** user: "talvez seja uma boa ideia, nao conectado no android Auto, avisar no app do celular que o vídeo não será reproduzido ali." (AC 17, 18). Achado no walk de T5: vídeo aberto no carro sem toque na tela do carro (celular, card de mídia) começava mudo; o `PAGE_JS` desliga o mudo nos primeiros 5 s de reprodução de cada vídeo (critério 1 pede o vídeo tocando no carro). Achados no walk de T6: (a) vídeo carregado por `loadUrl` começa a tocar antes do `PAGE_JS` ser injetado, então o evento `play` se perde e a sessão ficava sem metadata nem estado; o `PAGE_JS` passou a acompanhar tocar/pausar e metadata também por consulta a cada 500 ms; (b) `document.title` é "YouTube" logo após o carregamento: esse título provisório é ignorado; o canal vem de `getVideoData().author` quando a página não informa; (c) o Android Auto mantém o serviço e a tela do carro vivos com o app fechado, então "app aberto no carro" passou a ser "player do carro existe" (`carPlaying()`), e um vídeo enviado nesse estado mostra "Abra o YouTube Auto no carro para tocar"
 **Dispatched:** none yet
 **Walked:** pending

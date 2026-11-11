@@ -78,7 +78,7 @@ private const val JS_APPLY_PLAYBACK =
 // Injected on every full page load (m.youtube.com is a SPA, so the guard keeps it to once per window):
 // - fakes a visible page so YouTube keeps playing while the car shows another app (Maps etc.), if "background" is on
 // - reports play/pause and the video's title/channel/thumbnail to the app through the `yta` bridge
-//   (from the page's navigator.mediaSession, falling back to document.title and the ytimg thumbnail)
+//   (from the page's navigator.mediaSession, falling back to document.title, the player's author and the ytimg thumbnail)
 // - hides the playlist "Próximo / Mix de ..." bar that covers the player on short car screens
 // - stretches the player over the whole screen on /watch pages (polled, SPA navigation has no load event), if "fullscreen" is on,
 //   with the video's object-fit from yta.aspect() (Ajustar/Preencher/Esticar)
@@ -100,7 +100,10 @@ private const val PAGE_JS =
         "window.addEventListener('visibilitychange',e=>{if(yta.flag('background'))e.stopImmediatePropagation()},true);" +
         "const meta=()=>{const m=navigator.mediaSession&&navigator.mediaSession.metadata;" +
         "const id=new URLSearchParams(location.search).get('v');" +
-        "yta.meta(m&&m.title||document.title.replace(/ - YouTube\$/,''),m&&m.artist||''," +
+        "const pv=document.getElementById('movie_player'),vd=pv&&pv.getVideoData&&pv.getVideoData();" +
+        // document.title is a bare "YouTube" until the page fills it in: skip that placeholder.
+        "const tt=m&&m.title||document.title.replace(/ - YouTube\$/,'');if(tt==='YouTube')return;" +
+        "yta.meta(tt,m&&m.artist||vd&&vd.author||''," +
         "m&&m.artwork&&m.artwork.length?m.artwork[m.artwork.length-1].src:(id?'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg':''))};" +
         "document.addEventListener('play',()=>{yta.playing(true);meta();setTimeout(meta,1500)},true);" +
         "document.addEventListener('pause',()=>yta.playing(false),true);" +
@@ -124,7 +127,14 @@ private const val PAGE_JS =
         "html.yta-watch #player-container-id .html5-video-player,html.yta-watch #player-container-id video" +
         "{width:100%!important;height:100%!important;left:0!important;top:0!important;object-fit:var(--yta-fit,contain)!important}';" +
         "document.head.appendChild(s);" +
-        "let umId='',umN=0;setInterval(()=>{document.documentElement.classList.toggle('yta-watch'," +
+        "let umId='',umN=0,pl=false;setInterval(()=>{" +
+        // Play/pause and metadata also by polling: a video that starts before this script is injected (loadUrl from
+        // the phone or the media card) fires its play event too early to be heard.
+        "const v=document.querySelector('video'),on=!!v&&!v.paused&&!v.ended;if(on!==pl){pl=on;yta.playing(on)}" +
+        // Title and channel fill in late after a load (document.title is "YouTube" at first): report while playing;
+        // the app drops repeats.
+        "if(on&&location.pathname==='/watch')meta();" +
+        "document.documentElement.classList.toggle('yta-watch'," +
         "yta.flag('fullscreen')&&location.pathname==='/watch');" +
         "document.documentElement.style.setProperty('--yta-fit',yta.aspect());" +
         "if(yta.flag('skipAds'))document.querySelector('.ytp-skip-ad-button,.ytp-ad-skip-button,.ytp-ad-skip-button-modern')?.click();" +
@@ -302,14 +312,19 @@ private fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + Uri.e
 private val idleCallback = object : MediaSession.Callback() {
     override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
         pendingUrl = watchUrl(mediaId)
-        sharedSession?.setPlaybackState(
-            PlaybackState.Builder()
-                .setState(PlaybackState.STATE_ERROR, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0f)
-                .setErrorMessage("Abra o YouTube Auto pelo menu de apps para tocar")
-                .build()
-        )
+        sharedSession?.setPlaybackState(waitingForCar)
     }
 }
+
+// Session state while a video waits for the car screen to be opened; the phone bar shows its message.
+private val waitingForCar = PlaybackState.Builder()
+    .setState(PlaybackState.STATE_ERROR, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0f)
+    .setErrorMessage("Abra o YouTube Auto no carro para tocar")
+    .build()
+
+// The car player exists, so the car app is open or playing in the background. Android Auto keeps the car service
+// and its screen alive after the app is closed, so a screen alone doesn't mean that.
+private fun carPlaying() = carLink?.hasPlayer == true
 
 private fun mediaSession(ctx: Context) = sharedSession
     ?: MediaSession(ctx.applicationContext, "youtube-auto").also {
@@ -531,7 +546,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var durationMs = 0L
     // Metadata last published, to add the duration once the page reports it.
     private var meta: MediaMetadata? = null
-    // Title + artwork URL of the metadata last published, to skip duplicate reports and stale downloads.
+    // Title, channel and artwork URL of the metadata last published, to skip duplicate reports and stale downloads.
     private var metaKey = ""
 
     // Steering-wheel / car media-card controls land here while this screen is alive.
@@ -543,8 +558,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             override fun onSkipToPrevious() { js(JS_RESTART) }
             override fun onSeekTo(pos: Long) { js("(v=>v&&(v.currentTime=${pos / 1000.0}))(document.querySelector('video'))") }
             override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
-                pageUrl = watchUrl(mediaId)
-                webView?.loadUrl(pageUrl)
+                pageUrl = watchUrl(mediaId) // no player yet: it loads pageUrl when the car shows the screen
+                val wv = webView
+                if (wv != null) wv.loadUrl(pageUrl) else sharedSession?.setPlaybackState(waitingForCar)
             }
         })
     }
@@ -567,6 +583,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             }
         })
     }
+
+    val hasPlayer get() = webView != null
 
     /** Re-applies the saved quality and speed to the current video (after the car settings or the phone change them). */
     fun applyPlayback() {
@@ -597,7 +615,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
 
     private fun setMeta(title: String, artist: String, art: String) {
-        val key = "$title|$art"
+        val key = "$title|$artist|$art"
         if (key == metaKey) return
         metaKey = key
         durationMs = 0L // the next time report brings the new video's duration
@@ -902,6 +920,140 @@ internal open class OfflineRetry(ctx: Context, private val overlay: View) : WebV
     }
 }
 
+/**
+ * Phone remote bar under the page: the car's video (art, title, channel), play/pause, previous, next and a seek bar,
+ * all through [car], the shared media session. Hidden until the session has a video or a pending one.
+ */
+private class RemoteBar(ctx: Context, private val car: MediaController) : android.widget.LinearLayout(ctx) {
+    private fun dp(n: Int) = (n * resources.displayMetrics.density).toInt()
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val art = android.widget.ImageView(ctx).apply { scaleType = android.widget.ImageView.ScaleType.CENTER_CROP }
+    private val title = text(16f)
+    private val channel = text(13f).apply { alpha = 0.7f }
+    private val playPause = button(android.R.drawable.ic_media_play) {
+        if (car.playbackState?.state == PlaybackState.STATE_PLAYING) car.transportControls.pause() else car.transportControls.play()
+    }
+    private val position = text(12f)
+    private val duration = text(12f)
+    private val controls = android.widget.LinearLayout(ctx).apply {
+        addView(button(android.R.drawable.ic_media_previous) { car.transportControls.skipToPrevious() })
+        addView(playPause)
+        addView(button(android.R.drawable.ic_media_next) { car.transportControls.skipToNext() })
+    }
+    private var dragging = false
+    private val seek = android.widget.SeekBar(ctx).apply {
+        setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(b: android.widget.SeekBar, p: Int, fromUser: Boolean) {
+                if (fromUser) position.text = clock(p.toLong())
+            }
+            override fun onStartTrackingTouch(b: android.widget.SeekBar) { dragging = true }
+            override fun onStopTrackingTouch(b: android.widget.SeekBar) {
+                dragging = false
+                car.transportControls.seekTo(b.progress * 1000L)
+            }
+        })
+    }
+    private val timeRow = android.widget.LinearLayout(ctx).apply {
+        gravity = android.view.Gravity.CENTER_VERTICAL
+        addView(position)
+        addView(seek, LayoutParams(0, -2, 1f))
+        addView(duration)
+    }
+    private val callback = object : MediaController.Callback() {
+        override fun onMetadataChanged(m: MediaMetadata?) = update()
+        override fun onPlaybackStateChanged(s: PlaybackState?) = update()
+    }
+    private var carOpen = carPlaying()
+    private val tick = object : Runnable {
+        override fun run() {
+            if (carPlaying() != carOpen) update() // the car player came or went: no session event for that
+            updateTime()
+            handler.postDelayed(this, 1000)
+        }
+    }
+
+    init {
+        orientation = VERTICAL
+        setBackgroundColor(0xFF1F1F1F.toInt())
+        setPadding(dp(12), dp(8), dp(4), dp(4))
+        addView(android.widget.LinearLayout(ctx).apply {
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            addView(art, LayoutParams(dp(64), dp(36)))
+            addView(android.widget.LinearLayout(ctx).apply {
+                orientation = VERTICAL
+                setPadding(dp(10), 0, dp(4), 0)
+                addView(title)
+                addView(channel)
+            }, LayoutParams(0, -2, 1f))
+            addView(controls)
+        })
+        addView(timeRow)
+        car.registerCallback(callback, handler)
+        update()
+        handler.post(tick)
+    }
+
+    fun release() {
+        handler.removeCallbacks(tick)
+        car.unregisterCallback(callback)
+    }
+
+    private fun text(size: Float) = android.widget.TextView(context).apply {
+        textSize = size
+        setTextColor(android.graphics.Color.WHITE)
+        maxLines = 1
+        ellipsize = android.text.TextUtils.TruncateAt.END
+    }
+
+    private fun button(icon: Int, onClick: () -> Unit) = android.widget.ImageButton(context).apply {
+        setImageResource(icon)
+        setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+        setOnClickListener { onClick() }
+    }
+
+    private fun update() {
+        val m = car.metadata
+        val s = car.playbackState
+        // A video sent while no car screen is alive leaves only the session's error message ("Abra o YouTube Auto...").
+        val pending = s?.state == PlaybackState.STATE_ERROR
+        carOpen = carPlaying()
+        // Nothing to control and no car screen: say where videos play, since the phone never plays them.
+        val notice = !pending && m == null && !carOpen
+        visibility = if (m != null || pending || notice) VISIBLE else GONE
+        title.text = when {
+            pending -> s?.errorMessage
+            notice -> "Os vídeos tocam só no carro. Abra o YouTube Auto no Android Auto."
+            else -> m?.getString(MediaMetadata.METADATA_KEY_TITLE)
+        }
+        title.maxLines = if (notice || pending) 2 else 1
+        channel.text = if (pending || notice) "" else m?.getString(MediaMetadata.METADATA_KEY_ARTIST)
+        art.setImageBitmap(if (pending || notice) null else m?.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART))
+        // Only a message: nothing to play, pause or seek yet.
+        val message = if (pending || notice) GONE else VISIBLE
+        art.visibility = message
+        controls.visibility = message
+        timeRow.visibility = message
+        playPause.setImageResource(
+            if (s?.state == PlaybackState.STATE_PLAYING) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
+        )
+        val d = (m?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: 0L) / 1000
+        seek.max = d.toInt()
+        duration.text = clock(d)
+        updateTime()
+    }
+
+    // Position extrapolated from the last report, so the bar moves every second between the car's 500 ms reports.
+    private fun updateTime() {
+        val s = car.playbackState ?: return
+        if (dragging || s.position < 0) return
+        val elapsed = if (s.state == PlaybackState.STATE_PLAYING) android.os.SystemClock.elapsedRealtime() - s.lastPositionUpdateTime else 0
+        val seconds = (s.position + elapsed * s.playbackSpeed).toLong() / 1000
+        seek.progress = seconds.toInt()
+        position.text = clock(seconds)
+    }
+}
+
 /** Black loading screen with a spinner and "Sem conexão. Tentando de novo…", hidden until a page fails. */
 private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
     setBackgroundColor(android.graphics.Color.BLACK)
@@ -1002,6 +1154,7 @@ class SearchScreen(ctx: CarContext, private val onQuery: (String) -> Unit) : Scr
 class LoginActivity : Activity() {
     private var client: OfflineRetry? = null
     private var web: WebView? = null
+    private var bar: RemoteBar? = null
     // Phone -> car: the same session the steering wheel uses; it opens the video in the car, or keeps it for later.
     private val car by lazy { MediaController(this, mediaSession(this).sessionToken) }
 
@@ -1011,7 +1164,8 @@ class LoginActivity : Activity() {
         val retrying = object : OfflineRetry(this, offline) {
             override fun onLoaded(view: WebView) = view.evaluateJavascript(PHONE_JS, null)
         }.also { client = it }
-        setContentView(FrameLayout(this).apply {
+        bar = RemoteBar(this, car)
+        val page = FrameLayout(this).apply {
             addView(WebView(context).also { web = it }.apply {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
@@ -1022,7 +1176,15 @@ class LoginActivity : Activity() {
                     @JavascriptInterface
                     fun cast(url: String): Boolean {
                         val id = videoIdFromUrl(url) ?: return false
-                        runOnUiThread { car.transportControls.playFromMediaId(id, null) }
+                        runOnUiThread {
+                            if (!carPlaying()) {
+                                android.widget.Toast.makeText(
+                                    this@LoginActivity, "Vídeo guardado: ele toca quando você abrir o YouTube Auto no carro",
+                                    android.widget.Toast.LENGTH_LONG,
+                                ).show()
+                            }
+                            car.transportControls.playFromMediaId(id, null)
+                        }
                         return true
                     }
                 }, "remote")
@@ -1030,10 +1192,16 @@ class LoginActivity : Activity() {
                 loadUrl("https://accounts.google.com/ServiceLogin?service=youtube&continue=https://m.youtube.com")
             })
             addView(offline)
+        }
+        setContentView(android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            addView(page, android.widget.LinearLayout.LayoutParams(-1, 0, 1f))
+            addView(bar)
         })
     }
 
     override fun onDestroy() {
+        bar?.release()
         client?.release()
         web?.destroy() // e.g. on rotation: the old page must not keep loading in the background
         super.onDestroy()

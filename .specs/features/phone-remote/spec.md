@@ -31,6 +31,7 @@ reprodução pelo celular, com o vídeo tocando só no Android Auto.
 | Sem carro conectado | O vídeo tocado no celular fica guardado e abre no carro quando o app for aberto lá; o celular não toca | Resposta do usuário | y - user: "Guarda pro carro" |
 | Controles | Tocar/pausar, anterior, próximo, barra de tempo, proporção, qualidade e velocidade | Resposta do usuário | y - user: "Tocar/pausar, anterior, próximo (Recomendado), Barra de tempo para avançar/voltar (Recomendado), Proporção, qualidade e velocidade" |
 | Layout | Barra fixa embaixo da tela do celular; o YouTube continua navegável acima | Resposta do usuário | y - user: "Barra fixa embaixo (Recomendado)" |
+| Aviso sem carro | Sem o app aberto no carro, a barra avisa que os vídeos tocam só no carro; tocar num vídeo mostra um aviso rápido de que ficou guardado | Pedido do usuário no meio da execução | y - user: "talvez seja uma boa ideia, nao conectado no android Auto, avisar no app do celular que o vídeo não será reproduzido ali." |
 | Quando a barra aparece | Depois que um vídeo foi enviado ao carro ou o carro está com um vídeo; antes disso, só o YouTube | Sem vídeo não há o que controlar | y - user: "aprovado" |
 | O que conta como "tocar num vídeo" | Toque em link de vídeo (`/watch?v=`, `/shorts/<id>`, `youtu.be/<id>`) e qualquer navegação do celular para `/watch` ou `/shorts`; Shorts abrem no carro como `/watch?v=<id>` | O carro já toca `/watch`; Shorts em tela vertical não cabem bem no carro | y - user: "aprovado" |
 | Prévias do feed (vídeo que toca sozinho mudo no Início) | Pausadas no celular | "não reproduzindo o vídeo no celular" | y - user: "aprovado" |
@@ -81,7 +82,9 @@ reprodução pelo celular, com o vídeo tocando só no Android Auto.
 13. WHEN o usuário escolhe "Proporção" na barra THEN the app SHALL avançar o ciclo Ajustar → Preencher → Esticar no carro, como o botão do carro, sem mudar o padrão salvo
 14. WHEN o usuário escolhe uma qualidade na barra THEN the app SHALL aplicá-la ao vídeo do carro e salvá-la como padrão
 15. WHEN o usuário escolhe uma velocidade na barra THEN the app SHALL aplicá-la ao vídeo do carro e salvá-la como padrão
-16. WHILE nada foi enviado ao carro e o carro não tem vídeo the app SHALL esconder a barra
+16. WHILE o app está aberto no carro e nada foi enviado ao carro e o carro não tem vídeo the app SHALL esconder a barra
+17. WHILE o app não está aberto no carro e não há vídeo guardado the app SHALL mostrar na barra "Os vídeos tocam só no carro. Abra o YouTube Auto no Android Auto."
+18. WHEN o usuário toca num link de vídeo no celular WHILE o app não está aberto no carro THEN the app SHALL mostrar um aviso rápido "Vídeo guardado: ele toca quando você abrir o YouTube Auto no carro"
 
 **Independent Test**: com um vídeo tocando no carro, usar cada controle da barra no celular e ver o efeito no DHU.
 
@@ -114,8 +117,10 @@ reprodução pelo celular, com o vídeo tocando só no Android Auto.
 | REMOTE-09 | P1: Barra (AC 14) | Tasks | Pending |
 | REMOTE-10 | P1: Barra (AC 15) | Tasks | Pending |
 | REMOTE-11 | P1: Barra (AC 16) | Tasks | Pending |
+| REMOTE-12 | P1: Barra (AC 17) | Tasks | Pending |
+| CAST-06 | P1: Escolher no celular (AC 18) | Tasks | Pending |
 
-**Coverage:** 16 total, 0 mapped to tasks, 16 unmapped
+**Coverage:** 18 total, 0 mapped to tasks, 16 unmapped
 
 ---
 
