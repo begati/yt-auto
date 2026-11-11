@@ -25,6 +25,8 @@
 | C15 | `VideoFillTest.kt` `FILL-05 a media card beside the app limits the page` | partly - round 3: the right card (DHU rect), the left card and the bottom card hold exact bounds; the top card branch has no case, and no rect sits near the 1/3 cut, so a threshold of w/4 or `>=` passes (VideoFillTest.kt:80-84). Probe at HEAD: the cut is right (left 266 covered, 267 limits; top 300 -> 0,300,800,400) |
 | C16 | `VideoFillTest.kt` `FILL-06 no visible area yet fills the surface` | yes - round 3: null -> (0,0,800,400). Area before the surface is kept and applied at build (YoutubeCarAppService.kt:672); after, on the change (699); a size rebuild runs `fitToArea` on the new WebView |
 | C18 | `VideoFillTest.kt` `FILL-07 an empty inverted or stale area fills the surface` | yes - round 4, author: empty, inverted and stale-surface rects from the round 3 probe asserted exactly |
+| C19 | walk - grade de apps de volta ao app (Walked round 5) | yes - round 5, author walk: `innerWidth` 800 em 2 s; sem o `invalidate()` ficava 464 por ~10 s |
+| C20 | walk - Preencher no modo dividido e na tela cheia (Walked round 5) | yes - round 5, author walk: `objectFit` `cover` nos dois layouts; a proporção é CSS do vídeo e não depende do tamanho |
 | C17 | walk - modo dividido do DHU, vídeo em Ajustar à esquerda do card (Walked round 3) | yes - round 3, author walk with measured rects; the split rect (22,34,464,376) is the one FILL-05 asserts. Native fullscreen (custom view) was not walked |
 
 ## Findings

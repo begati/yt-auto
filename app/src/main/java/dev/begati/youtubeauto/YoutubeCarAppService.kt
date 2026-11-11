@@ -595,6 +595,12 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     override fun onSurfaceAvailable(container: SurfaceContainer) {
         val surface = container.surface ?: return
         val size = listOf(container.width, container.height, container.dpi)
+        // Coming back full screen from the split view, the host's last visible area is still the split one; it only
+        // corrects it when the strips next hide (~10 s). A template refresh makes it resend the real area now.
+        // ponytail: host quirk seen on the DHU; drop if the host starts sending the right area on its own
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            if (lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) invalidate()
+        }, 500)
         // Same size: reattach to the live display, page and playback untouched.
         // Different size: Presentation dismisses itself on metric changes, so rebuild (reloads pageUrl).
         if (display != null && size == displaySize) {

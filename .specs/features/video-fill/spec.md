@@ -28,6 +28,8 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --------------------- | -------------- | --------- | ---------- |
 | O que é a "borda" | A margem entre a superfície do carro e a área visível do host | Resposta do usuário: "Margem da área visível" | y - user: "Margem da área visível (Recomendado)" |
+| Volta à tela cheia com área antiga | Pedir novo template ao host 500 ms após a superfície voltar; o host reenvia a área real | DHU: o host manda por último a área do modo dividido e só corrige ~10 s depois, quando as barras somem | y - user: "quando eu tiro o controlador de mídia da lateral e jogo o app em toda a tela, tanto o Início quanto o vídeo em si, continuam com o tamanho antigo" |
+| Proporção ao trocar de layout | A proporção em uso não muda com o layout | Pedido do usuário | y - user: "ele tem que obedecer a proporção do vídeo que foi configurado ou previamente setado pelo usuário" |
 | Card de mídia ao lado do app (modo dividido do Android Auto) | WebView para na borda do card; corte de 1/3 da superfície separa card (recuo 336 de 800 no DHU) de margem/barras (recuo até 88) | Usuário relatou o vídeo cortado sob o card: "o vídeo não se encaixa na nova área disponível pra ele" | y - user: "o vídeo não se encaixa na nova área disponível pra ele, continua sendo renderizado em tela cheia, ficando cortado" |
 | Onde a WebView ocupa a superfície inteira | Em todas as páginas; a opção "Tela cheia ao abrir vídeo" só controla se o player ocupa a página. Mudado no meio da execução: a resposta anterior era "Só na página do vídeo (Recomendado)" | Usuário, depois de ver o walk: a tela de navegação também deve ficar em tela cheia | y - user: "o vídeo ficou em tela cheia, mas a tela de navegação dos vídeos, ainda não" |
 | Modos do botão | Ciclo Ajustar (`contain`) → Preencher (`cover`) → Esticar (`fill`) → Ajustar | Resposta do usuário | y - user: "Ajustar / Preencher / Esticar" |
@@ -58,6 +60,8 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 4. WHEN a navegação troca entre `/watch` e outra página THEN the app SHALL manter a WebView sobre a superfície inteira, sem mudar de tamanho
 14. WHILE o host mostra um card ao lado do app (a área visível recua mais de 1/3 da superfície num lado) the app SHALL limitar a WebView à borda do card nesse lado; recuos de até 1/3 (margem do host, barras de botões) SHALL ser cobertos
 15. WHILE o host ainda não informou a área visível the app SHALL dispor a WebView sobre a superfície inteira
+17. WHEN o app volta do modo dividido para a tela cheia THEN the app SHALL ocupar a superfície inteira em até 1 s, mesmo que o host repita a área do modo dividido
+18. WHILE o layout muda entre tela cheia e modo dividido the app SHALL manter no vídeo a proporção em uso (escolhida pelo botão ou o padrão salvo)
 16. IF a área visível é vazia, invertida ou não cabe na superfície atual THEN the app SHALL dispor a WebView sobre a superfície inteira
 
 **Independent Test**: no DHU, a lista do Início e um vídeo aberto sem margem preta; tocar na tela para mostrar os botões: o vídeo não muda de tamanho.
@@ -117,6 +121,8 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 | FILL-05 | P1: Vídeo sem margem (AC 14) | Execute | Verified |
 | FILL-06 | P1: Vídeo sem margem (AC 15) | Execute | Verified |
 | FILL-07 | P1: Vídeo sem margem (AC 16) | Execute | Verified |
+| FILL-08 | P1: Vídeo sem margem (AC 17) | Execute | Verified |
+| FILL-09 | P1: Vídeo sem margem (AC 18) | Execute | Verified |
 | ASPECT-01 | P1: Botão de proporção (AC 5) | Execute | Verified |
 | ASPECT-02 | P1: Botão de proporção (AC 6) | Execute | Verified |
 | ASPECT-03 | P1: Botão de proporção (AC 7) | Execute | Verified |
@@ -127,7 +133,7 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 | ASPECT-08 | P1: Proporção padrão (AC 12) | Execute | Verified |
 | ASPECT-09 | P1: Proporção padrão (AC 13) | Execute | Verified |
 
-**Coverage:** 16 total, 16 mapped to tasks, 0 unmapped
+**Coverage:** 18 total, 18 mapped to tasks, 0 unmapped
 
 ---
 
