@@ -8,7 +8,11 @@
 
 Corroborated across multiple features. Safe to apply as guidance.
 
-_none_
+### L-004 - A 'does not react to X failing' check must make X fail in the walk; observing the happy path proves nothing.
+- signal: `weak_test` · recurrence: 2 feature(s) · scope: `webview` · harmful: 0
+- features: offline-screen, car-polish
+- evidence: OFF-06 / C6 (webview) (+1 more)
+- last seen: 2026-11-11T17:15:45Z
 
 ## Candidates (under observation - do NOT load as guidance yet)
 
@@ -32,12 +36,6 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: ASPECT-06 / C10 (settings)
 - last seen: 2026-11-11T15:19:41Z
 
-### L-004 - A 'does not react to X failing' check must make X fail in the walk; observing the happy path proves nothing.
-- signal: `weak_test` · recurrence: 1 feature(s) · scope: `webview` · harmful: 0
-- features: offline-screen
-- evidence: OFF-06 / C6 (webview)
-- last seen: 2026-11-11T16:01:23Z
-
 ### L-005 - A retry-forever loop needs its trigger narrowed to the errors a retry can cure; list the excluded error codes in the spec.
 - signal: `ac_gap` · recurrence: 1 feature(s) · scope: `webview` · harmful: 0
 - features: offline-screen
@@ -55,6 +53,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - features: phone-remote
 - evidence: waitingForCar (jvm-tests)
 - last seen: 2026-11-11T16:38:30Z
+
+### L-008 - A pure-function test of page state needs a walk that drives the real page into that state; the function cannot see what the page reports.
+- signal: `weak_test` · recurrence: 1 feature(s) · scope: `webview` · harmful: 0
+- features: car-polish
+- evidence: PLAYBTN-02 / C2 (webview)
+- last seen: 2026-11-11T17:15:45Z
+
+### L-009 - When narrowing which element the page reports state from, point every control at the same selector.
+- signal: `spec_deviation` · recurrence: 1 feature(s) · scope: `webview` · harmful: 0
+- features: car-polish
+- evidence: YoutubeCarAppService.kt:171 (webview)
+- last seen: 2026-11-11T17:15:45Z
 
 ## Quarantined (failed when applied - ignore)
 

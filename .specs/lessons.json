@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 8,
+  "next_id": 10,
   "lessons": [
     {
       "id": "L-001",
@@ -65,17 +65,19 @@
       "text": "A 'does not react to X failing' check must make X fail in the walk; observing the happy path proves nothing.",
       "signal": "weak_test",
       "scope": "webview",
-      "status": "candidate",
+      "status": "confirmed",
       "features": [
-        "offline-screen"
+        "offline-screen",
+        "car-polish"
       ],
-      "recurrence": 1,
+      "recurrence": 2,
       "harmful": 0,
       "evidence": [
-        "OFF-06 / C6 (webview)"
+        "OFF-06 / C6 (webview)",
+        "THEME-04 / C13 (webview)"
       ],
       "created": "2026-11-11T16:01:23Z",
-      "last_seen": "2026-11-11T16:01:23Z"
+      "last_seen": "2026-11-11T17:15:45Z"
     },
     {
       "id": "L-005",
@@ -130,6 +132,42 @@
       ],
       "created": "2026-11-11T16:38:30Z",
       "last_seen": "2026-11-11T16:38:30Z"
+    },
+    {
+      "id": "L-008",
+      "key": "weak_test::a pure function test of page state needs a walk that drives the real page into that state the function cannot see what the page reports",
+      "text": "A pure-function test of page state needs a walk that drives the real page into that state; the function cannot see what the page reports.",
+      "signal": "weak_test",
+      "scope": "webview",
+      "status": "candidate",
+      "features": [
+        "car-polish"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "PLAYBTN-02 / C2 (webview)"
+      ],
+      "created": "2026-11-11T17:15:45Z",
+      "last_seen": "2026-11-11T17:15:45Z"
+    },
+    {
+      "id": "L-009",
+      "key": "spec_deviation::when narrowing which element the page reports state from point every control at the same selector",
+      "text": "When narrowing which element the page reports state from, point every control at the same selector.",
+      "signal": "spec_deviation",
+      "scope": "webview",
+      "status": "candidate",
+      "features": [
+        "car-polish"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "YoutubeCarAppService.kt:171 (webview)"
+      ],
+      "created": "2026-11-11T17:15:45Z",
+      "last_seen": "2026-11-11T17:15:45Z"
     }
   ]
 }
