@@ -755,6 +755,13 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
 }
 
+// No network (DNS, connection, timeout, I/O; UNKNOWN covers ERR_INTERNET_DISCONNECTED on some WebView builds).
+// Anything else (an intent:// or app link, a bad URL, SSL) is not cured by retrying, so it keeps the WebView's page.
+internal fun isNetworkError(code: Int) = code in setOf(
+    WebViewClient.ERROR_HOST_LOOKUP, WebViewClient.ERROR_CONNECT, WebViewClient.ERROR_TIMEOUT,
+    WebViewClient.ERROR_IO, WebViewClient.ERROR_UNKNOWN,
+)
+
 /**
  * WebViewClient that covers the page with [overlay] while its main frame can't load (no network), and reloads it
  * every 5 s and as soon as a network with internet comes up, until it loads. Call [release] when the WebView goes.
@@ -807,9 +814,9 @@ internal open class OfflineRetry(ctx: Context, private val overlay: View) : WebV
         handler.removeCallbacks(retry) // a new load (or the retry itself) is under way
     }
 
-    // HTTP errors come through onReceivedHttpError; this one is the network (DNS, connection, timeout).
+    // HTTP errors come through onReceivedHttpError; this one is every other load error, network or not.
     override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
-        if (released || !request.isForMainFrame) return
+        if (released || !request.isForMainFrame || !isNetworkError(error.errorCode)) return
         web = view
         failed = true
         overlay.visibility = View.VISIBLE
