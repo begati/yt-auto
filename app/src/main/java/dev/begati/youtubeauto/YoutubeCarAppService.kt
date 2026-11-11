@@ -216,6 +216,11 @@ internal fun withResume(url: String, at: Pair<String, Int>?): String {
     return url.replace(Regex("&t=[^&#]*"), "") + "&t=${at.second}s"
 }
 
+// Same rule as the page's `yta-watch` class: on /watch with "fullscreen" on, the video takes the whole surface
+// and the host's buttons float over it instead of shrinking it.
+internal fun fillsSurface(url: String, fullscreen: Boolean) =
+    fullscreen && runCatching { java.net.URI(url).path == "/watch" }.getOrDefault(false)
+
 private fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + Uri.encode(videoId)
 
 // Callback while no car screen is alive: the WebView (the actual player) only exists in that screen.
@@ -524,6 +529,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                                 webView?.settings?.textZoom = choice(carContext, TEXT_ZOOM).toInt()
                                 js(JS_APPLY_QUALITY)
                                 js(JS_APPLY_PLAYBACK)
+                                fitToArea() // "fullscreen" flag
                                 invalidate() // home button label
                             })
                         }
@@ -588,6 +594,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
                     override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
                         url?.let { pageUrl = it }
+                        fitToArea()
                     }
                 }
                 webChromeClient = object : WebChromeClient() {
@@ -641,11 +648,16 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         fitToArea()
     }
 
-    // Lays the WebView out inside [area] only, so the page (and the fullscreen video with object-fit:contain)
-    // fits the free space instead of running under the host's cards.
+    // Lays the WebView out inside [area] only, so pages fit the free space instead of running under the host's
+    // cards; a fullscreen video page takes the whole surface instead (see fillsSurface).
     private fun fitToArea() {
+        val wv = webView ?: return
+        if (fillsSurface(pageUrl, flag(carContext, "fullscreen"))) {
+            wv.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+            return
+        }
         val a = area?.takeUnless { it.isEmpty } ?: return
-        webView?.layoutParams = FrameLayout.LayoutParams(a.width(), a.height()).apply {
+        wv.layoutParams = FrameLayout.LayoutParams(a.width(), a.height()).apply {
             leftMargin = a.left
             topMargin = a.top
         }

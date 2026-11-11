@@ -7,7 +7,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** In-memory SharedPreferences: enough of the interface for the settings helpers. */
-private class MemoryPrefs : SharedPreferences {
+internal class MemoryPrefs : SharedPreferences {
     val map = mutableMapOf<String, Any?>()
 
     override fun getAll(): MutableMap<String, *> = map
