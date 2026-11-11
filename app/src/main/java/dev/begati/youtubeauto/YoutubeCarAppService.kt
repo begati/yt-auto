@@ -317,10 +317,13 @@ private val idleCallback = object : MediaSession.Callback() {
 }
 
 // Session state while a video waits for the car screen to be opened; the phone bar shows its message.
-private val waitingForCar = PlaybackState.Builder()
-    .setState(PlaybackState.STATE_ERROR, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0f)
-    .setErrorMessage("Abra o YouTube Auto no carro para tocar")
-    .build()
+// Lazy: a top-level Android object built at class load breaks the JVM unit tests (android.jar stubs throw).
+private val waitingForCar by lazy {
+    PlaybackState.Builder()
+        .setState(PlaybackState.STATE_ERROR, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0f)
+        .setErrorMessage("Abra o YouTube Auto no carro para tocar")
+        .build()
+}
 
 // The car player exists, so the car app is open or playing in the background. Android Auto keeps the car service
 // and its screen alive after the app is closed, so a screen alone doesn't mean that.
