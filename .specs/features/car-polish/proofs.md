@@ -1,9 +1,9 @@
 # car-polish proofs
 
-**HEAD**: 620c3a4
+**HEAD**: 3826fc0
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 17 pass, 0 fail
+**Result**: 19 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -19,10 +19,12 @@
 | C10 | `walk - cmd uimode night no, app reaberto no DHU: DevTools do carro matchMedia('(prefers-color-scheme: dark)').` | pass (Walked) |
 | C11 | `walk - cmd uimode night no, app reaberto no celular: DevTools do celular com prefers-color-scheme: dark; scree` | pass (Walked) |
 | C12 | `walk - cmd uimode night no: screenshot das Configurações escuras` | pass (Walked) |
-| C13 | `walk - DevTools do carro antes e depois da troca: mesmo performance.timeOrigin, paused false, currentTime maio` | pass (Walked) |
+| C13 | `walk - day/night no console do DHU, com CAR.SYS : setting night mode false/true no logcat do celular; DevTools` | pass (Walked) |
 | C16 | `walk - screenshots da gaveta do celular, da barra de título do app e do launcher do DHU` | pass (Walked) |
 | C17 | `! grep -rn "YouTube Auto" app/src && grep -q '"Abra o YT Auto no carro para tocar"' app/src/main/java/dev/bega` | pass |
 | C18 | `./gradlew assembleDebug && test -f app/build/outputs/apk/debug/yt-auto-0.5-debug.apk` | pass |
+| C19 | `walk - DHU: vídeo aberto = Pausar com paused false; toque em Pausar = Tocar com paused true; toque em Tocar = ` | pass (Walked) |
+| C20 | `walk - DHU no Início (/), DevTools do carro #movie_player video.play(): barra com Pausar; .pause(): barra sem ` | pass (Walked) |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output
@@ -69,6 +71,6 @@ BUILD SUCCESSFUL in 1s
 > Task :app:createDebugApkListingFileRedirect UP-TO-DATE
 > Task :app:assembleDebug UP-TO-DATE
 
-BUILD SUCCESSFUL in 745ms
+BUILD SUCCESSFUL in 757ms
 33 actionable tasks: 33 up-to-date
 ```
