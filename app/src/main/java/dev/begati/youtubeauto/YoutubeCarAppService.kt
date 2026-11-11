@@ -732,7 +732,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         val vd = dm.createVirtualDisplay("youtube", container.width, container.height, container.dpi, surface, 0)
         display = vd
         displaySize = size
-        presentation = Presentation(carContext, vd.display).apply {
+        // Explicit dark theme: the WebView asks YouTube for dark mode whatever the phone or the car day/night mode is.
+        presentation = Presentation(carContext, vd.display, R.style.AppTheme).apply {
             val frame = FrameLayout(context)
             val offline = offlineView(context)
             val wv = WebView(context).apply {
