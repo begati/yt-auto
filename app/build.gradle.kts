@@ -27,8 +27,8 @@ android {
     kotlinOptions { jvmTarget = "17" }
 }
 
-// APK named youtube-auto-<version>-<buildType>.apk
-base.archivesName = "youtube-auto-" + android.defaultConfig.versionName
+// APK named yt-auto-<version>-<buildType>.apk
+base.archivesName = "yt-auto-" + android.defaultConfig.versionName
 
 // One line per passed test: the spec checks are proven by these lines.
 tasks.withType<Test>().configureEach {

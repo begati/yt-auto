@@ -4,5 +4,5 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories { google(); mavenCentral() }
 }
-rootProject.name = "youtube-auto"
+rootProject.name = "yt-auto"
 include(":app")

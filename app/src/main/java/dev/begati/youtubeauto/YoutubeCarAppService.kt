@@ -329,7 +329,7 @@ private val idleCallback = object : MediaSession.Callback() {
 private val waitingForCar by lazy {
     PlaybackState.Builder()
         .setState(PlaybackState.STATE_ERROR, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0f)
-        .setErrorMessage("Abra o YouTube Auto no carro para tocar")
+        .setErrorMessage("Abra o YT Auto no carro para tocar")
         .build()
 }
 
@@ -338,7 +338,7 @@ private val waitingForCar by lazy {
 private fun carPlaying() = carLink?.hasPlayer == true
 
 private fun mediaSession(ctx: Context) = sharedSession
-    ?: MediaSession(ctx.applicationContext, "youtube-auto").also {
+    ?: MediaSession(ctx.applicationContext, "yt-auto").also {
         it.setCallback(idleCallback)
         it.setPlaybackState(playbackState(false))
         it.isActive = true
@@ -1073,7 +1073,7 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
     private fun update() {
         val m = car.metadata
         val s = car.playbackState
-        // A video sent while no car screen is alive leaves only the session's error message ("Abra o YouTube Auto...").
+        // A video sent while no car screen is alive leaves only the session's error message ("Abra o YT Auto...").
         val pending = s?.state == PlaybackState.STATE_ERROR
         carOpen = carPlaying()
         // Nothing to control and no car screen: say where videos play, since the phone never plays them.
@@ -1081,7 +1081,7 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         visibility = if (m != null || pending || notice) VISIBLE else GONE
         title.text = when {
             pending -> s?.errorMessage
-            notice -> "Os vídeos tocam só no carro. Abra o YouTube Auto no Android Auto."
+            notice -> "Os vídeos tocam só no carro. Abra o YT Auto no Android Auto."
             else -> m?.getString(MediaMetadata.METADATA_KEY_TITLE)
         }
         title.maxLines = if (notice || pending) 2 else 1
@@ -1102,7 +1102,7 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         // Metadata from earlier but no car player now: nothing would answer the buttons.
         controls.alpha = if (carOpen) 1f else 0.4f
         for (i in 0 until controls.childCount) controls.getChildAt(i).isEnabled = carOpen
-        if (!carOpen && !pending && m != null) channel.text = "Abra o YouTube Auto no carro para controlar"
+        if (!carOpen && !pending && m != null) channel.text = "Abra o YT Auto no carro para controlar"
         duration.text = clock(d)
         updateTime()
     }
@@ -1245,7 +1245,7 @@ class LoginActivity : Activity() {
                         runOnUiThread {
                             if (!carPlaying()) {
                                 android.widget.Toast.makeText(
-                                    this@LoginActivity, "Vídeo guardado: ele toca quando você abrir o YouTube Auto no carro",
+                                    this@LoginActivity, "Vídeo guardado: ele toca quando você abrir o YT Auto no carro",
                                     android.widget.Toast.LENGTH_LONG,
                                 ).show()
                             }
