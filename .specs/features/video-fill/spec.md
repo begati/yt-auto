@@ -60,9 +60,9 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 4. WHEN a navegação troca entre `/watch` e outra página THEN the app SHALL manter a WebView sobre a superfície inteira, sem mudar de tamanho
 14. WHILE o host mostra um card ao lado do app (a área visível recua mais de 1/3 da superfície num lado) the app SHALL limitar a WebView à borda do card nesse lado; recuos de até 1/3 (margem do host, barras de botões) SHALL ser cobertos
 15. WHILE o host ainda não informou a área visível the app SHALL dispor a WebView sobre a superfície inteira
+16. IF a área visível é vazia, invertida ou não cabe na superfície atual THEN the app SHALL dispor a WebView sobre a superfície inteira
 17. WHEN o app volta do modo dividido para a tela cheia THEN the app SHALL ocupar a superfície inteira em até 1 s, mesmo que o host repita a área do modo dividido
 18. WHILE o layout muda entre tela cheia e modo dividido the app SHALL manter no vídeo a proporção em uso (escolhida pelo botão ou o padrão salvo)
-16. IF a área visível é vazia, invertida ou não cabe na superfície atual THEN the app SHALL dispor a WebView sobre a superfície inteira
 
 **Independent Test**: no DHU, a lista do Início e um vídeo aberto sem margem preta; tocar na tela para mostrar os botões: o vídeo não muda de tamanho.
 
