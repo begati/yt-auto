@@ -76,7 +76,8 @@ private const val JS_APPLY_PLAYBACK =
 // - reports play/pause and the video's title/channel/thumbnail to the app through the `yta` bridge
 //   (from the page's navigator.mediaSession, falling back to document.title and the ytimg thumbnail)
 // - hides the playlist "Próximo / Mix de ..." bar that covers the player on short car screens
-// - stretches the player over the whole screen on /watch pages (polled, SPA navigation has no load event), if "fullscreen" is on
+// - stretches the player over the whole screen on /watch pages (polled, SPA navigation has no load event), if "fullscreen" is on,
+//   with the video's object-fit from yta.aspect() (Ajustar/Preencher/Esticar)
 // - clicks "Pular anúncio" as soon as it shows up, if "skipAds" is on
 // Flags are read through the bridge on every use, so settings changes apply without a reload.
 // - starts each video at the saved default quality (360p unless changed); applied once per video id, and ads
@@ -116,10 +117,11 @@ private const val PAGE_JS =
         "html.yta-watch #player-container-id #player,html.yta-watch #player-container-id .html5-video-container" +
         "{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;padding:0!important}" +
         "html.yta-watch #player-container-id .html5-video-player,html.yta-watch #player-container-id video" +
-        "{width:100%!important;height:100%!important;left:0!important;top:0!important;object-fit:contain!important}';" +
+        "{width:100%!important;height:100%!important;left:0!important;top:0!important;object-fit:var(--yta-fit,contain)!important}';" +
         "document.head.appendChild(s);" +
         "setInterval(()=>{document.documentElement.classList.toggle('yta-watch'," +
         "yta.flag('fullscreen')&&location.pathname==='/watch');" +
+        "document.documentElement.style.setProperty('--yta-fit',yta.aspect());" +
         "if(yta.flag('skipAds'))document.querySelector('.ytp-skip-ad-button,.ytp-ad-skip-button,.ytp-ad-skip-button-modern')?.click();" +
         // Only the URL's own video counts: during an ad the player reports the ad's id and time.
         "const p=document.getElementById('movie_player'),id=new URLSearchParams(location.search).get('v');" +
@@ -159,7 +161,13 @@ internal val HOME_PAGE = Choice(
     "https://m.youtube.com",
 )
 internal val TEXT_ZOOM = Choice("textZoom", "Tamanho do texto", linkedMapOf("100" to "100%", "115" to "115%", "130" to "130%", "150" to "150%"), "130")
-internal val CHOICES = listOf(QUALITY, SPEED, HOME_PAGE, TEXT_ZOOM)
+// Keys are the CSS object-fit values applied to the video on /watch.
+internal val ASPECT = Choice(
+    "aspect", "Proporção do vídeo",
+    linkedMapOf("contain" to "Ajustar", "cover" to "Preencher", "fill" to "Esticar"),
+    "contain",
+)
+internal val CHOICES = listOf(QUALITY, SPEED, ASPECT, HOME_PAGE, TEXT_ZOOM)
 // Flags default to on (the behavior before they were settings), except captions.
 internal val FLAGS = listOf(
     Flag("skipAds", "Pular anúncios"),
@@ -176,6 +184,19 @@ internal fun setChoice(prefs: SharedPreferences, c: Choice, v: String) {
 internal fun flag(prefs: SharedPreferences, key: String) =
     prefs.getBoolean(key, FLAGS.find { it.key == key }?.default ?: true)
 internal fun setFlag(prefs: SharedPreferences, key: String, on: Boolean) = prefs.edit().putBoolean(key, on).apply()
+
+// Aspect picked with the car button: (saved default when tapped, mode). Not saved, so it lasts until the
+// process dies; it also stops applying once the saved default changes, from the car or the phone.
+internal fun aspect(prefs: SharedPreferences, tap: Pair<String, String>?): String {
+    val saved = choice(prefs, ASPECT)
+    return tap?.takeIf { it.first == saved }?.second ?: saved
+}
+
+// Next mode in ASPECT's order (Ajustar -> Preencher -> Esticar -> Ajustar), remembered against the saved default.
+internal fun tapAspect(prefs: SharedPreferences, tap: Pair<String, String>?): Pair<String, String> {
+    val keys = ASPECT.options.keys.toList()
+    return choice(prefs, ASPECT) to keys[(keys.indexOf(aspect(prefs, tap)) + 1) % keys.size]
+}
 
 // Home button label: the chosen home page's name (Início / Inscrições / Histórico).
 internal fun homeLabel(prefs: SharedPreferences) = HOME_PAGE.options.getValue(choice(prefs, HOME_PAGE))
@@ -207,6 +228,9 @@ private var pendingUrl: String? = null
 
 // Last watch position reported by the page (videoId to seconds); process-wide like pageUrl.
 private var resumeAt: Pair<String, Int>? = null
+
+// See aspect(); process-wide like pageUrl.
+@Volatile private var aspectTap: Pair<String, String>? = null
 
 /** [url] with `t=` set to the saved position when it is a watch page of that same video, else [url]. */
 internal fun withResume(url: String, at: Pair<String, Int>?): String {
@@ -584,6 +608,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     fun flag(key: String) = flag(carContext, key)
 
                     @JavascriptInterface
+                    fun aspect() = aspect(prefs(carContext), aspectTap)
+
+                    @JavascriptInterface
                     fun meta(title: String, artist: String, art: String) =
                         carContext.mainExecutor.execute { setMeta(title, artist, art) }
                 }, "yta")
@@ -836,6 +863,7 @@ class SettingsActivity : Activity() {
             category("Vídeo").apply {
                 addPreference(list(QUALITY))
                 addPreference(list(SPEED))
+                addPreference(list(ASPECT))
                 FLAGS.forEach { addPreference(switch(it)) }
             }
             category("Navegação").apply {

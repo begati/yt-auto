@@ -6,7 +6,7 @@
 ## Execution Plan
 
 1. [x] Superfície inteira em `/watch` (FILL-01..04) - files: `YoutubeCarAppService.kt`, `VideoFillTest.kt`, `SettingsTest.kt` - verify: run unit - commit: `feat: fill the car surface with the video on watch pages`
-2. [ ] Proporção padrão e CSS (ASPECT-03, 05..09) - files: `YoutubeCarAppService.kt`, `VideoFillTest.kt` - verify: run unit + build - commit: `feat: add video aspect setting`
+2. [x] Proporção padrão e CSS (ASPECT-03, 05..09) - files: `YoutubeCarAppService.kt`, `VideoFillTest.kt` - verify: run unit + build - commit: `feat: add video aspect setting`
 3. [ ] Botão de proporção (ASPECT-01, 02, 04) - files: `YoutubeCarAppService.kt`, `ic_aspect_ratio.xml`, `VideoFillTest.kt` - verify: run unit + build + walk - commit: `feat: add aspect ratio button to the car map strip`
 
 ## Checks
