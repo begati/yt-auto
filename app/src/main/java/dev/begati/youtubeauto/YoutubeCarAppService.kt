@@ -251,13 +251,16 @@ internal fun withResume(url: String, at: Pair<String, Int>?): String {
  */
 // ponytail: one-third threshold from DHU measures (strips inset 88 of 400/800, the card 336 of 800); retune per host if a card gets covered
 internal fun webViewBounds(w: Int, h: Int, area: List<Int>?): List<Int> {
-    val (l, t, r, b) = area ?: return listOf(0, 0, w, h)
-    return listOf(
-        if (l > w / 3) l else 0,
-        if (t > h / 3) t else 0,
-        if (w - r > w / 3) r else w,
-        if (h - b > h / 3) b else h,
+    val full = listOf(0, 0, w, h)
+    val (l, t, r, b) = area ?: return full
+    val bounds = listOf(
+        if (l > w / 3) l.coerceAtMost(w) else 0,
+        if (t > h / 3) t.coerceAtMost(h) else 0,
+        if (w - r > w / 3) r.coerceAtLeast(0) else w,
+        if (h - b > h / 3) b.coerceAtLeast(0) else h,
     )
+    // An empty, inverted or stale rect (from before a surface resize) leaves nothing: show the whole page instead.
+    return if (bounds[0] < bounds[2] && bounds[1] < bounds[3]) bounds else full
 }
 
 private fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + Uri.encode(videoId)
@@ -656,6 +659,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         custom = view
                         exitFullscreen = callback
                         frame.addView(view)
+                        fitToArea() // the native fullscreen video also stops at a media card
                     }
 
                     override fun onHideCustomView() {
@@ -699,13 +703,16 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         fitToArea()
     }
 
+    // Sizes every child of the frame: the WebView and, while shown, the native fullscreen video.
     private fun fitToArea() {
-        val wv = webView ?: return
+        val frame = root ?: return
         val (w, h) = displaySize ?: return
         val (l, t, r, b) = webViewBounds(w, h, area)
-        wv.layoutParams = FrameLayout.LayoutParams(r - l, b - t).apply {
-            leftMargin = l
-            topMargin = t
+        for (i in 0 until frame.childCount) {
+            frame.getChildAt(i).layoutParams = FrameLayout.LayoutParams(r - l, b - t).apply {
+                leftMargin = l
+                topMargin = t
+            }
         }
     }
 

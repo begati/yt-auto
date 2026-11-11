@@ -1,16 +1,16 @@
 # video-fill proofs
 
-**HEAD**: 264a2c0
+**HEAD**: c5ed75a
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 15 pass, 0 fail
+**Result**: 18 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
-| C1 | `walk - vídeo aberto sem margem preta; barras do host por cima do vídeo` | pass (Walked) |
+| C1 | `run unit / FILL-01 margins and hidden strips are covered PASSED` | pass |
 | C2 | `walk - lista do Início sem margem preta; barras do host por cima da lista` | pass (Walked) |
-| C3 | `walk - a disposição da WebView não lê a opção: frame.addView(wv) com o tamanho do FrameLayout, sem onVisibleAr` | pass (Walked) |
-| C4 | `walk - abrir vídeo, voltar para Início, abrir outro vídeo: superfície inteira nos três` | pass (Walked) |
+| C3 | `walk - opção desligada no celular com vídeo aberto: página normal do YouTube, sem margem` | pass (Walked) |
+| C4 | `run unit / FILL-04 shown action strips do not shrink the page PASSED` | pass |
 | C5 | `run unit / ASPECT-01 tapping cycles contain cover fill contain PASSED` | pass |
 | C6 | `walk - tocar o botão de proporção mostra "Preencher", depois "Esticar", depois "Ajustar"` | pass (Walked) |
 | C7 | `walk - com vídeo 16:9 na tela do carro: Ajustar com barras, Preencher recortado, Esticar distorcido` | pass (Walked) |
@@ -21,6 +21,9 @@
 | C11 | `run unit / ASPECT-07 default is contain PASSED` | pass |
 | C12 | `run unit / ASPECT-08 invalid stored aspect reads as contain PASSED` | pass |
 | C13 | `run unit / ASPECT-09 changing the default drops the tapped mode PASSED` | pass |
+| C15 | `run unit / FILL-05 a media card beside the app limits the page PASSED` | pass |
+| C16 | `run unit / FILL-06 no visible area yet fills the surface PASSED` | pass |
+| C17 | `walk - vídeo aberto, botão de layout do DHU: vídeo em Ajustar ocupa só a área à esquerda do card, sem corte` | pass (Walked) |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output
@@ -29,9 +32,9 @@
 
 ```
 
-VideoFillTest > ASPECT-05 without a tap the saved default applies PASSED
-
 VideoFillTest > ASPECT-06 options are Ajustar Preencher Esticar in order PASSED
+
+VideoFillTest > FILL-04 shown action strips do not shrink the page PASSED
 
 VideoFillTest > ASPECT-07 default is contain PASSED
 

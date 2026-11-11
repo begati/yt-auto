@@ -58,6 +58,7 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 4. WHEN a navegação troca entre `/watch` e outra página THEN the app SHALL manter a WebView sobre a superfície inteira, sem mudar de tamanho
 14. WHILE o host mostra um card ao lado do app (a área visível recua mais de 1/3 da superfície num lado) the app SHALL limitar a WebView à borda do card nesse lado; recuos de até 1/3 (margem do host, barras de botões) SHALL ser cobertos
 15. WHILE o host ainda não informou a área visível the app SHALL dispor a WebView sobre a superfície inteira
+16. IF a área visível é vazia, invertida ou não cabe na superfície atual THEN the app SHALL dispor a WebView sobre a superfície inteira
 
 **Independent Test**: no DHU, a lista do Início e um vídeo aberto sem margem preta; tocar na tela para mostrar os botões: o vídeo não muda de tamanho.
 
@@ -115,6 +116,7 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 | FILL-04 | P1: Vídeo sem margem (AC 4) | Execute | Verified |
 | FILL-05 | P1: Vídeo sem margem (AC 14) | Execute | Verified |
 | FILL-06 | P1: Vídeo sem margem (AC 15) | Execute | Verified |
+| FILL-07 | P1: Vídeo sem margem (AC 16) | Execute | Verified |
 | ASPECT-01 | P1: Botão de proporção (AC 5) | Execute | Verified |
 | ASPECT-02 | P1: Botão de proporção (AC 6) | Execute | Verified |
 | ASPECT-03 | P1: Botão de proporção (AC 7) | Execute | Verified |
@@ -125,7 +127,7 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 | ASPECT-08 | P1: Proporção padrão (AC 12) | Execute | Verified |
 | ASPECT-09 | P1: Proporção padrão (AC 13) | Execute | Verified |
 
-**Coverage:** 15 total, 15 mapped to tasks, 0 unmapped
+**Coverage:** 16 total, 16 mapped to tasks, 0 unmapped
 
 ---
 

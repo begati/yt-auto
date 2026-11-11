@@ -82,10 +82,24 @@ class VideoFillTest {
         // Card on the left or at the bottom, the same rule.
         assertEquals(listOf(336, 0, 800, 400), webViewBounds(800, 400, listOf(336, 12, 788, 388)))
         assertEquals(listOf(0, 0, 800, 200), webViewBounds(800, 400, listOf(12, 12, 788, 200)))
+        assertEquals(listOf(0, 300, 800, 400), webViewBounds(800, 400, listOf(12, 300, 788, 388)))
+        // The cut is a third of the surface: 266 of 800 is covered, 267 limits the page.
+        assertEquals(listOf(0, 0, 800, 400), webViewBounds(800, 400, listOf(266, 12, 534, 388)))
+        assertEquals(listOf(267, 0, 800, 400), webViewBounds(800, 400, listOf(267, 12, 788, 388)))
+        assertEquals(listOf(0, 0, 533, 400), webViewBounds(800, 400, listOf(12, 12, 533, 388)))
+        assertEquals(listOf(0, 0, 800, 133), webViewBounds(800, 400, listOf(12, 12, 788, 133)))
     }
 
     @Test
     fun `FILL-06 no visible area yet fills the surface`() {
         assertEquals(listOf(0, 0, 800, 400), webViewBounds(800, 400, null))
+    }
+
+    @Test
+    fun `FILL-07 an empty inverted or stale area fills the surface`() {
+        assertEquals(listOf(0, 0, 800, 400), webViewBounds(800, 400, listOf(0, 0, 0, 0)))
+        assertEquals(listOf(0, 0, 800, 400), webViewBounds(800, 400, listOf(500, 12, 300, 388)))
+        // Left-card rect from an 800-wide surface after a rebuild to 300 wide.
+        assertEquals(listOf(0, 0, 300, 400), webViewBounds(300, 400, listOf(336, 12, 788, 388)))
     }
 }
