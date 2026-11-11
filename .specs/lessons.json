@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 4,
+  "next_id": 6,
   "lessons": [
     {
       "id": "L-001",
@@ -58,6 +58,42 @@
       ],
       "created": "2026-11-11T15:19:41Z",
       "last_seen": "2026-11-11T15:19:41Z"
+    },
+    {
+      "id": "L-004",
+      "key": "weak_test::a does not react to x failing check must make x fail in the walk observing the happy path proves nothing",
+      "text": "A 'does not react to X failing' check must make X fail in the walk; observing the happy path proves nothing.",
+      "signal": "weak_test",
+      "scope": "webview",
+      "status": "candidate",
+      "features": [
+        "offline-screen"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "OFF-06 / C6 (webview)"
+      ],
+      "created": "2026-11-11T16:01:23Z",
+      "last_seen": "2026-11-11T16:01:23Z"
+    },
+    {
+      "id": "L-005",
+      "key": "ac_gap::a retry forever loop needs its trigger narrowed to the errors a retry can cure list the excluded error codes in the spec",
+      "text": "A retry-forever loop needs its trigger narrowed to the errors a retry can cure; list the excluded error codes in the spec.",
+      "signal": "ac_gap",
+      "scope": "webview",
+      "status": "candidate",
+      "features": [
+        "offline-screen"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "OFF-09 (webview)"
+      ],
+      "created": "2026-11-11T16:01:23Z",
+      "last_seen": "2026-11-11T16:01:23Z"
     }
   ]
 }
