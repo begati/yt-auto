@@ -176,47 +176,58 @@ private const val JS_RESTART = "(v=>v&&(v.currentTime=0))(document.querySelector
 // Player's own "next": the playlist's next item, or the autoplay pick outside a playlist.
 private const val JS_NEXT = "document.getElementById('movie_player')?.nextVideo?.()"
 
-// Player quality names (YouTube's) -> labels. "medium" (360p) is the bandwidth-saving default.
+// Player quality names (YouTube's) -> label string ids. "medium" (360p) is the bandwidth-saving default.
 internal val QUALITIES = linkedMapOf(
     // Six options: car hosts truncate lists while driving, and 144p isn't worth a slot.
-    "auto" to "Automática", "small" to "240p", "medium" to "360p",
-    "large" to "480p", "hd720" to "720p", "hd1080" to "1080p",
+    "auto" to R.string.quality_auto, "small" to R.string.quality_240, "medium" to R.string.quality_360,
+    "large" to R.string.quality_480, "hd720" to R.string.quality_720, "hd1080" to R.string.quality_1080,
 )
 
-// Settings, shared by the car's SettingsScreen and the phone's menu. Stored values are the option keys.
-internal class Choice(val key: String, val title: String, val options: Map<String, String>, val default: String)
-internal class Flag(val key: String, val title: String, val default: Boolean = true)
+// Settings, shared by the car's SettingsScreen and the phone's menu. Stored values are the option keys;
+// titles and option labels are string resource ids, resolved in the device's language.
+internal class Choice(val key: String, val title: Int, val options: Map<String, Int>, val default: String)
+internal class Flag(val key: String, val title: Int, val default: Boolean = true)
 
-internal val QUALITY = Choice("quality", "Qualidade do vídeo", QUALITIES, "medium")
+internal val QUALITY = Choice("quality", R.string.quality_title, QUALITIES, "medium")
 internal val SPEED = Choice(
-    "speed", "Velocidade",
-    linkedMapOf("0.75" to "0,75x", "1" to "Normal", "1.25" to "1,25x", "1.5" to "1,5x", "1.75" to "1,75x", "2" to "2x"),
+    "speed", R.string.speed_title,
+    linkedMapOf(
+        "0.75" to R.string.speed_075, "1" to R.string.speed_normal, "1.25" to R.string.speed_125,
+        "1.5" to R.string.speed_150, "1.75" to R.string.speed_175, "2" to R.string.speed_200,
+    ),
     "1",
 )
 internal val HOME_PAGE = Choice(
-    "home", "Página inicial",
+    "home", R.string.home_title,
     linkedMapOf(
-        "https://m.youtube.com" to "Início",
-        "https://m.youtube.com/feed/subscriptions" to "Inscrições",
-        "https://m.youtube.com/feed/history" to "Histórico",
+        "https://m.youtube.com" to R.string.home_home,
+        "https://m.youtube.com/feed/subscriptions" to R.string.subscriptions,
+        "https://m.youtube.com/feed/history" to R.string.history,
     ),
     "https://m.youtube.com",
 )
-internal val TEXT_ZOOM = Choice("textZoom", "Tamanho do texto", linkedMapOf("100" to "100%", "115" to "115%", "130" to "130%", "150" to "150%"), "130")
+internal val TEXT_ZOOM = Choice(
+    "textZoom", R.string.text_size_title,
+    linkedMapOf("100" to R.string.zoom_100, "115" to R.string.zoom_115, "130" to R.string.zoom_130, "150" to R.string.zoom_150),
+    "130",
+)
 // Keys are the CSS object-fit values applied to the video on /watch.
 internal val ASPECT = Choice(
-    "aspect", "Proporção do vídeo",
-    linkedMapOf("contain" to "Ajustar", "cover" to "Preencher", "fill" to "Esticar"),
+    "aspect", R.string.aspect_title,
+    linkedMapOf("contain" to R.string.aspect_fit, "cover" to R.string.aspect_fill, "fill" to R.string.aspect_stretch),
     "contain",
 )
 internal val CHOICES = listOf(QUALITY, SPEED, ASPECT, HOME_PAGE, TEXT_ZOOM)
 // Flags default to on (the behavior before they were settings), except captions.
 internal val FLAGS = listOf(
-    Flag("skipAds", "Pular anúncios"),
-    Flag("fullscreen", "Tela cheia ao abrir vídeo"),
-    Flag("background", "Tocar com outro app na tela"),
-    Flag("captions", "Legendas", default = false),
+    Flag("skipAds", R.string.flag_skip_ads),
+    Flag("fullscreen", R.string.flag_fullscreen),
+    Flag("background", R.string.flag_background),
+    Flag("captions", R.string.flag_captions, default = false),
 )
+
+// Label of option [key] of [c], in the device's language.
+private fun Context.label(c: Choice, key: String) = getString(c.options.getValue(key))
 
 private fun prefs(ctx: Context) = ctx.getSharedPreferences("settings", Context.MODE_PRIVATE)
 internal fun choice(prefs: SharedPreferences, c: Choice) = prefs.getString(c.key, null)?.takeIf { it in c.options } ?: c.default
@@ -240,7 +251,7 @@ internal fun tapAspect(prefs: SharedPreferences, tap: String?): String {
 // A new default, set from the car or the phone, drops the button's pick.
 internal fun tapAfterChange(key: String?, tap: String?) = if (key == ASPECT.key) null else tap
 
-// Home button label: the chosen home page's name (Início / Inscrições / Histórico).
+// Home button label (string id): the chosen home page's name (Home / Subscriptions / History).
 internal fun homeLabel(prefs: SharedPreferences) = HOME_PAGE.options.getValue(choice(prefs, HOME_PAGE))
 
 private fun choice(ctx: Context, c: Choice) = choice(prefs(ctx), c)
@@ -278,7 +289,7 @@ private var carLink: YoutubeScreen? = null
 private fun cycleAspect(ctx: Context): String {
     val p = prefs(ctx)
     aspectTap = tapAspect(p, aspectTap)
-    return ASPECT.options.getValue(aspect(p, aspectTap))
+    return ctx.label(ASPECT, aspect(p, aspectTap))
 }
 
 // See aspect(); process-wide like pageUrl.
@@ -321,25 +332,26 @@ internal fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + java
 private val idleCallback = object : MediaSession.Callback() {
     override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
         pendingUrl = watchUrl(mediaId)
-        sharedSession?.setPlaybackState(waitingForCar)
+        sharedSession?.setPlaybackState(waitingForCar())
     }
 }
 
+// Set by mediaSession(), which runs before anything can ask for waitingForCar().
+private lateinit var appContext: Context
+
 // Session state while a video waits for the car screen to be opened; the phone bar shows its message.
-// Lazy: a top-level Android object built at class load breaks the JVM unit tests (android.jar stubs throw).
-private val waitingForCar by lazy {
-    PlaybackState.Builder()
-        .setState(PlaybackState.STATE_ERROR, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0f)
-        .setErrorMessage("Abra o YT Auto no carro para tocar")
-        .build()
-}
+// Built per call so the message follows a language change.
+private fun waitingForCar() = PlaybackState.Builder()
+    .setState(PlaybackState.STATE_ERROR, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0f)
+    .setErrorMessage(appContext.getString(R.string.open_car_to_play))
+    .build()
 
 // The car player exists, so the car app is open or playing in the background. Android Auto keeps the car service
 // and its screen alive after the app is closed, so a screen alone doesn't mean that.
 private fun carPlaying() = carLink?.hasPlayer == true
 
 private fun mediaSession(ctx: Context) = sharedSession
-    ?: MediaSession(ctx.applicationContext, "yt-auto").also {
+    ?: MediaSession(ctx.applicationContext.also { appContext = it }, "yt-auto").also {
         it.setCallback(idleCallback)
         it.setPlaybackState(playbackState(false))
         it.isActive = true
@@ -359,10 +371,10 @@ private fun playbackState(playing: Boolean, positionMs: Long = PlaybackState.PLA
         .setState(if (playing) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED, positionMs, rate)
         .build()
 
-// Browse tree: root -> Histórico / Inscrições -> videos (mediaId = videoId).
+// Browse tree: root -> History / Subscriptions -> videos (mediaId = videoId).
 private val FEEDS = linkedMapOf(
-    "history" to ("Histórico" to "https://www.youtube.com/feed/history"),
-    "subscriptions" to ("Inscrições" to "https://www.youtube.com/feed/subscriptions"),
+    "history" to (R.string.history to "https://www.youtube.com/feed/history"),
+    "subscriptions" to (R.string.subscriptions to "https://www.youtube.com/feed/subscriptions"),
 )
 
 /** Plain text of a YouTube text object: {simpleText}, {runs:[{text}]} or {content}. */
@@ -412,7 +424,7 @@ private fun fetchFeed(url: String): List<MediaBrowser.MediaItem> {
     val conn = URL(url).openConnection().apply {
         setRequestProperty("Cookie", CookieManager.getInstance().getCookie(url).orEmpty())
         setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36")
-        setRequestProperty("Accept-Language", "pt-BR,pt;q=0.9")
+        setRequestProperty("Accept-Language", java.util.Locale.getDefault().toLanguageTag() + ",en;q=0.8")
         connectTimeout = 10_000
         readTimeout = 15_000
     }
@@ -485,11 +497,11 @@ class ThumbProvider : ContentProvider() {
     override fun update(uri: Uri, v: ContentValues?, s: String?, a: Array<String>?) = 0
 }
 
-/** Title and subtitle of the placeholder row shown when a feed has no videos. */
+/** Title and subtitle (string ids) of the placeholder row shown when a feed has no videos. */
 internal fun feedNotice(signedIn: Boolean, failed: Boolean) = when {
-    !signedIn -> "Você não está logado" to "Faça login no app do celular"
-    failed -> "Não foi possível carregar" to "Verifique a conexão do celular"
-    else -> "Nada por aqui" to "Essa lista está vazia no YouTube"
+    !signedIn -> R.string.notice_signed_out to R.string.notice_signed_out_hint
+    failed -> R.string.notice_failed to R.string.notice_failed_hint
+    else -> R.string.notice_empty to R.string.notice_empty_hint
 }
 
 /**
@@ -509,7 +521,7 @@ class MediaService : MediaBrowserService() {
         if (parentId == "root") {
             result.sendResult(FEEDS.map { (id, feed) ->
                 MediaBrowser.MediaItem(
-                    MediaDescription.Builder().setMediaId(id).setTitle(feed.first).build(),
+                    MediaDescription.Builder().setMediaId(id).setTitle(getString(feed.first)).build(),
                     MediaBrowser.MediaItem.FLAG_BROWSABLE
                 )
             }.toMutableList())
@@ -525,7 +537,7 @@ class MediaService : MediaBrowserService() {
                 val (title, subtitle) = feedNotice(signedIn, fetched.isFailure)
                 listOf(
                     MediaBrowser.MediaItem(
-                        MediaDescription.Builder().setMediaId("empty").setTitle(title).setSubtitle(subtitle).build(),
+                        MediaDescription.Builder().setMediaId("empty").setTitle(getString(title)).setSubtitle(getString(subtitle)).build(),
                         0
                     )
                 )
@@ -578,7 +590,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
                 pageUrl = watchUrl(mediaId) // no player yet: it loads pageUrl when the car shows the screen
                 val wv = webView
-                if (wv != null) wv.loadUrl(pageUrl) else sharedSession?.setPlaybackState(waitingForCar)
+                if (wv != null) wv.loadUrl(pageUrl) else sharedSession?.setPlaybackState(waitingForCar())
             }
         })
     }
@@ -687,18 +699,18 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     override fun onGetTemplate() = NavigationTemplate.Builder()
         .setActionStrip(
             ActionStrip.Builder()
-                .addAction(Action.Builder().setTitle("Voltar").setOnClickListener { exitFullscreen?.onCustomViewHidden() ?: webView?.goBack() }.build())
-                // Named after the chosen home page (Início / Inscrições / Histórico).
-                .addAction(Action.Builder().setTitle(homeLabel(prefs(carContext))).setOnClickListener {
+                .addAction(Action.Builder().setTitle(carContext.getString(R.string.back)).setOnClickListener { exitFullscreen?.onCustomViewHidden() ?: webView?.goBack() }.build())
+                // Named after the chosen home page (Home / Subscriptions / History).
+                .addAction(Action.Builder().setTitle(carContext.getString(homeLabel(prefs(carContext)))).setOnClickListener {
                     pageUrl = choice(carContext, HOME_PAGE)
                     webView?.loadUrl(pageUrl)
                 }.build())
                 .apply {
                     toggleShown = playToggleShown(pageUrl, playing)
                     if (toggleShown)
-                        addAction(Action.Builder().setTitle(if (playing) "Pausar" else "Tocar").setOnClickListener { js(JS_TOGGLE) }.build())
+                        addAction(Action.Builder().setTitle(carContext.getString(if (playing) R.string.pause else R.string.play)).setOnClickListener { js(JS_TOGGLE) }.build())
                 }
-                .addAction(Action.Builder().setTitle("Pesquisar").setOnClickListener {
+                .addAction(Action.Builder().setTitle(carContext.getString(R.string.search)).setOnClickListener {
                     screenManager.push(SearchScreen(carContext) { query ->
                         pageUrl = "https://m.youtube.com/results?search_query=" + Uri.encode(query)
                         webView?.loadUrl(pageUrl)
@@ -1054,12 +1066,12 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
     private fun showMenu(anchor: View) {
         val ctx = context
         android.widget.PopupMenu(ctx, anchor).apply {
-            menu.add("Proporção: " + ASPECT.options.getValue(aspect(prefs(ctx), aspectTap))).setOnMenuItemClickListener {
-                android.widget.Toast.makeText(ctx, "Proporção: " + cycleAspect(ctx), android.widget.Toast.LENGTH_SHORT).show()
+            menu.add(ctx.getString(R.string.aspect_value, ctx.label(ASPECT, aspect(prefs(ctx), aspectTap)))).setOnMenuItemClickListener {
+                android.widget.Toast.makeText(ctx, ctx.getString(R.string.aspect_value, cycleAspect(ctx)), android.widget.Toast.LENGTH_SHORT).show()
                 true
             }
             for (c in listOf(QUALITY, SPEED)) {
-                val sub = menu.addSubMenu(c.title + ": " + c.options.getValue(choice(prefs(ctx), c)))
+                val sub = menu.addSubMenu(ctx.getString(c.title) + ": " + ctx.label(c, choice(prefs(ctx), c)))
                 c.options.forEach { (key, label) ->
                     sub.add(label).setOnMenuItemClickListener {
                         setChoice(prefs(ctx), c, key)
@@ -1097,7 +1109,7 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         visibility = if (m != null || pending || notice) VISIBLE else GONE
         title.text = when {
             pending -> s?.errorMessage
-            notice -> "Os vídeos tocam só no carro. Abra o YT Auto no Android Auto."
+            notice -> context.getString(R.string.phone_notice)
             else -> m?.getString(MediaMetadata.METADATA_KEY_TITLE)
         }
         title.maxLines = if (notice || pending) 2 else 1
@@ -1118,7 +1130,7 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         // Metadata from earlier but no car player now: nothing would answer the buttons.
         controls.alpha = if (carOpen) 1f else 0.4f
         for (i in 0 until controls.childCount) controls.getChildAt(i).isEnabled = carOpen
-        if (!carOpen && !pending && m != null) channel.text = "Abra o YT Auto no carro para controlar"
+        if (!carOpen && !pending && m != null) channel.text = context.getString(R.string.open_car_to_control)
         duration.text = clock(d)
         updateTime()
     }
@@ -1150,7 +1162,7 @@ private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
                 indeterminateTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
             })
             addView(android.widget.TextView(ctx).apply {
-                text = "Sem conexão. Tentando de novo…"
+                setText(R.string.offline_retrying)
                 setTextColor(android.graphics.Color.WHITE)
                 textSize = 20f
                 setPadding(0, 24, 0, 0)
@@ -1160,13 +1172,13 @@ private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
     )
 }
 
-/** Car settings, same values as the phone's "Configurações" menu. [onChanged] re-applies them to the live page. */
+/** Car settings, same values as the phone's Settings menu. [onChanged] re-applies them to the live page. */
 class SettingsScreen(ctx: CarContext, private val onChanged: () -> Unit) : Screen(ctx) {
     override fun onGetTemplate(): ListTemplate {
         val list = ItemList.Builder()
         CHOICES.forEach { c ->
             list.addItem(
-                Row.Builder().setTitle(c.title).addText(c.options.getValue(choice(carContext, c))).setBrowsable(true)
+                Row.Builder().setTitle(carContext.getString(c.title)).addText(carContext.label(c, choice(carContext, c))).setBrowsable(true)
                     .setOnClickListener {
                         screenManager.push(ChoiceScreen(carContext, c) {
                             invalidate()
@@ -1178,7 +1190,7 @@ class SettingsScreen(ctx: CarContext, private val onChanged: () -> Unit) : Scree
         }
         FLAGS.forEach { f ->
             list.addItem(
-                Row.Builder().setTitle(f.title)
+                Row.Builder().setTitle(carContext.getString(f.title))
                     .setToggle(Toggle.Builder { on ->
                         setFlag(carContext, f.key, on)
                         onChanged()
@@ -1187,7 +1199,7 @@ class SettingsScreen(ctx: CarContext, private val onChanged: () -> Unit) : Scree
             )
         }
         return ListTemplate.Builder()
-            .setTitle("Configurações")
+            .setTitle(carContext.getString(R.string.settings))
             .setHeaderAction(Action.BACK)
             .setSingleList(list.build())
             .build()
@@ -1199,7 +1211,7 @@ private class ChoiceScreen(ctx: CarContext, private val c: Choice, private val o
     override fun onGetTemplate(): ListTemplate {
         val keys = c.options.keys.toList()
         val list = ItemList.Builder()
-        c.options.values.forEach { list.addItem(Row.Builder().setTitle(it).build()) }
+        c.options.values.forEach { list.addItem(Row.Builder().setTitle(carContext.getString(it)).build()) }
         list.setSelectedIndex(keys.indexOf(choice(carContext, c)))
         list.setOnSelectedListener { i ->
             setChoice(carContext, c, keys[i])
@@ -1207,7 +1219,7 @@ private class ChoiceScreen(ctx: CarContext, private val c: Choice, private val o
             screenManager.pop()
         }
         return ListTemplate.Builder()
-            .setTitle(c.title)
+            .setTitle(carContext.getString(c.title))
             .setHeaderAction(Action.BACK)
             .setSingleList(list.build())
             .build()
@@ -1261,7 +1273,7 @@ class LoginActivity : Activity() {
                         runOnUiThread {
                             if (!carPlaying()) {
                                 android.widget.Toast.makeText(
-                                    this@LoginActivity, "Vídeo guardado: ele toca quando você abrir o YT Auto no carro",
+                                    this@LoginActivity, R.string.video_saved,
                                     android.widget.Toast.LENGTH_LONG,
                                 ).show()
                             }
@@ -1300,7 +1312,7 @@ class LoginActivity : Activity() {
         val tint = obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal)).run {
             getColorStateList(0).also { recycle() }
         }
-        menu.add("Configurações")
+        menu.add(R.string.settings)
             .setIcon(getDrawable(R.drawable.ic_settings)!!.mutate().apply { setTintList(tint) })
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true
@@ -1320,7 +1332,7 @@ class LoginActivity : Activity() {
 class SettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        title = "Configurações"
+        setTitle(R.string.settings)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         if (savedInstanceState == null) {
             fragmentManager.beginTransaction().replace(android.R.id.content, Prefs()).commit()
@@ -1339,15 +1351,15 @@ class SettingsActivity : Activity() {
             val ctx = activity
             val screen = preferenceManager.createPreferenceScreen(ctx)
             preferenceScreen = screen
-            fun category(title: String) = android.preference.PreferenceCategory(ctx).also {
-                it.title = title
+            fun category(title: Int) = android.preference.PreferenceCategory(ctx).also {
+                it.setTitle(title)
                 screen.addPreference(it)
             }
             fun list(c: Choice) = android.preference.ListPreference(ctx).apply {
                 key = c.key
-                title = c.title
-                dialogTitle = c.title
-                entries = c.options.values.toTypedArray()
+                setTitle(c.title)
+                setDialogTitle(c.title)
+                entries = c.options.values.map { ctx.getString(it) }.toTypedArray()
                 entryValues = c.options.keys.toTypedArray()
                 setDefaultValue(c.default)
                 value = choice(ctx, c) // also drops stale values to the default
@@ -1355,16 +1367,16 @@ class SettingsActivity : Activity() {
             }
             fun switch(f: Flag) = android.preference.SwitchPreference(ctx).apply {
                 key = f.key
-                title = f.title
+                setTitle(f.title)
                 setDefaultValue(f.default)
             }
-            category("Vídeo").apply {
+            category(R.string.category_video).apply {
                 addPreference(list(QUALITY))
                 addPreference(list(SPEED))
                 addPreference(list(ASPECT))
                 FLAGS.forEach { addPreference(switch(it)) }
             }
-            category("Navegação").apply {
+            category(R.string.category_navigation).apply {
                 addPreference(list(HOME_PAGE))
                 addPreference(list(TEXT_ZOOM))
             }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_title">Qualidade do vídeo</string>
+    <string name="quality_auto">Automática</string>
+    <string name="speed_title">Velocidade</string>
+    <string name="speed_normal">Normal</string>
+    <string name="speed_075">0,75x</string>
+    <string name="speed_125">1,25x</string>
+    <string name="speed_150">1,5x</string>
+    <string name="speed_175">1,75x</string>
+    <string name="home_title">Página inicial</string>
+    <string name="home_home">Início</string>
+    <string name="subscriptions">Inscrições</string>
+    <string name="history">Histórico</string>
+    <string name="text_size_title">Tamanho do texto</string>
+    <string name="aspect_title">Proporção do vídeo</string>
+    <string name="aspect_fit">Ajustar</string>
+    <string name="aspect_fill">Preencher</string>
+    <string name="aspect_stretch">Esticar</string>
+    <string name="aspect_value">Proporção: %1$s</string>
+    <string name="flag_skip_ads">Pular anúncios</string>
+    <string name="flag_fullscreen">Tela cheia ao abrir vídeo</string>
+    <string name="flag_background">Tocar com outro app na tela</string>
+    <string name="flag_captions">Legendas</string>
+    <string name="back">Voltar</string>
+    <string name="play">Tocar</string>
+    <string name="pause">Pausar</string>
+    <string name="search">Pesquisar</string>
+    <string name="settings">Configurações</string>
+    <string name="category_video">Vídeo</string>
+    <string name="category_navigation">Navegação</string>
+    <string name="open_car_to_play">Abra o YT Auto no carro para tocar</string>
+    <string name="open_car_to_control">Abra o YT Auto no carro para controlar</string>
+    <string name="phone_notice">Os vídeos tocam só no carro. Abra o YT Auto no Android Auto.</string>
+    <string name="video_saved">Vídeo guardado: ele toca quando você abrir o YT Auto no carro</string>
+    <string name="offline_retrying">Sem conexão. Tentando de novo…</string>
+    <string name="notice_signed_out">Você não está logado</string>
+    <string name="notice_signed_out_hint">Faça login no app do celular</string>
+    <string name="notice_failed">Não foi possível carregar</string>
+    <string name="notice_failed_hint">Verifique a conexão do celular</string>
+    <string name="notice_empty">Nada por aqui</string>
+    <string name="notice_empty_hint">Essa lista está vazia no YouTube</string>
+</resources>

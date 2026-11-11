@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_title">جودة الفيديو</string>
+    <string name="quality_auto">تلقائي</string>
+    <string name="speed_title">السرعة</string>
+    <string name="speed_normal">عادية</string>
+    <string name="speed_075">0.75x</string>
+    <string name="speed_125">1.25x</string>
+    <string name="speed_150">1.5x</string>
+    <string name="speed_175">1.75x</string>
+    <string name="home_title">الصفحة الرئيسية</string>
+    <string name="home_home">الرئيسية</string>
+    <string name="subscriptions">الاشتراكات</string>
+    <string name="history">السجل</string>
+    <string name="text_size_title">حجم النص</string>
+    <string name="aspect_title">نسبة عرض الفيديو</string>
+    <string name="aspect_fit">ملاءمة</string>
+    <string name="aspect_fill">ملء</string>
+    <string name="aspect_stretch">تمديد</string>
+    <string name="aspect_value">نسبة العرض: %1$s</string>
+    <string name="flag_skip_ads">تخطي الإعلانات</string>
+    <string name="flag_fullscreen">ملء الشاشة عند فتح فيديو</string>
+    <string name="flag_background">مواصلة التشغيل مع تطبيق آخر على الشاشة</string>
+    <string name="flag_captions">الترجمة</string>
+    <string name="back">رجوع</string>
+    <string name="play">تشغيل</string>
+    <string name="pause">إيقاف مؤقت</string>
+    <string name="search">بحث</string>
+    <string name="settings">الإعدادات</string>
+    <string name="category_video">الفيديو</string>
+    <string name="category_navigation">التصفح</string>
+    <string name="open_car_to_play">افتح YT Auto في السيارة للتشغيل</string>
+    <string name="open_car_to_control">افتح YT Auto في السيارة للتحكم</string>
+    <string name="phone_notice">يتم تشغيل الفيديوهات في السيارة فقط. افتح YT Auto في Android Auto.</string>
+    <string name="video_saved">تم حفظ الفيديو: سيتم تشغيله عند فتح YT Auto في السيارة</string>
+    <string name="offline_retrying">لا يوجد اتصال. جارٍ إعادة المحاولة…</string>
+    <string name="notice_signed_out">لم تسجّل الدخول</string>
+    <string name="notice_signed_out_hint">سجّل الدخول من التطبيق على الهاتف</string>
+    <string name="notice_failed">تعذّر التحميل</string>
+    <string name="notice_failed_hint">تحقق من اتصال الهاتف</string>
+    <string name="notice_empty">لا يوجد شيء هنا</string>
+    <string name="notice_empty_hint">هذه القائمة فارغة على YouTube</string>
+</resources>

@@ -92,20 +92,20 @@ class SettingsTest {
 
     @Test
     fun `SET-07 quality options are exactly the six labels in order`() {
-        assertEquals(listOf("Automática", "240p", "360p", "480p", "720p", "1080p"), QUALITY.options.values.toList())
+        assertEquals(listOf(R.string.quality_auto, R.string.quality_240, R.string.quality_360, R.string.quality_480, R.string.quality_720, R.string.quality_1080), QUALITY.options.values.toList())
     }
 
     @Test
     fun `SET-08 home page and text size options in order`() {
-        assertEquals(listOf("Início", "Inscrições", "Histórico"), HOME_PAGE.options.values.toList())
-        assertEquals(listOf("100%", "115%", "130%", "150%"), TEXT_ZOOM.options.values.toList())
+        assertEquals(listOf(R.string.home_home, R.string.subscriptions, R.string.history), HOME_PAGE.options.values.toList())
+        assertEquals(listOf(R.string.zoom_100, R.string.zoom_115, R.string.zoom_130, R.string.zoom_150), TEXT_ZOOM.options.values.toList())
     }
 
     @Test
     fun `SET-09 speed defaults to normal, options in order, invalid reads as default`() {
         assertEquals("1", choice(MemoryPrefs(), SPEED))
         assertEquals("1", choice(MemoryPrefs().apply { map["speed"] = "16" }, SPEED))
-        assertEquals(listOf("0,75x", "Normal", "1,25x", "1,5x", "1,75x", "2x"), SPEED.options.values.toList())
+        assertEquals(listOf(R.string.speed_075, R.string.speed_normal, R.string.speed_125, R.string.speed_150, R.string.speed_175, R.string.speed_200), SPEED.options.values.toList())
     }
 
     @Test
@@ -119,17 +119,17 @@ class SettingsTest {
     @Test
     fun `HOME-01 subscriptions home page labels the button`() {
         val prefs = MemoryPrefs().apply { map["home"] = "https://m.youtube.com/feed/subscriptions" }
-        assertEquals("Inscrições", homeLabel(prefs))
+        assertEquals(R.string.subscriptions, homeLabel(prefs))
     }
 
     @Test
     fun `HOME-02 history home page labels the button`() {
         val prefs = MemoryPrefs().apply { map["home"] = "https://m.youtube.com/feed/history" }
-        assertEquals("Histórico", homeLabel(prefs))
+        assertEquals(R.string.history, homeLabel(prefs))
     }
 
     @Test
     fun `HOME-03 default home page labels the button`() {
-        assertEquals("Início", homeLabel(MemoryPrefs()))
+        assertEquals(R.string.home_home, homeLabel(MemoryPrefs()))
     }
 }

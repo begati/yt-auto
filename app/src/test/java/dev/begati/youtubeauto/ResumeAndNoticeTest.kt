@@ -26,8 +26,8 @@ class ResumeAndNoticeTest {
 
     @Test
     fun `feed notice tells login, connection and empty apart`() {
-        assertEquals("Faça login no app do celular", feedNotice(signedIn = false, failed = true).second)
-        assertEquals("Não foi possível carregar", feedNotice(signedIn = true, failed = true).first)
-        assertEquals("Nada por aqui", feedNotice(signedIn = true, failed = false).first)
+        assertEquals(R.string.notice_signed_out_hint, feedNotice(signedIn = false, failed = true).second)
+        assertEquals(R.string.notice_failed, feedNotice(signedIn = true, failed = true).first)
+        assertEquals(R.string.notice_empty, feedNotice(signedIn = true, failed = false).first)
     }
 }

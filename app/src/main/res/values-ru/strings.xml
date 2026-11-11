@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_title">Качество видео</string>
+    <string name="quality_auto">Авто</string>
+    <string name="speed_title">Скорость</string>
+    <string name="speed_normal">Обычная</string>
+    <string name="speed_075">0,75x</string>
+    <string name="speed_125">1,25x</string>
+    <string name="speed_150">1,5x</string>
+    <string name="speed_175">1,75x</string>
+    <string name="home_title">Стартовая страница</string>
+    <string name="home_home">Главная</string>
+    <string name="subscriptions">Подписки</string>
+    <string name="history">История</string>
+    <string name="text_size_title">Размер текста</string>
+    <string name="aspect_title">Пропорции видео</string>
+    <string name="aspect_fit">Вписать</string>
+    <string name="aspect_fill">Заполнить</string>
+    <string name="aspect_stretch">Растянуть</string>
+    <string name="aspect_value">Пропорции: %1$s</string>
+    <string name="flag_skip_ads">Пропускать рекламу</string>
+    <string name="flag_fullscreen">Полноэкранный режим при открытии видео</string>
+    <string name="flag_background">Воспроизводить при другом приложении на экране</string>
+    <string name="flag_captions">Субтитры</string>
+    <string name="back">Назад</string>
+    <string name="play">Воспроизвести</string>
+    <string name="pause">Пауза</string>
+    <string name="search">Поиск</string>
+    <string name="settings">Настройки</string>
+    <string name="category_video">Видео</string>
+    <string name="category_navigation">Навигация</string>
+    <string name="open_car_to_play">Откройте YT Auto в автомобиле для воспроизведения</string>
+    <string name="open_car_to_control">Откройте YT Auto в автомобиле для управления</string>
+    <string name="phone_notice">Видео воспроизводится только в автомобиле. Откройте YT Auto в Android Auto.</string>
+    <string name="video_saved">Видео сохранено: оно начнётся, когда вы откроете YT Auto в автомобиле</string>
+    <string name="offline_retrying">Нет подключения. Повторная попытка…</string>
+    <string name="notice_signed_out">Вы не вошли в аккаунт</string>
+    <string name="notice_signed_out_hint">Войдите в приложении на телефоне</string>
+    <string name="notice_failed">Не удалось загрузить</string>
+    <string name="notice_failed_hint">Проверьте подключение телефона</string>
+    <string name="notice_empty">Здесь пусто</string>
+    <string name="notice_empty_hint">Этот список на YouTube пуст</string>
+</resources>

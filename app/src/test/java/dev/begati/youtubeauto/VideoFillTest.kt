@@ -14,8 +14,8 @@ class VideoFillTest {
 
     @Test
     fun `ASPECT-06 options are Ajustar Preencher Esticar in order`() {
-        assertEquals("Proporção do vídeo", ASPECT.title)
-        assertEquals(listOf("contain" to "Ajustar", "cover" to "Preencher", "fill" to "Esticar"), ASPECT.options.toList())
+        assertEquals(R.string.aspect_title, ASPECT.title)
+        assertEquals(listOf("contain" to R.string.aspect_fit, "cover" to R.string.aspect_fill, "fill" to R.string.aspect_stretch), ASPECT.options.toList())
         assertTrue(ASPECT in CHOICES)
     }
 

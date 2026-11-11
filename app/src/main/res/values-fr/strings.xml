@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_title">Qualité vidéo</string>
+    <string name="quality_auto">Automatique</string>
+    <string name="speed_title">Vitesse</string>
+    <string name="speed_normal">Normale</string>
+    <string name="speed_075">0,75x</string>
+    <string name="speed_125">1,25x</string>
+    <string name="speed_150">1,5x</string>
+    <string name="speed_175">1,75x</string>
+    <string name="home_title">Page d\'accueil</string>
+    <string name="home_home">Accueil</string>
+    <string name="subscriptions">Abonnements</string>
+    <string name="history">Historique</string>
+    <string name="text_size_title">Taille du texte</string>
+    <string name="aspect_title">Format de la vidéo</string>
+    <string name="aspect_fit">Ajuster</string>
+    <string name="aspect_fill">Remplir</string>
+    <string name="aspect_stretch">Étirer</string>
+    <string name="aspect_value">Format : %1$s</string>
+    <string name="flag_skip_ads">Ignorer les annonces</string>
+    <string name="flag_fullscreen">Plein écran à l\'ouverture d\'une vidéo</string>
+    <string name="flag_background">Continuer la lecture avec une autre app à l\'écran</string>
+    <string name="flag_captions">Sous-titres</string>
+    <string name="back">Retour</string>
+    <string name="play">Lire</string>
+    <string name="pause">Pause</string>
+    <string name="search">Rechercher</string>
+    <string name="settings">Paramètres</string>
+    <string name="category_video">Vidéo</string>
+    <string name="category_navigation">Navigation</string>
+    <string name="open_car_to_play">Ouvrez YT Auto dans la voiture pour lancer la lecture</string>
+    <string name="open_car_to_control">Ouvrez YT Auto dans la voiture pour contrôler</string>
+    <string name="phone_notice">Les vidéos ne sont lues que dans la voiture. Ouvrez YT Auto dans Android Auto.</string>
+    <string name="video_saved">Vidéo enregistrée : elle sera lue à l\'ouverture de YT Auto dans la voiture</string>
+    <string name="offline_retrying">Pas de connexion. Nouvelle tentative…</string>
+    <string name="notice_signed_out">Vous n\'êtes pas connecté</string>
+    <string name="notice_signed_out_hint">Connectez-vous dans l\'app du téléphone</string>
+    <string name="notice_failed">Chargement impossible</string>
+    <string name="notice_failed_hint">Vérifiez la connexion du téléphone</string>
+    <string name="notice_empty">Rien ici</string>
+    <string name="notice_empty_hint">Cette liste est vide sur YouTube</string>
+</resources>

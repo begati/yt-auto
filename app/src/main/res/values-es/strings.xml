@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_title">Calidad del video</string>
+    <string name="quality_auto">Automática</string>
+    <string name="speed_title">Velocidad</string>
+    <string name="speed_normal">Normal</string>
+    <string name="speed_075">0,75x</string>
+    <string name="speed_125">1,25x</string>
+    <string name="speed_150">1,5x</string>
+    <string name="speed_175">1,75x</string>
+    <string name="home_title">Página de inicio</string>
+    <string name="home_home">Inicio</string>
+    <string name="subscriptions">Suscripciones</string>
+    <string name="history">Historial</string>
+    <string name="text_size_title">Tamaño del texto</string>
+    <string name="aspect_title">Proporción del video</string>
+    <string name="aspect_fit">Ajustar</string>
+    <string name="aspect_fill">Rellenar</string>
+    <string name="aspect_stretch">Estirar</string>
+    <string name="aspect_value">Proporción: %1$s</string>
+    <string name="flag_skip_ads">Saltar anuncios</string>
+    <string name="flag_fullscreen">Pantalla completa al abrir un video</string>
+    <string name="flag_background">Seguir reproduciendo con otra app en pantalla</string>
+    <string name="flag_captions">Subtítulos</string>
+    <string name="back">Atrás</string>
+    <string name="play">Reproducir</string>
+    <string name="pause">Pausar</string>
+    <string name="search">Buscar</string>
+    <string name="settings">Ajustes</string>
+    <string name="category_video">Video</string>
+    <string name="category_navigation">Navegación</string>
+    <string name="open_car_to_play">Abre YT Auto en el auto para reproducir</string>
+    <string name="open_car_to_control">Abre YT Auto en el auto para controlar</string>
+    <string name="phone_notice">Los videos solo se reproducen en el auto. Abre YT Auto en Android Auto.</string>
+    <string name="video_saved">Video guardado: se reproducirá cuando abras YT Auto en el auto</string>
+    <string name="offline_retrying">Sin conexión. Reintentando…</string>
+    <string name="notice_signed_out">No has iniciado sesión</string>
+    <string name="notice_signed_out_hint">Inicia sesión en la app del teléfono</string>
+    <string name="notice_failed">No se pudo cargar</string>
+    <string name="notice_failed_hint">Revisa la conexión del teléfono</string>
+    <string name="notice_empty">No hay nada aquí</string>
+    <string name="notice_empty_hint">Esta lista está vacía en YouTube</string>
+</resources>

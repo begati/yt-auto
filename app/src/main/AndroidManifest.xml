@@ -9,6 +9,7 @@
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="YT Auto"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.car.application"

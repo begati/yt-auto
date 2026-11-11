@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_title">Qualità video</string>
+    <string name="quality_auto">Automatica</string>
+    <string name="speed_title">Velocità</string>
+    <string name="speed_normal">Normale</string>
+    <string name="speed_075">0,75x</string>
+    <string name="speed_125">1,25x</string>
+    <string name="speed_150">1,5x</string>
+    <string name="speed_175">1,75x</string>
+    <string name="home_title">Pagina iniziale</string>
+    <string name="home_home">Home</string>
+    <string name="subscriptions">Iscrizioni</string>
+    <string name="history">Cronologia</string>
+    <string name="text_size_title">Dimensione testo</string>
+    <string name="aspect_title">Proporzioni video</string>
+    <string name="aspect_fit">Adatta</string>
+    <string name="aspect_fill">Riempi</string>
+    <string name="aspect_stretch">Allunga</string>
+    <string name="aspect_value">Proporzioni: %1$s</string>
+    <string name="flag_skip_ads">Salta annunci</string>
+    <string name="flag_fullscreen">Schermo intero all\'apertura di un video</string>
+    <string name="flag_background">Continua la riproduzione con un\'altra app sullo schermo</string>
+    <string name="flag_captions">Sottotitoli</string>
+    <string name="back">Indietro</string>
+    <string name="play">Riproduci</string>
+    <string name="pause">Pausa</string>
+    <string name="search">Cerca</string>
+    <string name="settings">Impostazioni</string>
+    <string name="category_video">Video</string>
+    <string name="category_navigation">Navigazione</string>
+    <string name="open_car_to_play">Apri YT Auto in auto per riprodurre</string>
+    <string name="open_car_to_control">Apri YT Auto in auto per controllare</string>
+    <string name="phone_notice">I video vengono riprodotti solo in auto. Apri YT Auto su Android Auto.</string>
+    <string name="video_saved">Video salvato: verrà riprodotto quando apri YT Auto in auto</string>
+    <string name="offline_retrying">Nessuna connessione. Nuovo tentativo…</string>
+    <string name="notice_signed_out">Non hai effettuato l\'accesso</string>
+    <string name="notice_signed_out_hint">Accedi dall\'app sul telefono</string>
+    <string name="notice_failed">Impossibile caricare</string>
+    <string name="notice_failed_hint">Controlla la connessione del telefono</string>
+    <string name="notice_empty">Niente da mostrare</string>
+    <string name="notice_empty_hint">Questo elenco è vuoto su YouTube</string>
+</resources>
