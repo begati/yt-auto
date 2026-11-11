@@ -20,13 +20,19 @@ class RemoteTest {
         assertNull(videoIdFromUrl("https://m.youtube.com/watch?v=short"))
         assertNull(videoIdFromUrl("https://m.youtube.com/@canal/shorts"))
         assertNull(videoIdFromUrl(""))
+        assertEquals("dQw4w9WgXcQ", videoIdFromUrl("https://www.youtube.com/watch?feature=x&v=dQw4w9WgXcQ"))
+        assertEquals("dQw4w9WgXcQ", videoIdFromUrl("youtu.be/dQw4w9WgXcQ"))
+        // First v= wins, like the browser.
+        assertEquals("dQw4w9WgXcQ", videoIdFromUrl("https://m.youtube.com/watch?v=dQw4w9WgXcQ&x=1&v=abcDEF12_-x"))
+        assertNull(videoIdFromUrl("https://example.com/watch?v=dQw4w9WgXcQ"))
+        assertNull(videoIdFromUrl("https://m.youtube.com.evil.example/watch?v=dQw4w9WgXcQ"))
     }
 
     @Test
     fun `CAST-05 a short opens as a watch url`() {
-        assertEquals("https://m.youtube.com/watch?v=abcDEF12_-x", castUrl("https://m.youtube.com/shorts/abcDEF12_-x"))
-        assertEquals("https://m.youtube.com/watch?v=dQw4w9WgXcQ", castUrl("https://m.youtube.com/watch?v=dQw4w9WgXcQ&t=42s"))
-        assertNull(castUrl("https://m.youtube.com/"))
+        // The phone sends videoIdFromUrl's id; the car opens watchUrl(id).
+        assertEquals("https://m.youtube.com/watch?v=abcDEF12_-x", watchUrl(videoIdFromUrl("https://m.youtube.com/shorts/abcDEF12_-x")!!))
+        assertEquals("https://m.youtube.com/watch?v=dQw4w9WgXcQ", watchUrl(videoIdFromUrl("https://m.youtube.com/watch?v=dQw4w9WgXcQ&t=42s")!!))
     }
 
     @Test

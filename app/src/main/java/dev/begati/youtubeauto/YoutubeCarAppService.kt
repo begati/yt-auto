@@ -146,8 +146,8 @@ private const val PAGE_JS =
         "const p=document.getElementById('movie_player'),id=new URLSearchParams(location.search).get('v');" +
         // A video opened without a tap on the car (phone remote, media card) autoplays muted, and the player mutes it
         // again right after the play event; unmute during its first 5 s of playback, so a later mute by hand sticks.
-        "if(id&&p&&p.isMuted&&p.getPlayerState()===1){if(id!==umId){umId=id;umN=0}if(umN++<10&&p.isMuted())p.unMute()}" +
-        "if(id&&p&&p.getVideoData&&p.getVideoData().video_id===id)yta.time(id,Math.floor(p.getCurrentTime()),Math.floor(p.getDuration()||0))},500)})()"
+        "if(id&&p&&p.isMuted&&p.getPlayerState()===1&&p.getVideoData().video_id===id){if(id!==umId){umId=id;umN=0}if(umN++<10&&p.isMuted())p.unMute()}" +
+        "if(id&&p&&p.getVideoData&&p.getVideoData().video_id===id)yta.time(id,Math.floor(p.getCurrentTime()),Math.floor(p.getDuration()||0),p.getPlaybackRate?p.getPlaybackRate():1)},500)})()"
 
 // Phone page (once per document): the phone is a remote, so it never plays.
 // - a tap on a video link (capture phase, before YouTube's own handlers) goes to remote.cast and is cancelled
@@ -162,8 +162,8 @@ private const val PHONE_JS =
         "if(a&&remote.cast(abs(a.getAttribute('href')))){e.preventDefault();e.stopImmediatePropagation()}},true);" +
         "document.addEventListener('play',e=>e.target.pause&&e.target.pause(),true);" +
         "let last='';setInterval(()=>{document.querySelectorAll('video').forEach(v=>v.paused||v.pause());" +
-        "if(/^\\/(watch|shorts\\/)/.test(location.pathname)&&location.href!==last){last=location.href;" +
-        "if(remote.cast(last))history.back()}},300)})()"
+        "if(!/^\\/(watch|shorts\\/)/.test(location.pathname))last='';" +
+        "else if(location.href!==last){last=location.href;if(remote.cast(last))history.back()}},300)})()"
 
 private const val JS_PLAY = "document.querySelector('video')?.play()"
 private const val JS_PAUSE = "document.querySelector('video')?.pause()"
@@ -310,7 +310,8 @@ internal fun webViewBounds(w: Int, h: Int, area: List<Int>?): List<Int> {
     return if (bounds[0] < bounds[2] && bounds[1] < bounds[3]) bounds else full
 }
 
-private fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + Uri.encode(videoId)
+// Watch page the car opens for a video id (from the phone, the media list or a short).
+internal fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + java.net.URLEncoder.encode(videoId, "UTF-8")
 
 // Callback while no car screen is alive: the WebView (the actual player) only exists in that screen.
 private val idleCallback = object : MediaSession.Callback() {
@@ -342,7 +343,7 @@ private fun mediaSession(ctx: Context) = sharedSession
     }
 
 // [positionMs] is extrapolated by readers (car media card, phone bar) while playing, so a report every 500 ms is enough.
-private fun playbackState(playing: Boolean, positionMs: Long = PlaybackState.PLAYBACK_POSITION_UNKNOWN): PlaybackState =
+private fun playbackState(playing: Boolean, positionMs: Long = PlaybackState.PLAYBACK_POSITION_UNKNOWN, rate: Float = 1f): PlaybackState =
     PlaybackState.Builder()
         .setActions(
             PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE or
@@ -351,7 +352,7 @@ private fun playbackState(playing: Boolean, positionMs: Long = PlaybackState.PLA
             // No ACTION_SEEK_TO: with it Android Auto swaps previous/next for -10/+10 s on its media card (session
             // extras don't stop it). onSeekTo still runs for the phone bar, which calls seekTo directly.
         )
-        .setState(if (playing) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED, positionMs, 1f)
+        .setState(if (playing) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED, positionMs, rate)
         .build()
 
 // Browse tree: root -> Histórico / Inscrições -> videos (mediaId = videoId).
@@ -435,8 +436,9 @@ internal fun isVideoId(s: String) = VIDEO_ID.matches(s)
 
 // Video id of a watch, shorts or youtu.be link (absolute or path-only), else null.
 internal fun videoIdFromUrl(url: String): String? {
-    val m = Regex("""^(?:https?://[^/]+)?/(?:watch\?(?:[^#]*&)?v=|shorts/)([^&#?/]+)""").find(url)
-        ?: Regex("""^https?://youtu\.be/([^?#/]+)""").find(url)
+    // First v= wins, as in the browser's URLSearchParams; only YouTube hosts (or a path on the current one).
+    val m = Regex("""^(?:https?://(?:[\w-]+\.)?youtube\.com)?/(?:watch\?(?:[^#]*?&)??v=|shorts/)([^&#?/]+)""").find(url)
+        ?: Regex("""^(?:https?://)?youtu\.be/([^?#/]+)""").find(url)
         ?: return null
     return m.groupValues[1].takeIf(::isVideoId)
 }
@@ -446,9 +448,6 @@ internal fun clock(seconds: Long): String {
     val s = seconds.coerceAtLeast(0)
     return if (s >= 3600) "%d:%02d:%02d".format(s / 3600, s % 3600 / 60, s % 60) else "%d:%02d".format(s / 60, s % 60)
 }
-
-// Where a video link from the phone opens in the car: shorts become a plain watch page.
-internal fun castUrl(url: String) = videoIdFromUrl(url)?.let { "https://m.youtube.com/watch?v=$it" }
 
 /**
  * Serves content://…thumbs/<videoId> as the video's i.ytimg.com thumbnail: Android Auto only loads
@@ -551,6 +550,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var playing = false
     private var positionMs = PlaybackState.PLAYBACK_POSITION_UNKNOWN
     private var durationMs = 0L
+    private var rate = 1f
+    // elapsedRealtime of the PlaybackState last published (see setTime).
+    private var published = 0L
     // Metadata last published, to add the duration once the page reports it.
     private var meta: MediaMetadata? = null
     // Title, channel and artwork URL of the metadata last published, to skip duplicate reports and stale downloads.
@@ -605,15 +607,26 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
     private fun setPlaying(p: Boolean) {
         playing = p
-        session.setPlaybackState(playbackState(p, positionMs))
+        published = SystemClock.elapsedRealtime()
+        session.setPlaybackState(playbackState(p, positionMs, rate))
         invalidate()
     }
 
     // Position and duration of the URL's video, from the page every 500 ms. No invalidate(): the template doesn't show them.
-    private fun setTime(id: String, seconds: Int, duration: Int) {
+    private fun setTime(id: String, seconds: Int, duration: Int, playbackRate: Float) {
         resumeAt = id to seconds
+        // Readers extrapolate from the last published state, so republish only when that drifts (seek, rate change,
+        // stall), not every 500 ms.
+        val now = SystemClock.elapsedRealtime()
+        val expected = positionMs + if (playing) ((now - published) * rate).toLong() else 0L
         positionMs = seconds * 1000L
-        session.setPlaybackState(playbackState(playing, positionMs))
+        if (playbackRate != rate || kotlin.math.abs(positionMs - expected) > 1500) {
+            rate = playbackRate
+            published = now
+            session.setPlaybackState(playbackState(playing, positionMs, rate))
+        } else {
+            positionMs = expected // keep the published baseline
+        }
         val ms = duration * 1000L
         if (ms > 0 && ms != durationMs) {
             durationMs = ms
@@ -733,7 +746,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     fun saveSpeed(r: String) = setChoice(carContext, SPEED, r)
 
                     @JavascriptInterface
-                    fun time(id: String, t: Int, dur: Int) = carContext.mainExecutor.execute { setTime(id, t, dur) }
+                    fun time(id: String, t: Int, dur: Int, rate: Float) = carContext.mainExecutor.execute { setTime(id, t, dur, rate) }
 
                     @JavascriptInterface
                     fun flag(key: String) = flag(carContext, key)
@@ -1069,6 +1082,12 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         )
         val d = (m?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: 0L) / 1000
         seek.max = d.toInt()
+        // No duration yet (new video, ad, live): a touch would seek the car to 0.
+        seek.isEnabled = d > 0 && carOpen
+        // Metadata from earlier but no car player now: nothing would answer the buttons.
+        controls.alpha = if (carOpen) 1f else 0.4f
+        for (i in 0 until controls.childCount) controls.getChildAt(i).isEnabled = carOpen
+        if (!carOpen && !pending && m != null) channel.text = "Abra o YouTube Auto no carro para controlar"
         duration.text = clock(d)
         updateTime()
     }
@@ -1078,7 +1097,9 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         val s = car.playbackState ?: return
         if (dragging || s.position < 0) return
         val elapsed = if (s.state == PlaybackState.STATE_PLAYING) android.os.SystemClock.elapsedRealtime() - s.lastPositionUpdateTime else 0
-        val seconds = (s.position + elapsed * s.playbackSpeed).toLong() / 1000
+        val max = seek.max.toLong()
+        // Clamped: the state stays PLAYING through ads, while time reports stop.
+        val seconds = ((s.position + elapsed * s.playbackSpeed).toLong() / 1000).let { if (max > 0) it.coerceAtMost(max) else it }
         seek.progress = seconds.toInt()
         position.text = clock(seconds)
     }
