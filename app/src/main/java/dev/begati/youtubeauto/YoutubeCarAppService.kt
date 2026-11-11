@@ -14,6 +14,7 @@ import android.hardware.display.VirtualDisplay
 import android.media.MediaDescription
 import android.media.MediaMetadata
 import android.media.browse.MediaBrowser
+import android.media.session.MediaController
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
 import android.net.Uri
@@ -88,6 +89,7 @@ private const val JS_APPLY_PLAYBACK =
 // - same per-video moment: applies the saved speed (a speed picked in the player becomes the default too)
 //   and captions on/off
 // - reports the watch position every 500 ms so a rebuilt car screen resumes where it was
+// - unmutes a video that autoplayed muted (opened from the phone or the media card), during its first 5 s
 // ponytail: tied to m.youtube.com markup; re-inspect via chrome://inspect when YouTube changes it
 private const val PAGE_JS =
     "(()=>{if(window.__yta)return;window.__yta=1;" +
@@ -122,13 +124,32 @@ private const val PAGE_JS =
         "html.yta-watch #player-container-id .html5-video-player,html.yta-watch #player-container-id video" +
         "{width:100%!important;height:100%!important;left:0!important;top:0!important;object-fit:var(--yta-fit,contain)!important}';" +
         "document.head.appendChild(s);" +
-        "setInterval(()=>{document.documentElement.classList.toggle('yta-watch'," +
+        "let umId='',umN=0;setInterval(()=>{document.documentElement.classList.toggle('yta-watch'," +
         "yta.flag('fullscreen')&&location.pathname==='/watch');" +
         "document.documentElement.style.setProperty('--yta-fit',yta.aspect());" +
         "if(yta.flag('skipAds'))document.querySelector('.ytp-skip-ad-button,.ytp-ad-skip-button,.ytp-ad-skip-button-modern')?.click();" +
         // Only the URL's own video counts: during an ad the player reports the ad's id and time.
         "const p=document.getElementById('movie_player'),id=new URLSearchParams(location.search).get('v');" +
+        // A video opened without a tap on the car (phone remote, media card) autoplays muted, and the player mutes it
+        // again right after the play event; unmute during its first 5 s of playback, so a later mute by hand sticks.
+        "if(id&&p&&p.isMuted&&p.getPlayerState()===1){if(id!==umId){umId=id;umN=0}if(umN++<10&&p.isMuted())p.unMute()}" +
         "if(id&&p&&p.getVideoData&&p.getVideoData().video_id===id)yta.time(id,Math.floor(p.getCurrentTime()),Math.floor(p.getDuration()||0))},500)})()"
+
+// Phone page (once per document): the phone is a remote, so it never plays.
+// - a tap on a video link (capture phase, before YouTube's own handlers) goes to remote.cast and is cancelled
+//   when the link has a video id; links without one are left alone
+// - landing on /watch or /shorts some other way (autoplay, SPA navigation) goes back and casts that page
+// - every <video> that starts playing (feed previews included) is paused
+// ponytail: tied to m.youtube.com markup and routing; re-check via chrome://inspect if videos start playing on the phone
+private const val PHONE_JS =
+    "(()=>{if(window.__ytr)return;window.__ytr=1;" +
+        "const abs=h=>new URL(h,location.href).href;" +
+        "document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href]');" +
+        "if(a&&remote.cast(abs(a.getAttribute('href')))){e.preventDefault();e.stopImmediatePropagation()}},true);" +
+        "document.addEventListener('play',e=>e.target.pause&&e.target.pause(),true);" +
+        "let last='';setInterval(()=>{document.querySelectorAll('video').forEach(v=>v.paused||v.pause());" +
+        "if(/^\\/(watch|shorts\\/)/.test(location.pathname)&&location.href!==last){last=location.href;" +
+        "if(remote.cast(last))history.back()}},300)})()"
 
 private const val JS_PLAY = "document.querySelector('video')?.play()"
 private const val JS_PAUSE = "document.querySelector('video')?.pause()"
@@ -981,16 +1002,30 @@ class SearchScreen(ctx: CarContext, private val onQuery: (String) -> Unit) : Scr
 class LoginActivity : Activity() {
     private var client: OfflineRetry? = null
     private var web: WebView? = null
+    // Phone -> car: the same session the steering wheel uses; it opens the video in the car, or keeps it for later.
+    private val car by lazy { MediaController(this, mediaSession(this).sessionToken) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val offline = offlineView(this)
-        val retrying = OfflineRetry(this, offline).also { client = it }
+        val retrying = object : OfflineRetry(this, offline) {
+            override fun onLoaded(view: WebView) = view.evaluateJavascript(PHONE_JS, null)
+        }.also { client = it }
         setContentView(FrameLayout(this).apply {
             addView(WebView(context).also { web = it }.apply {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
                 settings.userAgentString = settings.userAgentString.replace("; wv", "")
+                settings.mediaPlaybackRequiresUserGesture = true // no autoplay on the phone; PHONE_JS pauses the rest
+                addJavascriptInterface(object {
+                    /** Sends [url]'s video to the car; false when it has no video id (the page then follows the link). */
+                    @JavascriptInterface
+                    fun cast(url: String): Boolean {
+                        val id = videoIdFromUrl(url) ?: return false
+                        runOnUiThread { car.transportControls.playFromMediaId(id, null) }
+                        return true
+                    }
+                }, "remote")
                 webViewClient = retrying
                 loadUrl("https://accounts.google.com/ServiceLogin?service=youtube&continue=https://m.youtube.com")
             })

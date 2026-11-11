@@ -148,8 +148,8 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
-- [ ] Walk: toque num vídeo no celular abre no DHU; celular fica no Início sem tocar; com o app do carro fechado, o vídeo abre ao abrir o app no carro
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Walk: toque num vídeo no celular abre no DHU; celular fica no Início sem tocar; com o app do carro fechado, o vídeo abre ao abrir o app no carro
 
 **Tests**: none
 **Gate**: build
@@ -258,6 +258,6 @@ Proof: walk - app recém-aberto (processo novo) no celular sem vídeo no carro: 
 
 ## Handoff
 
-**Settled mid-build:** none
+**Settled mid-build:** none. Achado no walk de T5: vídeo aberto no carro sem toque na tela do carro (celular, card de mídia) começava mudo; o `PAGE_JS` desliga o mudo nos primeiros 5 s de reprodução de cada vídeo (critério 1 pede o vídeo tocando no carro)
 **Dispatched:** none yet
 **Walked:** pending
