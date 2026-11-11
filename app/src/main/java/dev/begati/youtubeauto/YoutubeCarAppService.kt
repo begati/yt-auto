@@ -168,10 +168,11 @@ private const val PHONE_JS =
         "if(!/^\\/(watch|shorts\\/)/.test(location.pathname))last='';" +
         "else if(location.href!==last){last=location.href;if(remote.cast(last))history.back()}},300)})()"
 
-private const val JS_PLAY = "document.querySelector('video')?.play()"
-private const val JS_PAUSE = "document.querySelector('video')?.pause()"
-private const val JS_TOGGLE = "(v=>v&&(v.paused?v.play():v.pause()))(document.querySelector('video'))"
-private const val JS_RESTART = "(v=>v&&(v.currentTime=0))(document.querySelector('video'))"
+// Controls act on the main player (watch page or miniplayer), the same video whose state yta.playing reports.
+private const val JS_PLAY = "document.querySelector('#movie_player video')?.play()"
+private const val JS_PAUSE = "document.querySelector('#movie_player video')?.pause()"
+private const val JS_TOGGLE = "(v=>v&&(v.paused?v.play():v.pause()))(document.querySelector('#movie_player video'))"
+private const val JS_RESTART = "(v=>v&&(v.currentTime=0))(document.querySelector('#movie_player video'))"
 // Player's own "next": the playlist's next item, or the autoplay pick outside a playlist.
 private const val JS_NEXT = "document.getElementById('movie_player')?.nextVideo?.()"
 
@@ -573,7 +574,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             override fun onPause() { js(JS_PAUSE) }
             override fun onSkipToNext() { js(JS_NEXT) }
             override fun onSkipToPrevious() { js(JS_RESTART) }
-            override fun onSeekTo(pos: Long) { js("(v=>v&&(v.currentTime=${pos / 1000.0}))(document.querySelector('video'))") }
+            override fun onSeekTo(pos: Long) { js("(v=>v&&(v.currentTime=${pos / 1000.0}))(document.querySelector('#movie_player video'))") }
             override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
                 pageUrl = watchUrl(mediaId) // no player yet: it loads pageUrl when the car shows the screen
                 val wv = webView
