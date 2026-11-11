@@ -1,9 +1,9 @@
 # video-fill proofs
 
-**HEAD**: c5ed75a
+**HEAD**: 3c178b5
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 18 pass, 0 fail
+**Result**: 19 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -24,6 +24,7 @@
 | C15 | `run unit / FILL-05 a media card beside the app limits the page PASSED` | pass |
 | C16 | `run unit / FILL-06 no visible area yet fills the surface PASSED` | pass |
 | C17 | `walk - vídeo aberto, botão de layout do DHU: vídeo em Ajustar ocupa só a área à esquerda do card, sem corte` | pass (Walked) |
+| C18 | `run unit / FILL-07 an empty inverted or stale area fills the surface PASSED` | pass |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output
