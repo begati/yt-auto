@@ -102,6 +102,21 @@ class SettingsTest {
     }
 
     @Test
+    fun `SET-09 speed defaults to normal, options in order, invalid reads as default`() {
+        assertEquals("1", choice(MemoryPrefs(), SPEED))
+        assertEquals("1", choice(MemoryPrefs().apply { map["speed"] = "16" }, SPEED))
+        assertEquals(listOf("0,75x", "Normal", "1,25x", "1,5x", "1,75x", "2x"), SPEED.options.values.toList())
+    }
+
+    @Test
+    fun `SET-10 captions default off and can be turned on`() {
+        val prefs = MemoryPrefs()
+        assertFalse(flag(prefs, "captions"))
+        setFlag(prefs, "captions", true)
+        assertTrue(flag(prefs, "captions"))
+    }
+
+    @Test
     fun `HOME-01 subscriptions home page labels the button`() {
         val prefs = MemoryPrefs().apply { map["home"] = "https://m.youtube.com/feed/subscriptions" }
         assertEquals("Inscrições", homeLabel(prefs))

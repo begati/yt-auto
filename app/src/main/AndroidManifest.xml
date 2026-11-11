@@ -7,7 +7,8 @@
 
     <application
         android:icon="@android:drawable/ic_media_play"
-        android:label="YouTube Auto">
+        android:label="YouTube Auto"
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
@@ -24,6 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".SettingsActivity" />
 
         <!-- Thumbnails for the car's media list (Android Auto only loads content:// artwork). -->
         <provider

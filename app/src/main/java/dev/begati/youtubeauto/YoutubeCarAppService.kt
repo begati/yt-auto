@@ -1,7 +1,6 @@
 package dev.begati.youtubeauto
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.Presentation
 import android.content.ContentProvider
 import android.content.ContentValues
@@ -65,6 +64,13 @@ private const val JS_APPLY_QUALITY =
     "(p=>{if(p&&p.setPlaybackQualityRange){window.__ytaQAt=Date.now();const q=yta.quality();p.setPlaybackQualityRange(q,q)}})" +
         "(document.getElementById('movie_player'))"
 
+// Sets the saved speed and turns captions on/off on the current video. load/unloadModule is used because
+// toggleSubtitlesOn proved unreliable on m.youtube.com (stale isSubtitlesOn, toggles ignored).
+// ponytail: internal player API of m.youtube.com, re-check via chrome://inspect if speed or captions stop applying
+private const val JS_APPLY_PLAYBACK =
+    "(p=>{if(!p||!p.setPlaybackRate)return;window.__ytaRAt=Date.now();p.setPlaybackRate(+yta.speed());" +
+        "p[yta.flag('captions')?'loadModule':'unloadModule']('captions')})(document.getElementById('movie_player'))"
+
 // Injected on every full page load (m.youtube.com is a SPA, so the guard keeps it to once per window):
 // - fakes a visible page so YouTube keeps playing while the car shows another app (Maps etc.), if "background" is on
 // - reports play/pause and the video's title/channel/thumbnail to the app through the `yta` bridge
@@ -75,6 +81,9 @@ private const val JS_APPLY_QUALITY =
 // Flags are read through the bridge on every use, so settings changes apply without a reload.
 // - starts each video at the saved default quality (360p unless changed); applied once per video id, and ads
 //   have their own id so they don't eat it. A quality picked later in the player menu becomes the new default.
+// - same per-video moment: applies the saved speed (a speed picked in the player becomes the default too)
+//   and captions on/off
+// - reports the watch position every 500 ms so a rebuilt car screen resumes where it was
 // ponytail: tied to m.youtube.com markup; re-inspect via chrome://inspect when YouTube changes it
 private const val PAGE_JS =
     "(()=>{if(window.__yta)return;window.__yta=1;" +
@@ -91,28 +100,37 @@ private const val PAGE_JS =
         "document.addEventListener('pause',()=>yta.playing(false),true);" +
         "let qId='';document.addEventListener('play',()=>{const p=document.getElementById('movie_player');" +
         "const id=p&&p.getVideoData&&p.getVideoData().video_id;" +
-        "if(!id||id===qId||!p.setPlaybackQualityRange)return;qId=id;" + JS_APPLY_QUALITY + ";" +
+        "if(!id||id===qId||!p.setPlaybackQualityRange)return;qId=id;" + JS_APPLY_QUALITY + ";" + JS_APPLY_PLAYBACK + ";" +
         // Changes in the first 5 s are our own call or a video lacking that quality, not the user's pick.
         "if(!p.__yta){p.__yta=1;p.addEventListener('onPlaybackQualityChange'," +
-        "v=>{if(Date.now()-window.__ytaQAt>5000&&yta.quality()!=='auto')yta.saveQuality(v)})}},true);" +
+        "v=>{if(Date.now()-window.__ytaQAt>5000&&yta.quality()!=='auto')yta.saveQuality(v)});" +
+        // Same for speed; the id check also skips YouTube resetting the rate as the next video loads.
+        "p.addEventListener('onPlaybackRateChange',r=>{if(Date.now()-window.__ytaRAt>2000&&" +
+        "p.getVideoData().video_id===qId)yta.saveSpeed(String(r))})}},true);" +
         "const s=document.createElement('style');" +
         "s.textContent='ytm-playlist-engagement-panel{display:none!important}" +
         "html.yta-watch #player-container-id{position:fixed!important;inset:0!important;" +
         "width:100vw!important;height:100vh!important;z-index:99999!important;background:#000!important}" +
+        // Wrappers between the container and the video (#player keeps an aspect-ratio padding, the video
+        // container has height 0): without this the video gets 100% of 0 px and the screen stays black.
+        "html.yta-watch #player-container-id #player,html.yta-watch #player-container-id .html5-video-container" +
+        "{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;padding:0!important}" +
         "html.yta-watch #player-container-id .html5-video-player,html.yta-watch #player-container-id video" +
         "{width:100%!important;height:100%!important;left:0!important;top:0!important;object-fit:contain!important}';" +
         "document.head.appendChild(s);" +
         "setInterval(()=>{document.documentElement.classList.toggle('yta-watch'," +
         "yta.flag('fullscreen')&&location.pathname==='/watch');" +
-        "if(yta.flag('skipAds'))document.querySelector('.ytp-skip-ad-button,.ytp-ad-skip-button,.ytp-ad-skip-button-modern')?.click()},500)})()"
+        "if(yta.flag('skipAds'))document.querySelector('.ytp-skip-ad-button,.ytp-ad-skip-button,.ytp-ad-skip-button-modern')?.click();" +
+        // Only the URL's own video counts: during an ad the player reports the ad's id and time.
+        "const p=document.getElementById('movie_player'),id=new URLSearchParams(location.search).get('v');" +
+        "if(id&&p&&p.getVideoData&&p.getVideoData().video_id===id)yta.time(id,Math.floor(p.getCurrentTime()))},500)})()"
 
 private const val JS_PLAY = "document.querySelector('video')?.play()"
 private const val JS_PAUSE = "document.querySelector('video')?.pause()"
 private const val JS_TOGGLE = "(v=>v&&(v.paused?v.play():v.pause()))(document.querySelector('video'))"
 private const val JS_RESTART = "(v=>v&&(v.currentTime=0))(document.querySelector('video'))"
-// ponytail: guessed selectors for the mobile player's "next" button; fix via chrome://inspect if the wheel's next key does nothing
-private const val JS_NEXT =
-    "document.querySelector('.ytp-next-button,button[aria-label^=\"Próximo\"],button[aria-label^=\"Next\"]')?.click()"
+// Player's own "next": the playlist's next item, or the autoplay pick outside a playlist.
+private const val JS_NEXT = "document.getElementById('movie_player')?.nextVideo?.()"
 
 // Player quality names (YouTube's) -> labels. "medium" (360p) is the bandwidth-saving default.
 internal val QUALITIES = linkedMapOf(
@@ -123,9 +141,14 @@ internal val QUALITIES = linkedMapOf(
 
 // Settings, shared by the car's SettingsScreen and the phone's menu. Stored values are the option keys.
 internal class Choice(val key: String, val title: String, val options: Map<String, String>, val default: String)
-internal class Flag(val key: String, val title: String)
+internal class Flag(val key: String, val title: String, val default: Boolean = true)
 
 internal val QUALITY = Choice("quality", "Qualidade do vídeo", QUALITIES, "medium")
+internal val SPEED = Choice(
+    "speed", "Velocidade",
+    linkedMapOf("0.75" to "0,75x", "1" to "Normal", "1.25" to "1,25x", "1.5" to "1,5x", "1.75" to "1,75x", "2" to "2x"),
+    "1",
+)
 internal val HOME_PAGE = Choice(
     "home", "Página inicial",
     linkedMapOf(
@@ -136,12 +159,13 @@ internal val HOME_PAGE = Choice(
     "https://m.youtube.com",
 )
 internal val TEXT_ZOOM = Choice("textZoom", "Tamanho do texto", linkedMapOf("100" to "100%", "115" to "115%", "130" to "130%", "150" to "150%"), "130")
-internal val CHOICES = listOf(QUALITY, HOME_PAGE, TEXT_ZOOM)
-// All flags default to on (the behavior before they were settings).
+internal val CHOICES = listOf(QUALITY, SPEED, HOME_PAGE, TEXT_ZOOM)
+// Flags default to on (the behavior before they were settings), except captions.
 internal val FLAGS = listOf(
     Flag("skipAds", "Pular anúncios"),
     Flag("fullscreen", "Tela cheia ao abrir vídeo"),
     Flag("background", "Tocar com outro app na tela"),
+    Flag("captions", "Legendas", default = false),
 )
 
 private fun prefs(ctx: Context) = ctx.getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -149,7 +173,8 @@ internal fun choice(prefs: SharedPreferences, c: Choice) = prefs.getString(c.key
 internal fun setChoice(prefs: SharedPreferences, c: Choice, v: String) {
     if (v in c.options) prefs.edit().putString(c.key, v).apply()
 }
-internal fun flag(prefs: SharedPreferences, key: String) = prefs.getBoolean(key, true)
+internal fun flag(prefs: SharedPreferences, key: String) =
+    prefs.getBoolean(key, FLAGS.find { it.key == key }?.default ?: true)
 internal fun setFlag(prefs: SharedPreferences, key: String, on: Boolean) = prefs.edit().putBoolean(key, on).apply()
 
 // Home button label: the chosen home page's name (Início / Inscrições / Histórico).
@@ -179,6 +204,17 @@ private var pageUrl = ""
 
 // Video picked from the car's media list while the navigation screen was closed; it opens it on start.
 private var pendingUrl: String? = null
+
+// Last watch position reported by the page (videoId to seconds); process-wide like pageUrl.
+private var resumeAt: Pair<String, Int>? = null
+
+/** [url] with `t=` set to the saved position when it is a watch page of that same video, else [url]. */
+internal fun withResume(url: String, at: Pair<String, Int>?): String {
+    if (at == null || at.second < 5) return url
+    val id = Regex("[?&]v=([^&#]+)").find(url)?.groupValues?.get(1)
+    if (id != at.first || !url.contains("/watch?")) return url
+    return url.replace(Regex("&t=[^&#]*"), "") + "&t=${at.second}s"
+}
 
 private fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + Uri.encode(videoId)
 
@@ -323,6 +359,13 @@ class ThumbProvider : ContentProvider() {
     override fun update(uri: Uri, v: ContentValues?, s: String?, a: Array<String>?) = 0
 }
 
+/** Title and subtitle of the placeholder row shown when a feed has no videos. */
+internal fun feedNotice(signedIn: Boolean, failed: Boolean) = when {
+    !signedIn -> "Você não está logado" to "Faça login no app do celular"
+    failed -> "Não foi possível carregar" to "Verifique a conexão do celular"
+    else -> "Nada por aqui" to "Essa lista está vazia no YouTube"
+}
+
 /**
  * Makes the app a media source for Android Auto: the now-playing card shows the session's
  * title/thumbnail, and the browse list offers history and subscriptions. Playback itself lives in
@@ -349,11 +392,14 @@ class MediaService : MediaBrowserService() {
         val url = FEEDS[parentId]?.second ?: return result.sendResult(mutableListOf())
         result.detach()
         thread {
-            val items = runCatching { fetchFeed(url) }.getOrDefault(emptyList()).ifEmpty {
+            // SAPISID is the cookie Google sets on sign-in.
+            val signedIn = "SAPISID=" in CookieManager.getInstance().getCookie(url).orEmpty()
+            val fetched = runCatching { fetchFeed(url) }
+            val items = fetched.getOrDefault(emptyList()).ifEmpty {
+                val (title, subtitle) = feedNotice(signedIn, fetched.isFailure)
                 listOf(
                     MediaBrowser.MediaItem(
-                        MediaDescription.Builder().setMediaId("empty")
-                            .setTitle("Nada encontrado").setSubtitle("Faça login no app do celular").build(),
+                        MediaDescription.Builder().setMediaId("empty").setTitle(title).setSubtitle(subtitle).build(),
                         0
                     )
                 )
@@ -374,6 +420,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var presentation: Presentation? = null
     private var webView: WebView? = null
     private var root: FrameLayout? = null
+    // Part of the surface not covered by the host's UI (e.g. the media card beside the map on wide screens).
+    private var area: android.graphics.Rect? = null
     // Set while a video is fullscreen; calling it exits fullscreen.
     private var exitFullscreen: WebChromeClient.CustomViewCallback? = null
     private var playing = false
@@ -472,9 +520,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_settings)).build())
                         .setOnClickListener {
                             screenManager.push(SettingsScreen(carContext) {
-                                // Flags are read live by the page; these two need a push.
+                                // Flags are read live by the page; zoom, quality, speed and captions need a push.
                                 webView?.settings?.textZoom = choice(carContext, TEXT_ZOOM).toInt()
                                 js(JS_APPLY_QUALITY)
+                                js(JS_APPLY_PLAYBACK)
                                 invalidate() // home button label
                             })
                         }
@@ -514,7 +563,16 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     fun quality() = choice(carContext, QUALITY)
 
                     @JavascriptInterface
+                    fun speed() = choice(carContext, SPEED)
+
+                    @JavascriptInterface
                     fun saveQuality(q: String) = setChoice(carContext, QUALITY, q)
+
+                    @JavascriptInterface
+                    fun saveSpeed(r: String) = setChoice(carContext, SPEED, r)
+
+                    @JavascriptInterface
+                    fun time(id: String, t: Int) = carContext.mainExecutor.execute { resumeAt = id to t }
 
                     @JavascriptInterface
                     fun flag(key: String) = flag(carContext, key)
@@ -547,11 +605,12 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         exitFullscreen = null
                     }
                 }
-                loadUrl(pageUrl)
+                loadUrl(withResume(pageUrl, resumeAt))
             }
             webView = wv
             root = frame
             frame.addView(wv)
+            fitToArea()
             setContentView(frame)
             show()
         }
@@ -573,6 +632,23 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         presentation = null
         display = null
         displaySize = null
+    }
+
+    // Visible, not stable, area: stable also gives up the auto-hiding action strips' space, shrinking the video
+    // for buttons that are hidden most of the time. Both exclude a media card beside the map.
+    override fun onVisibleAreaChanged(visibleArea: android.graphics.Rect) {
+        area = visibleArea
+        fitToArea()
+    }
+
+    // Lays the WebView out inside [area] only, so the page (and the fullscreen video with object-fit:contain)
+    // fits the free space instead of running under the host's cards.
+    private fun fitToArea() {
+        val a = area?.takeUnless { it.isEmpty } ?: return
+        webView?.layoutParams = FrameLayout.LayoutParams(a.width(), a.height()).apply {
+            leftMargin = a.left
+            topMargin = a.top
+        }
     }
 
     override fun onScroll(distanceX: Float, distanceY: Float) {
@@ -683,39 +759,77 @@ class LoginActivity : Activity() {
 
     // Settings live here, on the phone, so they're not fiddled with while driving.
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menu.add("Configurações").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        // The gear is white; tint it to the action bar's icon color so it shows in light mode too.
+        val tint = obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal)).run {
+            getColorStateList(0).also { recycle() }
+        }
+        menu.add("Configurações")
+            .setIcon(getDrawable(R.drawable.ic_settings)!!.mutate().apply { setTintList(tint) })
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        showSettings()
+        startActivity(Intent(this, SettingsActivity::class.java))
+        return true
+    }
+}
+
+/**
+ * Phone settings screen, same values as the car's SettingsScreen. Framework preferences (deprecated
+ * but built in) keep it native-looking without pulling in AppCompat/androidx.preference.
+ */
+@Suppress("DEPRECATION")
+class SettingsActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        title = "Configurações"
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+        if (savedInstanceState == null) {
+            fragmentManager.beginTransaction().replace(android.R.id.content, Prefs()).commit()
+        }
+    }
+
+    override fun onNavigateUp(): Boolean {
+        finish()
         return true
     }
 
-    // Main list: choices open a single-choice dialog, flags flip in place; both reopen the list.
-    private fun showSettings() {
-        val rows = CHOICES.map { "${it.title}: ${it.options.getValue(choice(this, it))}" } +
-            FLAGS.map { "${it.title}: ${if (flag(this, it.key)) "Ligado" else "Desligado"}" }
-        AlertDialog.Builder(this)
-            .setTitle("Configurações")
-            .setItems(rows.toTypedArray()) { _, i ->
-                val c = CHOICES.getOrNull(i)
-                if (c == null) {
-                    val f = FLAGS[i - CHOICES.size]
-                    setFlag(this, f.key, !flag(this, f.key))
-                    showSettings()
-                    return@setItems
-                }
-                val keys = c.options.keys.toList()
-                AlertDialog.Builder(this)
-                    .setTitle(c.title)
-                    .setSingleChoiceItems(c.options.values.toTypedArray(), keys.indexOf(choice(this, c))) { dialog, j ->
-                        setChoice(this, c, keys[j])
-                        dialog.dismiss()
-                        showSettings()
-                    }
-                    .show()
+    class Prefs : android.preference.PreferenceFragment() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            preferenceManager.sharedPreferencesName = "settings" // same file prefs() uses
+            val ctx = activity
+            val screen = preferenceManager.createPreferenceScreen(ctx)
+            preferenceScreen = screen
+            fun category(title: String) = android.preference.PreferenceCategory(ctx).also {
+                it.title = title
+                screen.addPreference(it)
             }
-            .show()
+            fun list(c: Choice) = android.preference.ListPreference(ctx).apply {
+                key = c.key
+                title = c.title
+                dialogTitle = c.title
+                entries = c.options.values.toTypedArray()
+                entryValues = c.options.keys.toTypedArray()
+                setDefaultValue(c.default)
+                value = choice(ctx, c) // also drops stale values to the default
+                summary = "%s" // shows the chosen option
+            }
+            fun switch(f: Flag) = android.preference.SwitchPreference(ctx).apply {
+                key = f.key
+                title = f.title
+                setDefaultValue(f.default)
+            }
+            category("Vídeo").apply {
+                addPreference(list(QUALITY))
+                addPreference(list(SPEED))
+                FLAGS.forEach { addPreference(switch(it)) }
+            }
+            category("Navegação").apply {
+                addPreference(list(HOME_PAGE))
+                addPreference(list(TEXT_ZOOM))
+            }
+        }
     }
 }
