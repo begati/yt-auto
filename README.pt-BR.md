@@ -65,14 +65,7 @@ ou gerenciador de arquivos).
 
 <br clear="right">
 
-### 4. Permita fontes desconhecidas no Android Auto
-
-1. Abra as configurações do Android Auto no celular (Configurações › Dispositivos conectados › Android Auto, ou o app
-   Android Auto).
-2. Role até o fim e toque em **Versão** umas 10 vezes, até ativar o modo desenvolvedor.
-3. Abra o menu ⋮ › **Configurações do desenvolvedor** e ative **Fontes desconhecidas**.
-
-### 5. Use
+### 4. Use
 
 1. Abra o **YT Auto** no celular e faça login na sua conta do YouTube.
 2. Conecte o celular ao carro e abra o **YT Auto** pelo menu do Android Auto.

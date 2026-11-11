@@ -66,13 +66,7 @@ The screenshot shows KingInstaller in Portuguese: "Selecione o APK para instalar
 
 <br clear="right">
 
-### 4. Allow unknown sources in Android Auto
-
-1. Open the Android Auto settings on the phone (Settings › Connected devices › Android Auto, or the Android Auto app).
-2. Scroll to the bottom and tap **Version** about 10 times until developer mode turns on.
-3. Open the ⋮ menu › **Developer settings** and enable **Unknown sources**.
-
-### 5. Use it
+### 4. Use it
 
 1. Open **YT Auto** on the phone and sign in to your YouTube account.
 2. Connect the phone to the car and open **YT Auto** from the Android Auto launcher.
