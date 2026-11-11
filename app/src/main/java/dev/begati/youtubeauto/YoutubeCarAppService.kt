@@ -89,6 +89,7 @@ private const val JS_APPLY_PLAYBACK =
 // - same per-video moment: applies the saved speed (a speed picked in the player becomes the default too)
 //   and captions on/off
 // - reports the watch position every 500 ms so a rebuilt car screen resumes where it was
+// - opens /shorts/<id> as /watch?v=<id> (the shorts page blocks playback behind an "open the app" dialog)
 // - unmutes a video that autoplayed muted (opened from the phone or the media card), during its first 5 s
 // ponytail: tied to m.youtube.com markup; re-inspect via chrome://inspect when YouTube changes it
 private const val PAGE_JS =
@@ -128,6 +129,9 @@ private const val PAGE_JS =
         "{width:100%!important;height:100%!important;left:0!important;top:0!important;object-fit:var(--yta-fit,contain)!important}';" +
         "document.head.appendChild(s);" +
         "let umId='',umN=0,pl=false;setInterval(()=>{" +
+        // Shorts pages on m.youtube.com block playback behind an "Assistir no app YouTube" dialog; the watch page of
+        // the same id plays normally, so open that instead (as videos sent from the phone do).
+        "const sh=location.pathname.match(/^\\/shorts\\/([\\w-]{11})/);if(sh){location.replace('/watch?v='+sh[1]);return}" +
         // Play/pause and metadata also by polling: a video that starts before this script is injected (loadUrl from
         // the phone or the media card) fires its play event too early to be heard.
         "const v=document.querySelector('video'),on=!!v&&!v.paused&&!v.ended;if(on!==pl){pl=on;yta.playing(on)}" +
