@@ -1,6 +1,6 @@
 # video-fill proofs
 
-**HEAD**: 0b82b9d
+**HEAD**: 01c325a
 **Tree**: clean
 **Shell**: /bin/sh
 **Result**: 21 pass, 0 fail
@@ -25,7 +25,7 @@
 | C16 | `run unit / FILL-06 no visible area yet fills the surface PASSED` | pass |
 | C17 | `walk - vídeo aberto, botão de layout do DHU: vídeo em Ajustar ocupa só a área à esquerda do card, sem corte` | pass (Walked) |
 | C18 | `run unit / FILL-07 an empty inverted or stale area fills the surface PASSED` | pass |
-| C19 | `walk - modo dividido, grade de apps, abrir o app: innerWidth 800 dois segundos depois (antes: 464 por ~10 s)` | pass (Walked) |
+| C19 | `walk - vídeo tocando: botão de layout para dividido (464), ícone do app para tela cheia: innerWidth 800 em 1,5` | pass (Walked) |
 | C20 | `walk - com Preencher pelo botão: modo dividido objectFit cover em 464 px, de volta à tela cheia cover em 800 p` | pass (Walked) |
 | Build | `./gradlew assembleDebug` | pass |
 
