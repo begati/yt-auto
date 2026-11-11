@@ -443,6 +443,9 @@ internal fun videoIdFromUrl(url: String): String? {
     return m.groupValues[1].takeIf(::isVideoId)
 }
 
+// Car's Tocar/Pausar: only with a video to control - a video page (playing or paused) or one playing elsewhere (miniplayer).
+internal fun playToggleShown(url: String, playing: Boolean) = playing || videoIdFromUrl(url) != null
+
 // Playback time on the phone bar: m:ss, or h:mm:ss from one hour on.
 internal fun clock(seconds: Long): String {
     val s = seconds.coerceAtLeast(0)
