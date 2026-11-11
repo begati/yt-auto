@@ -10,8 +10,15 @@ android {
         applicationId = "dev.begati.youtubeauto"
         minSdk = 29
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.3"
+        versionCode = 4
+        versionName = "0.4"
+    }
+    buildTypes {
+        release {
+            // ponytail: signed with the debug key so it installs over the debug build (same signature, keeps
+            // login and settings); a dedicated keystore is needed before publishing anywhere.
+            signingConfig = signingConfigs.getByName("debug")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -19,6 +26,9 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
 }
+
+// APK named youtube-auto-<version>-<buildType>.apk
+base.archivesName = "youtube-auto-" + android.defaultConfig.versionName
 
 // One line per passed test: the spec checks are proven by these lines.
 tasks.withType<Test>().configureEach {
