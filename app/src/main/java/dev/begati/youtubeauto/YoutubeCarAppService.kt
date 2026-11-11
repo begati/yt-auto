@@ -379,6 +379,17 @@ private val VIDEO_ID = Regex("[A-Za-z0-9_-]{11}")
 /** YouTube video id: exactly 11 of A-Z a-z 0-9 _ -. Guards the exported ThumbProvider against path tricks. */
 internal fun isVideoId(s: String) = VIDEO_ID.matches(s)
 
+// Video id of a watch, shorts or youtu.be link (absolute or path-only), else null.
+internal fun videoIdFromUrl(url: String): String? {
+    val m = Regex("""^(?:https?://[^/]+)?/(?:watch\?(?:[^#]*&)?v=|shorts/)([^&#?/]+)""").find(url)
+        ?: Regex("""^https?://youtu\.be/([^?#/]+)""").find(url)
+        ?: return null
+    return m.groupValues[1].takeIf(::isVideoId)
+}
+
+// Where a video link from the phone opens in the car: shorts become a plain watch page.
+internal fun castUrl(url: String) = videoIdFromUrl(url)?.let { "https://m.youtube.com/watch?v=$it" }
+
 /**
  * Serves content://…thumbs/<videoId> as the video's i.ytimg.com thumbnail: Android Auto only loads
  * browse-list artwork from content:// URIs. Exported because the car host reads it; it only ever
