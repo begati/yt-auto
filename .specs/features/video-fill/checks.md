@@ -12,16 +12,16 @@
 ## Checks
 
 **C1** - Em `/watch` a WebView ocupa a superfície inteira (FILL-01, AC 1)
-Proof: walk - vídeo aberto sem margem preta; barras do host por cima do vídeo
+Proof: run unit | FILL-01 margins and hidden strips are covered PASSED
 
 **C2** - Fora de `/watch` a WebView também ocupa a superfície inteira (FILL-02, AC 2)
 Proof: walk - lista do Início sem margem preta; barras do host por cima da lista
 
 **C3** - Com "Tela cheia ao abrir vídeo" desligada a WebView continua na superfície inteira (FILL-03, AC 3)
-Proof: walk - a disposição da WebView não lê a opção: `frame.addView(wv)` com o tamanho do `FrameLayout`, sem `onVisibleAreaChanged`
+Proof: walk - opção desligada no celular com vídeo aberto: página normal do YouTube, sem margem
 
 **C4** - Navegar entre `/watch` e outra página não muda o tamanho da WebView (FILL-04, AC 4)
-Proof: walk - abrir vídeo, voltar para Início, abrir outro vídeo: superfície inteira nos três
+Proof: run unit | FILL-04 shown action strips do not shrink the page PASSED
 
 **C5** - Cada toque avança Ajustar → Preencher → Esticar → Ajustar (ASPECT-01, AC 5)
 Proof: run unit | ASPECT-01 tapping cycles contain cover fill contain PASSED
@@ -53,7 +53,16 @@ Proof: run unit | ASPECT-08 invalid stored aspect reads as contain PASSED
 **C13** - Mudar o padrão nas Configurações descarta a escolha do botão (ASPECT-09, AC 13)
 Proof: run unit | ASPECT-09 changing the default drops the tapped mode PASSED
 
+**C15** - Com o card de mídia ao lado, a WebView para na borda do card (FILL-05, AC 14)
+Proof: run unit | FILL-05 a media card beside the app limits the page PASSED
+
+**C16** - Sem área visível informada, a WebView ocupa a superfície inteira (FILL-06, AC 15)
+Proof: run unit | FILL-06 no visible area yet fills the surface PASSED
+
+**C17** - No modo dividido do DHU o vídeo fica inteiro à esquerda do card (FILL-05, AC 14)
+Proof: walk - vídeo aberto, botão de layout do DHU: vídeo em Ajustar ocupa só a área à esquerda do card, sem corte
+
 ## Handoff
 
 **Dispatched:** Verifier round 1 at `3489ccb` (no screens sub-agent: no criterion cites a capture) - returned
-**Walked:** 2026-11-11 (round 2, `HEAD` após as correções): Início sem margem, lista sob as barras do host, superfície inteira (C2); vídeo aberto também (C1, C4). Celular (LoginActivity > engrenagem): "Configurações > Vídeo" lista "Proporção do vídeo: Ajustar"; o diálogo mostra Ajustar, Preencher, Esticar; escolher Esticar grava `aspect=fill` e `yta.aspect()` no carro lê `fill` (C14). "Tela cheia ao abrir vídeo" desligada no celular com vídeo aberto: página normal do YouTube (cabeçalho "Premium" no topo da tela), ainda na superfície inteira, sem margem (C3); religada em seguida. Ida e volta do padrão (C13): botão do carro leva a `cover`, padrão no celular Esticar lê `fill`, de volta a Ajustar lê `contain` (antes da correção lia `cover`). Round 1:, DHU (800x480) + telefone motorola_signature via USB, app já logado. P1 sem margem: Início mostra a lista dentro da área visível (barras do host em volta); tocar no 1º vídeo abre `/watch` ocupando a superfície inteira, botões "Voltar/Início/Pausar/Pesquisar" e os botões do mapa por cima, sem encolher o vídeo; "Início" (dois toques: o 1º só revela a barra) volta à lista na área visível; abrir outro vídeo ocupa a superfície de novo (C4). P1 botão: ícone de proporção acima da engrenagem; três toques mostram os toasts "Preencher", "Esticar", "Ajustar", e `getComputedStyle(video).objectFit` via DevTools da WebView lê `cover`, `fill`, `contain` a cada toque (C6, C7); com Preencher o vídeo 16:9 é recortado, com Esticar distorcido, com Ajustar tem barras laterais.
+**Walked:** 2026-11-11 (round 3, após relato do usuário): áreas visíveis medidas no DHU (superfície 800x400): barras escondidas `(12,12)-(788,388)`, barras visíveis `(12,88)-(712,388)`, modo dividido `(22,34)-(464,376)`. Início e vídeo cobrem a superfície inteira; com o vídeo aberto, o botão de layout do DHU (canto inferior esquerdo) põe o card de mídia à direita e o vídeo se encaixa em 0..464 px, inteiro em Ajustar (C17). Round 2 (, `HEAD` após as correções): Início sem margem, lista sob as barras do host, superfície inteira (C2); vídeo aberto também (C1, C4). Celular (LoginActivity > engrenagem): "Configurações > Vídeo" lista "Proporção do vídeo: Ajustar"; o diálogo mostra Ajustar, Preencher, Esticar; escolher Esticar grava `aspect=fill` e `yta.aspect()` no carro lê `fill` (C14). "Tela cheia ao abrir vídeo" desligada no celular com vídeo aberto: página normal do YouTube (cabeçalho "Premium" no topo da tela), ainda na superfície inteira, sem margem (C3); religada em seguida. Ida e volta do padrão (C13): botão do carro leva a `cover`, padrão no celular Esticar lê `fill`, de volta a Ajustar lê `contain` (antes da correção lia `cover`). Round 1:, DHU (800x480) + telefone motorola_signature via USB, app já logado. P1 sem margem: Início mostra a lista dentro da área visível (barras do host em volta); tocar no 1º vídeo abre `/watch` ocupando a superfície inteira, botões "Voltar/Início/Pausar/Pesquisar" e os botões do mapa por cima, sem encolher o vídeo; "Início" (dois toques: o 1º só revela a barra) volta à lista na área visível; abrir outro vídeo ocupa a superfície de novo (C4). P1 botão: ícone de proporção acima da engrenagem; três toques mostram os toasts "Preencher", "Esticar", "Ajustar", e `getComputedStyle(video).objectFit` via DevTools da WebView lê `cover`, `fill`, `contain` a cada toque (C6, C7); com Preencher o vídeo 16:9 é recortado, com Esticar distorcido, com Ajustar tem barras laterais.

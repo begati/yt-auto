@@ -28,6 +28,7 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --------------------- | -------------- | --------- | ---------- |
 | O que é a "borda" | A margem entre a superfície do carro e a área visível do host | Resposta do usuário: "Margem da área visível" | y - user: "Margem da área visível (Recomendado)" |
+| Card de mídia ao lado do app (modo dividido do Android Auto) | WebView para na borda do card; corte de 1/3 da superfície separa card (recuo 336 de 800 no DHU) de margem/barras (recuo até 88) | Usuário relatou o vídeo cortado sob o card: "o vídeo não se encaixa na nova área disponível pra ele" | y - user: "o vídeo não se encaixa na nova área disponível pra ele, continua sendo renderizado em tela cheia, ficando cortado" |
 | Onde a WebView ocupa a superfície inteira | Em todas as páginas; a opção "Tela cheia ao abrir vídeo" só controla se o player ocupa a página. Mudado no meio da execução: a resposta anterior era "Só na página do vídeo (Recomendado)" | Usuário, depois de ver o walk: a tela de navegação também deve ficar em tela cheia | y - user: "o vídeo ficou em tela cheia, mas a tela de navegação dos vídeos, ainda não" |
 | Modos do botão | Ciclo Ajustar (`contain`) → Preencher (`cover`) → Esticar (`fill`) → Ajustar | Resposta do usuário | y - user: "Ajustar / Preencher / Esticar" |
 | O botão muda o padrão salvo? | Não: vale até o processo do app terminar; o padrão só muda nas Configurações | Resposta do usuário | y - user: "Não, só até fechar o app (Recomendado)" |
@@ -55,6 +56,8 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 2. WHILE a página não é `/watch` (início, inscrições, pesquisa, canais) the app SHALL dispor a WebView sobre a superfície inteira do carro, ignorando a área visível do host
 3. WHILE a opção "Tela cheia ao abrir vídeo" está desligada the app SHALL manter a WebView sobre a superfície inteira do carro
 4. WHEN a navegação troca entre `/watch` e outra página THEN the app SHALL manter a WebView sobre a superfície inteira, sem mudar de tamanho
+14. WHILE o host mostra um card ao lado do app (a área visível recua mais de 1/3 da superfície num lado) the app SHALL limitar a WebView à borda do card nesse lado; recuos de até 1/3 (margem do host, barras de botões) SHALL ser cobertos
+15. WHILE o host ainda não informou a área visível the app SHALL dispor a WebView sobre a superfície inteira
 
 **Independent Test**: no DHU, a lista do Início e um vídeo aberto sem margem preta; tocar na tela para mostrar os botões: o vídeo não muda de tamanho.
 
@@ -110,6 +113,8 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 | FILL-02 | P1: Vídeo sem margem (AC 2) | Execute | Verified |
 | FILL-03 | P1: Vídeo sem margem (AC 3) | Execute | Verified |
 | FILL-04 | P1: Vídeo sem margem (AC 4) | Execute | Verified |
+| FILL-05 | P1: Vídeo sem margem (AC 14) | Execute | Verified |
+| FILL-06 | P1: Vídeo sem margem (AC 15) | Execute | Verified |
 | ASPECT-01 | P1: Botão de proporção (AC 5) | Execute | Verified |
 | ASPECT-02 | P1: Botão de proporção (AC 6) | Execute | Verified |
 | ASPECT-03 | P1: Botão de proporção (AC 7) | Execute | Verified |
@@ -120,7 +125,7 @@ vídeo sempre usa `object-fit:contain`, sem opção de ocupar a tela inteira.
 | ASPECT-08 | P1: Proporção padrão (AC 12) | Execute | Verified |
 | ASPECT-09 | P1: Proporção padrão (AC 13) | Execute | Verified |
 
-**Coverage:** 13 total, 13 mapped to tasks, 0 unmapped
+**Coverage:** 15 total, 15 mapped to tasks, 0 unmapped
 
 ---
 

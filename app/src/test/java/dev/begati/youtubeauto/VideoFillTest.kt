@@ -4,7 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** ASPECT-01..09 (spec video-fill). FILL-01..03 are layout, proven by the walk. */
+/** FILL-01, 04..06 and ASPECT-01..09 (spec video-fill). */
 class VideoFillTest {
     @Test
     fun `ASPECT-05 without a tap the saved default applies`() {
@@ -63,5 +63,29 @@ class VideoFillTest {
         repeat(2) { tap = tapAspect(prefs, tap) }
         assertEquals("contain", aspect(prefs, tap))
         assertEquals(mapOf<String, Any?>("aspect" to "cover"), prefs.map)
+    }
+
+    // Rects measured on the DHU (surface 800x400), as left, top, right, bottom.
+    @Test
+    fun `FILL-01 margins and hidden strips are covered`() {
+        assertEquals(listOf(0, 0, 800, 400), webViewBounds(800, 400, listOf(12, 12, 788, 388)))
+    }
+
+    @Test
+    fun `FILL-04 shown action strips do not shrink the page`() {
+        assertEquals(listOf(0, 0, 800, 400), webViewBounds(800, 400, listOf(12, 88, 712, 388)))
+    }
+
+    @Test
+    fun `FILL-05 a media card beside the app limits the page`() {
+        assertEquals(listOf(0, 0, 464, 400), webViewBounds(800, 400, listOf(22, 34, 464, 376)))
+        // Card on the left or at the bottom, the same rule.
+        assertEquals(listOf(336, 0, 800, 400), webViewBounds(800, 400, listOf(336, 12, 788, 388)))
+        assertEquals(listOf(0, 0, 800, 200), webViewBounds(800, 400, listOf(12, 12, 788, 200)))
+    }
+
+    @Test
+    fun `FILL-06 no visible area yet fills the surface`() {
+        assertEquals(listOf(0, 0, 800, 400), webViewBounds(800, 400, null))
     }
 }

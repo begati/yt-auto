@@ -243,6 +243,23 @@ internal fun withResume(url: String, at: Pair<String, Int>?): String {
     return url.replace(Regex("&t=[^&#]*"), "") + "&t=${at.second}s"
 }
 
+/**
+ * WebView bounds (left, top, right, bottom) on a [w] x [h] surface, from the host's visible area.
+ * A side the host insets by a third of the surface or less (its margin, the auto-hiding action strips) is
+ * covered, so the buttons float over the page; a deeper inset is a media card beside the app, and the page
+ * stops at it. No area yet: the whole surface.
+ */
+// ponytail: one-third threshold from DHU measures (strips inset 88 of 400/800, the card 336 of 800); retune per host if a card gets covered
+internal fun webViewBounds(w: Int, h: Int, area: List<Int>?): List<Int> {
+    val (l, t, r, b) = area ?: return listOf(0, 0, w, h)
+    return listOf(
+        if (l > w / 3) l else 0,
+        if (t > h / 3) t else 0,
+        if (w - r > w / 3) r else w,
+        if (h - b > h / 3) b else h,
+    )
+}
+
 private fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + Uri.encode(videoId)
 
 // Callback while no car screen is alive: the WebView (the actual player) only exists in that screen.
@@ -447,6 +464,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var presentation: Presentation? = null
     private var webView: WebView? = null
     private var root: FrameLayout? = null
+    // Host's visible area as left, top, right, bottom (see webViewBounds).
+    private var area: List<Int>? = null
     // Set while a video is fullscreen; calling it exits fullscreen.
     private var exitFullscreen: WebChromeClient.CustomViewCallback? = null
     private var playing = false
@@ -649,8 +668,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             }
             webView = wv
             root = frame
-            // Whole surface on every page: the host's buttons and cards float over the page instead of shrinking it.
             frame.addView(wv)
+            fitToArea()
             setContentView(frame)
             show()
         }
@@ -672,6 +691,22 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         presentation = null
         display = null
         displaySize = null
+    }
+
+    // Visible area: it shrinks while the action strips show and when a media card sits beside the app.
+    override fun onVisibleAreaChanged(visibleArea: android.graphics.Rect) {
+        area = visibleArea.run { listOf(left, top, right, bottom) }
+        fitToArea()
+    }
+
+    private fun fitToArea() {
+        val wv = webView ?: return
+        val (w, h) = displaySize ?: return
+        val (l, t, r, b) = webViewBounds(w, h, area)
+        wv.layoutParams = FrameLayout.LayoutParams(r - l, b - t).apply {
+            leftMargin = l
+            topMargin = t
+        }
     }
 
     override fun onScroll(distanceX: Float, distanceY: Float) {
