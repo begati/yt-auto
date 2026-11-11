@@ -35,6 +35,7 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 | Cores do ícone | Gradiente vermelho → vermelho-escuro, sem fundo branco (antes ciano → azul) | Pedido do usuário depois de ver o azul | y - user: "pode fazer o icone vermelho ao inves de azul" |
 | Símbolo do ícone | Volante estilizado com um triângulo de play no centro; sem o retângulo arredondado com play (YouTube) e sem o círculo com play (YouTube Music) | Resposta do usuário | y - user: "Volante com play (Recomendado)" |
 | Nome do projeto | "YT Auto" em vez de "YouTube Auto": nome do app, mensagens ao usuário, APK (`yt-auto-<versão>-<tipo>.apk`) e projeto Gradle (`yt-auto`) | Pedido do usuário no meio da execução | y - user: "vamos também chamar todo o projeto de YT Auto ao invés de YouTube Auto" |
+| Vídeo antigo na barra do celular depois do Início | Sai do vídeo sem nada tocando = a sessão de mídia perde título, capa e posição; a barra do celular some e o card de mídia fica vazio; abrir outro vídeo traz a barra de volta | Pedido do usuário depois do fechamento | y - user: "quando aperto início no android auto, tem que remover o progresso do video que ta tocando lá no yt auto do android" |
 | Formato do ícone | Ícone adaptativo em vetor (fundo com gradiente + símbolo branco), usado no celular e no Android Auto | `minSdk` 29 suporta ícone adaptativo; vetor dispensa PNGs por densidade | n |
 | Tema do app | Sempre escuro, no celular (página do YouTube e Configurações) e no carro, ignorando o tema do celular e o dia/noite da central | Pedido do usuário | y - user: "vou mudar de ideia, mantenha tema tanto do app quanto no carro sempre em dark" |
 | A central troca dia/noite com o app aberto (faróis acesos/apagados) | A página do carro continua escura e o vídeo em reprodução continua tocando, sem recarregar | Pedido do usuário | y - user: "ao acender faróis, central muda tema pra escuro, app tem que ser capaz de suportar isso, mas sem dar reload em vídeo em reprodução" |
@@ -59,6 +60,8 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 3. WHILE a página do carro não é `/watch` e nenhum vídeo toca the app SHALL mostrar na barra de ações apenas Voltar, o botão da página inicial e Pesquisar
 4. IF só uma prévia do feed toca fora de `/watch` THEN the app SHALL manter o botão Tocar/Pausar escondido
 5. WHEN o usuário sai de `/watch` para o Início com o vídeo pausado THEN the app SHALL esconder o botão
+
+15. WHEN o carro sai do vídeo para uma página sem vídeo tocando (ex.: botão Início) THEN the app SHALL tirar o vídeo da barra do celular (capa, título e progresso) e do card de mídia
 
 **Independent Test**: no DHU, abrir o app no Início: sem Tocar; abrir um vídeo: aparece Pausar; voltar ao Início com o vídeo pausado: o botão some.
 
@@ -136,8 +139,9 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 | NAME-01 | P1: Nome "YT Auto" (AC 12) | Execute | Verified |
 | NAME-02 | P1: Nome "YT Auto" (AC 13) | Execute | Verified |
 | NAME-03 | P1: Nome "YT Auto" (AC 14) | Execute | Verified |
+| PLAYBTN-06 | P1: Tocar/Pausar só com vídeo (AC 15) | Execute | Verified |
 
-**Coverage:** 14 total, 14 mapped to tasks, 0 unmapped
+**Coverage:** 15 total, 15 mapped to tasks, 0 unmapped
 
 ---
 

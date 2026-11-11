@@ -27,6 +27,7 @@
 | C19 | walk - Pausar/Tocar/Pausar com `paused` false/true/false (Walked) | yes - round 2, author walk: rótulo e estado do vídeo principal lidos juntos |
 | C20 | walk - `#movie_player video` tocando em `/` = Pausar, pausado = some (Walked) | yes - round 2, author walk: lê o estado do player principal na página, não a função pura |
 | C21 | walk - Início e vídeo em tela cheia e no split sem faixa no topo (Walked) | yes - author walk depois do fechamento (regressão relatada pelo usuário, sem Verifier novo): cabeçalho do YouTube em y=0 e `innerHeight` 400 |
+| C22 | walk - Início no carro tira o vídeo da barra do celular; outro vídeo a traz de volta (Walked) | yes - author walk depois do fechamento (pedido do usuário, sem Verifier novo): barra lida na tela do celular antes e depois |
 
 ## Findings
 

@@ -619,6 +619,19 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         published = SystemClock.elapsedRealtime()
         session.setPlaybackState(playbackState(p, positionMs, rate))
         invalidate()
+        dropVideoIfGone()
+    }
+
+    // Off a video page with nothing playing (Início, search): no video is left in the car, so the phone bar and the
+    // media card stop showing the last one and its progress.
+    private fun dropVideoIfGone() {
+        if (metaKey.isEmpty() || playToggleShown(pageUrl, playing)) return
+        meta = null
+        metaKey = ""
+        durationMs = 0L
+        positionMs = PlaybackState.PLAYBACK_POSITION_UNKNOWN
+        session.setMetadata(null)
+        session.setPlaybackState(playbackState(false))
     }
 
     // Position and duration of the URL's video, from the page every 500 ms. No invalidate(): the template doesn't show them.
@@ -782,6 +795,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         url ?: return
                         pageUrl = url
                         if (playToggleShown(url, playing) != toggleShown) invalidate()
+                        dropVideoIfGone()
                     }
                 }
                 client = webViewClient as OfflineRetry // the object above
