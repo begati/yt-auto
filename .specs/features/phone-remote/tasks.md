@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: none - design inline nas tarefas: o celular fala com o carro pela `MediaSession` que já existe no processo (tocar/pausar/anterior/próximo/posição/`playFromMediaId`), e por um gancho de processo (`carLink`) para proporção, qualidade e velocidade
-**Status**: In Progress
+**Status**: Done
 **Approved**: 2026-11-11 - user: "aprovado"
 **Build**: `./gradlew assembleDebug`
 **Run unit**: `./gradlew testDebugUnitTest --rerun`
@@ -180,7 +180,7 @@ T5 → T6 → T7
 
 ### T7: Menu de proporção, qualidade e velocidade na barra
 
-**What**: botão "⋮" na barra abre um `PopupMenu` com "Proporção" (chama `carLink.cycleAspect`), "Qualidade" e "Velocidade" (submenus com as opções de `QUALITY`/`SPEED`; salva com `setChoice` e chama `carLink.applyPlayback`)
+**What**: botão de engrenagem na barra abre um `PopupMenu` com "Proporção" (chama `carLink.cycleAspect`), "Qualidade" e "Velocidade" (submenus com as opções de `QUALITY`/`SPEED`; salva com `setChoice` e chama `carLink.applyPlayback`)
 **Where**: `app/src/main/java/dev/begati/youtubeauto/YoutubeCarAppService.kt`
 **Depends on**: T6
 **Reuses**: `carLink`, `QUALITY`, `SPEED`, `setChoice`
@@ -188,8 +188,8 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
-- [ ] Walk: cada item muda o vídeo do carro (lido via DevTools)
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Walk: cada item muda o vídeo do carro (lido via DevTools)
 
 **Tests**: none
 **Gate**: build
@@ -266,4 +266,16 @@ Proof: walk - mesmo cenário de C19, toque num vídeo: aviso rápido na tela do 
 
 **Settled mid-build:** user: "talvez seja uma boa ideia, nao conectado no android Auto, avisar no app do celular que o vídeo não será reproduzido ali." (AC 17, 18). Achado no walk de T5: vídeo aberto no carro sem toque na tela do carro (celular, card de mídia) começava mudo; o `PAGE_JS` desliga o mudo nos primeiros 5 s de reprodução de cada vídeo (critério 1 pede o vídeo tocando no carro). Achados no walk de T6: (a) vídeo carregado por `loadUrl` começa a tocar antes do `PAGE_JS` ser injetado, então o evento `play` se perde e a sessão ficava sem metadata nem estado; o `PAGE_JS` passou a acompanhar tocar/pausar e metadata também por consulta a cada 500 ms; (b) `document.title` é "YouTube" logo após o carregamento: esse título provisório é ignorado; o canal vem de `getVideoData().author` quando a página não informa; (c) o Android Auto mantém o serviço e a tela do carro vivos com o app fechado, então "app aberto no carro" passou a ser "player do carro existe" (`carPlaying()`), e um vídeo enviado nesse estado mostra "Abra o YouTube Auto no carro para tocar"
 **Dispatched:** none yet
-**Walked:** pending
+**Walked:** 2026-11-11, DHU 800x480 + telefone motorola_signature via USB; estado lido por DevTools (`node cdp2.mjs car|phone`), `dumpsys media_session` e `shared_prefs/settings.xml`.
+- C1: app aberto no DHU (Início); toque no 1º vídeo do Início do celular: DHU em `/watch?v=<id>`, tocando, `muted` false; celular continua em `/`, nenhum `<video>` tocando.
+- C2, C20: DHU na grade de apps, `force-stop` e celular aberto: barra "Os vídeos tocam só no carro. Abra o YouTube Auto no Android Auto." (C19); toque num vídeo: toast "Vídeo guardado: ele toca quando você abrir o YouTube Auto no carro" e barra "Abra o YouTube Auto no carro para tocar"; "YouTube Auto" na grade do DHU: o vídeo guardado ("DESAFIO DO PREÇO") toca, com som, e a barra vira controle.
+- C3: cinco rolagens do Início do celular: `[<videos>, <tocando>]` sempre `[1,0]`.
+- C4: `location.href` do celular para `/watch?v=dQw4w9WgXcQ` via DevTools: celular volta a `/`, carro abre `?v=dQw4w9WgXcQ`.
+- C7, C13: barra com capa, título, canal ("República Coisa de Nerd"), tempo andando (0:08 → 0:56 → 1:12) e duração igual à do carro (17:08).
+- C8: "próximo" no card do DHU: título novo na sessão em 1,4 s, sem o título provisório "YouTube".
+- C9: seis toques em tocar/pausar: `paused` do carro true, false, true, false, true, false; ícone acompanha.
+- C10: "anterior": `currentTime` do carro 541 → 0. C11: "próximo": id do vídeo do carro muda (`S5Cef6ubTkY` → `vg2nA9NbCwk`).
+- C14: arrastar a barra até a metade: `currentTime` do carro 23 → 541 de 1044.
+- C15: "Proporção" no menu: `yta.aspect()` e `objectFit` do carro `contain` → `cover`; `aspect` em `settings.xml` continua `contain`.
+- C16: Qualidade 720p: `getPlaybackQuality()` `hd720` e `quality` `hd720` salvo. C17: Velocidade 1,5x: `playbackRate` 1.5 e `speed` `1.5` salvo. Padrões do usuário restaurados depois (360p, Normal).
+- C18: `force-stop`, app aberto no DHU no Início, celular aberto: sem barra.

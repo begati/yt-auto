@@ -939,6 +939,7 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         addView(button(android.R.drawable.ic_media_previous) { car.transportControls.skipToPrevious() })
         addView(playPause)
         addView(button(android.R.drawable.ic_media_next) { car.transportControls.skipToNext() })
+        addView(button(R.drawable.ic_settings) { showMenu(this) })
     }
     private var dragging = false
     private val seek = android.widget.SeekBar(ctx).apply {
@@ -996,6 +997,28 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
     fun release() {
         handler.removeCallbacks(tick)
         car.unregisterCallback(callback)
+    }
+
+    // Proporção (this run only, like the car button), Qualidade and Velocidade (saved, then pushed to the car video).
+    private fun showMenu(anchor: View) {
+        val ctx = context
+        android.widget.PopupMenu(ctx, anchor).apply {
+            menu.add("Proporção: " + ASPECT.options.getValue(aspect(prefs(ctx), aspectTap))).setOnMenuItemClickListener {
+                android.widget.Toast.makeText(ctx, "Proporção: " + cycleAspect(ctx), android.widget.Toast.LENGTH_SHORT).show()
+                true
+            }
+            for (c in listOf(QUALITY, SPEED)) {
+                val sub = menu.addSubMenu(c.title + ": " + c.options.getValue(choice(prefs(ctx), c)))
+                c.options.forEach { (key, label) ->
+                    sub.add(label).setOnMenuItemClickListener {
+                        setChoice(prefs(ctx), c, key)
+                        carLink?.applyPlayback()
+                        true
+                    }
+                }
+            }
+            show()
+        }
     }
 
     private fun text(size: Float) = android.widget.TextView(context).apply {
