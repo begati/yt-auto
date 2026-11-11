@@ -20,7 +20,6 @@ de carregamento e tentar de novo sozinho até o YouTube carregar.
 | Erros HTTP do YouTube (404, 500) | Não são falta de rede; a página do YouTube já mostra a própria mensagem |
 | Falha de recursos dentro da página (imagem, vídeo, anúncio) | Só a página principal decide se há algo para mostrar |
 | Tela de carregamento em carregamentos normais (com rede) | Pedido é para a falta de internet; o YouTube já mostra o próprio carregamento |
-| Tela de login no celular (`LoginActivity`) | Pedido é sobre o app no carro |
 
 ---
 
@@ -30,6 +29,7 @@ de carregamento e tentar de novo sozinho até o YouTube carregar.
 | --------------------- | -------------- | --------- | ---------- |
 | Quando mostrar | Toda vez que a página principal falha por erro de rede, não só na abertura | Resposta do usuário | y - user: "Qualquer falha de página (Recomendado)" |
 | Como tentar de novo | Assim que o Android avisa que a rede voltou e, por garantia, a cada 5 s | Resposta do usuário | y - user: "A cada 5 s + ao voltar a rede (Recomendado)" |
+| App do celular | A tela de login do celular (`LoginActivity`) ganha a mesma tela e as mesmas tentativas, com a mesma lógica compartilhada | Pedido do usuário no meio da execução | y - user: "trata isso também no app do celular" |
 | Visual | Fundo preto, animação de carregamento girando e o texto "Sem conexão. Tentando de novo…" | Resposta do usuário | y - user: "Fundo escuro, animação e texto (Recomendado)" |
 | O que conta como erro de rede | Qualquer erro reportado pela WebView para a página principal (`onReceivedError` com `isForMainFrame`) | Erros HTTP vêm por outro callback; os de rede (DNS, conexão, timeout) chegam todos por esse | y - user: "aprovado" |
 | Nova tentativa | Recarrega a página que falhou (`reload`), sem empilhar entradas no histórico do "Voltar" | "Voltar" depois de reconectar não deve cair em páginas de erro | y - user: "aprovado" |
@@ -57,6 +57,7 @@ de carregamento e tentar de novo sozinho até o YouTube carregar.
 5. IF a página falha de novo numa tentativa THEN the app SHALL manter a tela de carregamento visível, sem mostrar a página de erro da WebView entre as tentativas
 6. IF um recurso que não é a página principal falha THEN the app SHALL manter a página como está, sem a tela de carregamento
 7. WHEN o motorista toca "Voltar" depois de reconectar THEN the app SHALL voltar à página anterior à que falhou, sem passar por páginas de erro
+8. WHERE a página é a tela do app no celular (login do YouTube) the app SHALL aplicar os critérios 1-6 do mesmo jeito
 
 **Independent Test**: no DHU, desligar Wi-Fi e dados do telefone e abrir o app: tela de carregamento; religar: o Início do YouTube aparece sozinho em até 5 s.
 
@@ -80,8 +81,9 @@ de carregamento e tentar de novo sozinho até o YouTube carregar.
 | OFF-05 | P1 (AC 5) | Execute | Pending |
 | OFF-06 | P1 (AC 6) | Execute | Pending |
 | OFF-07 | P1 (AC 7) | Execute | Pending |
+| OFF-08 | P1 (AC 8) | Execute | Pending |
 
-**Coverage:** 7 total, 7 mapped to tasks, 0 unmapped
+**Coverage:** 8 total, 8 mapped to tasks, 0 unmapped
 
 ---
 

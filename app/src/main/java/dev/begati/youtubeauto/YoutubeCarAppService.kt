@@ -473,13 +473,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var area: List<Int>? = null
     // Uptime of the last template refresh asked to confirm a media card (see onVisibleAreaChanged).
     private var confirmAt = 0L
-    // Loading screen shown over the page while it can't load (no network); see showOffline.
-    private var offline: View? = null
-    // Set when the main frame fails, cleared when a new load starts; keeps onPageFinished of the error page from
-    // hiding the loading screen.
-    private var loadFailed = false
-    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
-    private val retry = Runnable { webView?.reload() } // reload, not loadUrl: no error entries in the back history
+    // The WebView's client: loading screen and retries while offline (see OfflineRetry).
+    private var client: OfflineRetry? = null
     // Set while a video is fullscreen; calling it exits fullscreen.
     private var exitFullscreen: WebChromeClient.CustomViewCallback? = null
     private var playing = false
@@ -619,6 +614,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         displaySize = size
         presentation = Presentation(carContext, vd.display).apply {
             val frame = FrameLayout(context)
+            val offline = offlineView(context)
             val wv = WebView(context).apply {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
@@ -654,21 +650,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     fun meta(title: String, artist: String, art: String) =
                         carContext.mainExecutor.execute { setMeta(title, artist, art) }
                 }, "yta")
-                webViewClient = object : WebViewClient() {
-                    override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
-                        loadFailed = false
-                    }
-
-                    // HTTP errors come through onReceivedHttpError; this one is the network (DNS, connection, timeout).
-                    override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
-                        if (!request.isForMainFrame) return
-                        loadFailed = true
-                        showOffline()
-                    }
-
-                    override fun onPageFinished(view: WebView, url: String?) {
-                        if (loadFailed) return // WebView's own error page under the loading screen
-                        hideOffline()
+                webViewClient = object : OfflineRetry(carContext, offline) {
+                    override fun onLoaded(view: WebView) {
                         view.evaluateJavascript(PAGE_JS, null)
                     }
 
@@ -676,6 +659,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         url?.let { pageUrl = it }
                     }
                 }
+                client = webViewClient as OfflineRetry // the object above
                 webChromeClient = object : WebChromeClient() {
                     private var custom: View? = null
 
@@ -697,7 +681,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             webView = wv
             root = frame
             frame.addView(wv)
-            offline = offlineView(context).also(frame::addView)
+            frame.addView(offline)
             fitToArea()
             setContentView(frame)
             show()
@@ -711,8 +695,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
 
     private fun teardown() {
-        handler.removeCallbacks(retry)
-        offline = null
+        client?.release()
+        client = null
         webView?.destroy()
         presentation?.dismiss()
         display?.release()
@@ -722,18 +706,6 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         presentation = null
         display = null
         displaySize = null
-    }
-
-    // Loading screen over the page, retrying it every 5 s until it loads.
-    private fun showOffline() {
-        offline?.visibility = View.VISIBLE
-        handler.removeCallbacks(retry)
-        handler.postDelayed(retry, 5000)
-    }
-
-    private fun hideOffline() {
-        offline?.visibility = View.GONE
-        handler.removeCallbacks(retry)
     }
 
     // Visible area: it shrinks while the action strips show and when a media card sits beside the app.
@@ -780,6 +752,69 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             target.dispatchTouchEvent(e)
             e.recycle()
         }
+    }
+}
+
+/**
+ * WebViewClient that covers the page with [overlay] while its main frame can't load (no network), and reloads it
+ * every 5 s and as soon as a network with internet comes up, until it loads. Call [release] when the WebView goes.
+ * Shared by the car screen and the phone's login screen.
+ */
+internal open class OfflineRetry(ctx: Context, private val overlay: View) : WebViewClient() {
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    private var web: WebView? = null
+    // Set when the main frame fails, cleared when a new load starts, so the error page's onPageFinished keeps the overlay.
+    private var failed = false
+    private val retry = Runnable { web?.reload() } // reload, not loadUrl: no error entries in the back history
+    private val connectivity = ctx.getSystemService(android.net.ConnectivityManager::class.java)
+    private val network = object : android.net.ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(n: android.net.Network) {
+            handler.post {
+                if (overlay.visibility != View.VISIBLE) return@post
+                handler.removeCallbacks(retry)
+                retry.run()
+            }
+        }
+    }
+
+    init {
+        connectivity.registerNetworkCallback(
+            android.net.NetworkRequest.Builder()
+                .addCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .addCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                .build(),
+            network,
+        )
+    }
+
+    fun release() {
+        handler.removeCallbacks(retry)
+        connectivity.unregisterNetworkCallback(network)
+    }
+
+    /** The page loaded without a network error. */
+    open fun onLoaded(view: WebView) {}
+
+    override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
+        web = view
+        failed = false
+    }
+
+    // HTTP errors come through onReceivedHttpError; this one is the network (DNS, connection, timeout).
+    override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+        if (!request.isForMainFrame) return
+        web = view
+        failed = true
+        overlay.visibility = View.VISIBLE
+        handler.removeCallbacks(retry)
+        handler.postDelayed(retry, 5000)
+    }
+
+    override fun onPageFinished(view: WebView, url: String?) {
+        if (failed) return // WebView's own error page under the overlay
+        overlay.visibility = View.GONE
+        handler.removeCallbacks(retry)
+        onLoaded(view)
     }
 }
 

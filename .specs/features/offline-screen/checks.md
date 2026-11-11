@@ -6,7 +6,8 @@
 ## Execution Plan
 
 1. [x] Tela de carregamento e novas tentativas a cada 5 s (OFF-01, 02, 04..07) - files: `YoutubeCarAppService.kt` - verify: build + walk - commit: `feat: show a loading screen and retry when the car page fails offline`
-2. [ ] Nova tentativa ao voltar a rede (OFF-03) - files: `YoutubeCarAppService.kt`, `AndroidManifest.xml` - verify: build + walk - commit: `feat: retry the failed page as soon as the network returns`
+2. [x] Nova tentativa ao voltar a rede, lógica numa classe reaproveitável (OFF-03) - files: `YoutubeCarAppService.kt`, `AndroidManifest.xml` - verify: build + walk - commit: `feat: retry the failed page as soon as the network returns`
+3. [ ] Mesma tela no app do celular (OFF-08) - files: `YoutubeCarAppService.kt` - verify: build + walk - commit: `feat: show the loading screen on the phone too`
 
 Sem teste JVM: todo o comportamento está nos callbacks da WebView e do `ConnectivityManager` (o projeto só testa na JVM, sem Robolectric); a prova é o walk no DHU com a rede do telefone cortada por `adb shell svc wifi/data`.
 
@@ -32,6 +33,9 @@ Proof: walk - o código só reage a `request.isForMainFrame`; com rede, a págin
 
 **C7** - "Voltar" após reconectar não passa por páginas de erro (OFF-07, AC 7)
 Proof: walk - abrir vídeo, cortar rede, tocar "Início" (falha), religar: Início carrega; "Voltar" leva ao vídeo
+
+**C8** - No celular, sem rede, a tela de login mostra a mesma tela de carregamento e volta sozinha (OFF-08, AC 8)
+Proof: walk - rede desligada, abrir o app no celular: screenshot com a tela de carregamento; religar: página do Google/YouTube carrega
 
 ## Handoff
 
