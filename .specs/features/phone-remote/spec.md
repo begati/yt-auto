@@ -103,25 +103,25 @@ reprodução pelo celular, com o vídeo tocando só no Android Auto.
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| CAST-01 | P1: Escolher no celular (AC 1) | Tasks | Pending |
-| CAST-02 | P1: Escolher no celular (AC 2) | Tasks | Pending |
-| CAST-03 | P1: Escolher no celular (AC 3) | Tasks | Pending |
-| CAST-04 | P1: Escolher no celular (AC 4) | Tasks | Pending |
-| CAST-05 | P1: Escolher no celular (AC 5) | Tasks | Pending |
-| REMOTE-01 | P1: Barra (AC 6) | Tasks | Pending |
-| REMOTE-02 | P1: Barra (AC 7) | Tasks | Pending |
-| REMOTE-03 | P1: Barra (AC 8) | Tasks | Pending |
-| REMOTE-04 | P1: Barra (AC 9) | Tasks | Pending |
-| REMOTE-05 | P1: Barra (AC 10) | Tasks | Pending |
-| REMOTE-06 | P1: Barra (AC 11) | Tasks | Pending |
-| REMOTE-07 | P1: Barra (AC 12) | Tasks | Pending |
-| REMOTE-08 | P1: Barra (AC 13) | Tasks | Pending |
-| REMOTE-09 | P1: Barra (AC 14) | Tasks | Pending |
-| REMOTE-10 | P1: Barra (AC 15) | Tasks | Pending |
-| REMOTE-11 | P1: Barra (AC 16) | Tasks | Pending |
-| REMOTE-12 | P1: Barra (AC 17) | Tasks | Pending |
-| CAST-06 | P1: Escolher no celular (AC 18) | Tasks | Pending |
-| CAST-07 | P1: Escolher no celular (AC 19) | Tasks | Pending |
+| CAST-01 | P1: Escolher no celular (AC 1) | Execute | Verified |
+| CAST-02 | P1: Escolher no celular (AC 2) | Execute | Verified |
+| CAST-03 | P1: Escolher no celular (AC 3) | Execute | Verified |
+| CAST-04 | P1: Escolher no celular (AC 4) | Execute | Verified |
+| CAST-05 | P1: Escolher no celular (AC 5) | Execute | Verified |
+| REMOTE-01 | P1: Barra (AC 6) | Execute | Verified |
+| REMOTE-02 | P1: Barra (AC 7) | Execute | Verified |
+| REMOTE-03 | P1: Barra (AC 8) | Execute | Verified |
+| REMOTE-04 | P1: Barra (AC 9) | Execute | Verified |
+| REMOTE-05 | P1: Barra (AC 10) | Execute | Verified |
+| REMOTE-06 | P1: Barra (AC 11) | Execute | Verified |
+| REMOTE-07 | P1: Barra (AC 12) | Execute | Verified |
+| REMOTE-08 | P1: Barra (AC 13) | Execute | Verified |
+| REMOTE-09 | P1: Barra (AC 14) | Execute | Verified |
+| REMOTE-10 | P1: Barra (AC 15) | Execute | Verified |
+| REMOTE-11 | P1: Barra (AC 16) | Execute | Verified |
+| REMOTE-12 | P1: Barra (AC 17) | Execute | Verified |
+| CAST-06 | P1: Escolher no celular (AC 18) | Execute | Verified |
+| CAST-07 | P1: Escolher no celular (AC 19) | Execute | Verified |
 
 **Coverage:** 19 total, 0 mapped to tasks, 16 unmapped
 
