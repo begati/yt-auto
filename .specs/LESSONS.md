@@ -44,6 +44,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: OFF-09 (webview)
 - last seen: 2026-11-11T16:01:23Z
 
+### L-006 - A unit test must call the function the production path calls; grep for callers before pointing a check at a helper.
+- signal: `weak_test` · recurrence: 1 feature(s) · scope: `webview` · harmful: 0
+- features: phone-remote
+- evidence: CAST-05 / C6 (webview)
+- last seen: 2026-11-11T16:38:30Z
+
+### L-007 - Never build Android framework objects in top-level vals of a file the JVM tests load; use lazy or a function.
+- signal: `gate_fail` · recurrence: 1 feature(s) · scope: `jvm-tests` · harmful: 0
+- features: phone-remote
+- evidence: waitingForCar (jvm-tests)
+- last seen: 2026-11-11T16:38:30Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

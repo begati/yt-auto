@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 6,
+  "next_id": 8,
   "lessons": [
     {
       "id": "L-001",
@@ -94,6 +94,42 @@
       ],
       "created": "2026-11-11T16:01:23Z",
       "last_seen": "2026-11-11T16:01:23Z"
+    },
+    {
+      "id": "L-006",
+      "key": "weak_test::a unit test must call the function the production path calls grep for callers before pointing a check at a helper",
+      "text": "A unit test must call the function the production path calls; grep for callers before pointing a check at a helper.",
+      "signal": "weak_test",
+      "scope": "webview",
+      "status": "candidate",
+      "features": [
+        "phone-remote"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "CAST-05 / C6 (webview)"
+      ],
+      "created": "2026-11-11T16:38:30Z",
+      "last_seen": "2026-11-11T16:38:30Z"
+    },
+    {
+      "id": "L-007",
+      "key": "gate_fail::never build android framework objects in top level vals of a file the jvm tests load use lazy or a function",
+      "text": "Never build Android framework objects in top-level vals of a file the JVM tests load; use lazy or a function.",
+      "signal": "gate_fail",
+      "scope": "jvm-tests",
+      "status": "candidate",
+      "features": [
+        "phone-remote"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "waitingForCar (jvm-tests)"
+      ],
+      "created": "2026-11-11T16:38:30Z",
+      "last_seen": "2026-11-11T16:38:30Z"
     }
   ]
 }

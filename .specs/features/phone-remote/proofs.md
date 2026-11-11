@@ -1,9 +1,9 @@
 # phone-remote proofs
 
-**HEAD**: e93cac0
+**HEAD**: b89dd91
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 21 pass, 0 fail
+**Result**: 22 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -27,6 +27,7 @@
 | C18 | `walk - processo novo, app aberto no DHU no Início, celular aberto: sem barra` | pass (Walked) |
 | C19 | `walk - DHU em outro app, processo novo, celular aberto: barra com o aviso` | pass (Walked) |
 | C20 | `walk - mesmo cenário de C19, toque num vídeo: aviso rápido na tela do celular` | pass (Walked) |
+| C21 | `walk - location.href do carro para /shorts/cUQ1MDJDc8s: 10 s depois /watch?v=cUQ1MDJDc8s, paused false, sem di` | pass (Walked) |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output
