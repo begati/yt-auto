@@ -122,20 +122,20 @@ escuro depende do tema do celular; o usuário quer o app sempre escuro, no celul
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| PLAYBTN-01 | P1: Tocar/Pausar só com vídeo (AC 1) | Execute | Pending |
-| PLAYBTN-02 | P1: Tocar/Pausar só com vídeo (AC 2) | Execute | Pending |
-| PLAYBTN-03 | P1: Tocar/Pausar só com vídeo (AC 3) | Execute | Pending |
-| PLAYBTN-04 | P1: Tocar/Pausar só com vídeo (AC 4) | Execute | Pending |
-| PLAYBTN-05 | P1: Tocar/Pausar só com vídeo (AC 5) | Execute | Pending |
-| ICON-01 | P1: Ícone próprio (AC 6) | Execute | Pending |
-| ICON-02 | P1: Ícone próprio (AC 7) | Execute | Pending |
-| THEME-01 | P1: App sempre escuro (AC 8) | Execute | Pending |
-| THEME-02 | P1: App sempre escuro (AC 9) | Execute | Pending |
-| THEME-03 | P1: App sempre escuro (AC 10) | Execute | Pending |
-| THEME-04 | P1: App sempre escuro (AC 11) | Execute | Pending |
-| NAME-01 | P1: Nome "YT Auto" (AC 12) | Execute | Pending |
-| NAME-02 | P1: Nome "YT Auto" (AC 13) | Execute | Pending |
-| NAME-03 | P1: Nome "YT Auto" (AC 14) | Execute | Pending |
+| PLAYBTN-01 | P1: Tocar/Pausar só com vídeo (AC 1) | Execute | Verified |
+| PLAYBTN-02 | P1: Tocar/Pausar só com vídeo (AC 2) | Execute | Verified |
+| PLAYBTN-03 | P1: Tocar/Pausar só com vídeo (AC 3) | Execute | Verified |
+| PLAYBTN-04 | P1: Tocar/Pausar só com vídeo (AC 4) | Execute | Verified |
+| PLAYBTN-05 | P1: Tocar/Pausar só com vídeo (AC 5) | Execute | Verified |
+| ICON-01 | P1: Ícone próprio (AC 6) | Execute | Verified |
+| ICON-02 | P1: Ícone próprio (AC 7) | Execute | Verified |
+| THEME-01 | P1: App sempre escuro (AC 8) | Execute | Verified |
+| THEME-02 | P1: App sempre escuro (AC 9) | Execute | Verified |
+| THEME-03 | P1: App sempre escuro (AC 10) | Execute | Verified |
+| THEME-04 | P1: App sempre escuro (AC 11) | Execute | Verified |
+| NAME-01 | P1: Nome "YT Auto" (AC 12) | Execute | Verified |
+| NAME-02 | P1: Nome "YT Auto" (AC 13) | Execute | Verified |
+| NAME-03 | P1: Nome "YT Auto" (AC 14) | Execute | Verified |
 
 **Coverage:** 14 total, 14 mapped to tasks, 0 unmapped
 

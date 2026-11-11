@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: none - design inline nas tarefas. Botão: uma função pura decide se Tocar/Pausar aparece (URL `/watch` ou vídeo do player principal tocando); o template é invalidado quando isso muda. Ícone: ícone adaptativo em vetor. Tema: o `AppTheme` deixa de ser DayNight (escuro sempre, no celular) e a `Presentation` do carro recebe esse tema explicitamente; a WebView passa `prefers-color-scheme: dark` e o YouTube no padrão da conta fica escuro, sem recarregar nada na troca dia/noite e sem mexer no cookie `PREF`
-**Status**: In Progress
+**Status**: Done
 **Approved**: 2026-11-11 - user: "vou mudar de ideia, mantenha tema tanto do app quanto no carro sempre em dark. pode ver os demais."
 **Build**: `./gradlew assembleDebug`
 **Run unit**: `./gradlew testDebugUnitTest --rerun`
