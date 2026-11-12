@@ -40,4 +40,19 @@
     <string name="notice_failed_hint">Проверьте подключение телефона</string>
     <string name="notice_empty">Здесь пусто</string>
     <string name="notice_empty_hint">Этот список на YouTube пуст</string>
+    <string name="flag_sponsor_block">Пропускать спонсоров (SponsorBlock)</string>
+    <string name="flag_audio_while_moving">Только звук, пока машина едет</string>
+    <string name="audio_only_moving">Только звук во время движения. Видео вернётся, когда машина остановится.</string>
+    <string name="rewind_10">Назад на 10 с</string>
+    <string name="forward_10">Вперёд на 10 с</string>
+    <string name="watch_later">Смотреть позже</string>
+    <string name="liked">Понравившиеся</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="share_no_video">В переданном нет видео YouTube</string>
+    <string name="video_sent">Воспроизводится в машине</string>
+    <string name="sponsor_skipped">Спонсор пропущен</string>
+    <string name="update_title">Доступна YT Auto %1$s</string>
+    <string name="update_message">Вышла новая версия. Скачайте APK и установите его через KingInstaller, как в первый раз.</string>
+    <string name="update_download">Скачать</string>
+    <string name="update_skip">Пропустить версию</string>
 </resources>

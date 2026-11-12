@@ -40,6 +40,21 @@
     <string name="notice_failed_hint">Check the phone\'s connection</string>
     <string name="notice_empty">Nothing here</string>
     <string name="notice_empty_hint">This list is empty on YouTube</string>
+    <string name="flag_sponsor_block">Skip sponsor segments (SponsorBlock)</string>
+    <string name="flag_audio_while_moving">Audio only while the car is moving</string>
+    <string name="audio_only_moving">Audio only while driving. The video comes back when the car stops.</string>
+    <string name="rewind_10">Back 10 s</string>
+    <string name="forward_10">Forward 10 s</string>
+    <string name="watch_later">Watch later</string>
+    <string name="liked">Liked videos</string>
+    <string name="playlists">Playlists</string>
+    <string name="share_no_video">No YouTube video in what was shared</string>
+    <string name="video_sent">Playing in the car</string>
+    <string name="sponsor_skipped">Sponsor skipped</string>
+    <string name="update_title">YT Auto %1$s is available</string>
+    <string name="update_message">A new version is out. Download the APK and install it with KingInstaller, as before.</string>
+    <string name="update_download">Download</string>
+    <string name="update_skip">Skip this version</string>
     <!-- Same in every language. -->
     <string name="quality_240" translatable="false">240p</string>
     <string name="quality_360" translatable="false">360p</string>

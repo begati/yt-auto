@@ -40,4 +40,19 @@
     <string name="notice_failed_hint">Revisa la conexión del teléfono</string>
     <string name="notice_empty">No hay nada aquí</string>
     <string name="notice_empty_hint">Esta lista está vacía en YouTube</string>
+    <string name="flag_sponsor_block">Saltar patrocinios (SponsorBlock)</string>
+    <string name="flag_audio_while_moving">Solo audio con el coche en movimiento</string>
+    <string name="audio_only_moving">Solo audio mientras conduces. El vídeo vuelve cuando el coche se detenga.</string>
+    <string name="rewind_10">Retroceder 10 s</string>
+    <string name="forward_10">Avanzar 10 s</string>
+    <string name="watch_later">Ver más tarde</string>
+    <string name="liked">Videos que me gustan</string>
+    <string name="playlists">Listas de reproducción</string>
+    <string name="share_no_video">No hay ningún video de YouTube en lo compartido</string>
+    <string name="video_sent">Reproduciendo en el coche</string>
+    <string name="sponsor_skipped">Patrocinio saltado</string>
+    <string name="update_title">YT Auto %1$s disponible</string>
+    <string name="update_message">Hay una versión nueva. Descarga el APK e instálalo con KingInstaller, como la primera vez.</string>
+    <string name="update_download">Descargar</string>
+    <string name="update_skip">Omitir esta versión</string>
 </resources>

@@ -7,9 +7,9 @@ import org.junit.Test
 /** FILL-01, 04..06 and ASPECT-01..09 (spec video-fill). */
 class VideoFillTest {
     @Test
-    fun `ASPECT-05 without a tap the saved default applies`() {
-        assertEquals("cover", aspect(MemoryPrefs().apply { map["aspect"] = "cover" }, null))
-        assertEquals("fill", aspect(MemoryPrefs().apply { map["aspect"] = "fill" }, null))
+    fun `ASPECT-05 the saved aspect applies`() {
+        assertEquals("cover", choice(MemoryPrefs().apply { map["aspect"] = "cover" }, ASPECT))
+        assertEquals("fill", choice(MemoryPrefs().apply { map["aspect"] = "fill" }, ASPECT))
     }
 
     @Test
@@ -20,49 +20,29 @@ class VideoFillTest {
     }
 
     @Test
-    fun `ASPECT-07 default is contain`() {
-        assertEquals("contain", aspect(MemoryPrefs(), null))
+    fun `ASPECT-07 default on a fresh install is cover (fill the screen)`() {
+        assertEquals("cover", choice(MemoryPrefs(), ASPECT))
     }
 
     @Test
-    fun `ASPECT-08 invalid stored aspect reads as contain`() {
-        assertEquals("contain", aspect(MemoryPrefs().apply { map["aspect"] = "stretch" }, null))
+    fun `ASPECT-08 invalid stored aspect reads as the default`() {
+        assertEquals("cover", choice(MemoryPrefs().apply { map["aspect"] = "stretch" }, ASPECT))
     }
 
     @Test
-    fun `ASPECT-09 changing the default drops the tapped mode`() {
+    fun `ASPECT-01 the button cycles cover fill contain cover from the default`() {
         val prefs = MemoryPrefs()
-        var tap: String? = tapAspect(prefs, null) // Ajustar -> Preencher
-        assertEquals("cover", aspect(prefs, tap))
-        setChoice(prefs, ASPECT, "fill")
-        tap = tapAfterChange(ASPECT.key, tap)
-        assertEquals("fill", aspect(prefs, tap))
-        // Back to the old default: the old pick stays dropped.
-        setChoice(prefs, ASPECT, "contain")
-        tap = tapAfterChange(ASPECT.key, tap)
-        assertEquals("contain", aspect(prefs, tap))
-        // Other settings keep the pick.
-        assertEquals("fill", tapAfterChange(QUALITY.key, "fill"))
+        assertEquals(listOf("fill", "contain", "cover", "fill"), (1..4).map { nextAspect(prefs) })
+        // The cycle starts from the saved value.
+        assertEquals("cover", nextAspect(MemoryPrefs().apply { map["aspect"] = "contain" }))
     }
 
     @Test
-    fun `ASPECT-01 tapping cycles contain cover fill contain`() {
+    fun `ASPECT-04 the button pick is saved as the default`() {
         val prefs = MemoryPrefs()
-        var tap: String? = null
-        val seen = (1..4).map { tap = tapAspect(prefs, tap); aspect(prefs, tap) }
-        assertEquals(listOf("cover", "fill", "contain", "cover"), seen)
-        // The cycle starts from the saved default, not from Ajustar.
-        val esticar = MemoryPrefs().apply { map["aspect"] = "fill" }
-        assertEquals("contain", aspect(esticar, tapAspect(esticar, null)))
-    }
-
-    @Test
-    fun `ASPECT-04 tapping leaves the saved default unchanged`() {
-        val prefs = MemoryPrefs().apply { map["aspect"] = "cover" }
-        var tap: String? = null
-        repeat(2) { tap = tapAspect(prefs, tap) }
-        assertEquals("contain", aspect(prefs, tap))
-        assertEquals(mapOf<String, Any?>("aspect" to "cover"), prefs.map)
+        nextAspect(prefs)
+        assertEquals(mapOf<String, Any?>("aspect" to "fill"), prefs.map)
+        assertEquals("fill", choice(prefs, ASPECT))
     }
 
     // Rects measured on the DHU (surface 800x400), as left, top, right, bottom.

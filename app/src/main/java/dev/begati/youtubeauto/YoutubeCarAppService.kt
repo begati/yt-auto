@@ -63,17 +63,25 @@ import org.json.JSONObject
 import org.json.JSONTokener
 import kotlin.concurrent.thread
 
+// m.youtube.com markup the injected scripts depend on. When YouTube changes its site, re-inspect the page via
+// chrome://inspect and fix the selectors here first.
+private const val PLAYER_ID = "movie_player"
+private const val MAIN_VIDEO = "#movie_player video"
+private const val PLAYER_CONTAINER = "#player-container-id"
+private const val SKIP_AD_BUTTONS = ".ytp-skip-ad-button,.ytp-ad-skip-button,.ytp-ad-skip-button-modern"
+private const val PLAYLIST_PANEL = "ytm-playlist-engagement-panel"
+
 // Sets the saved quality on the current video; stamps the time so the resulting change event isn't saved as a pick.
 private const val JS_APPLY_QUALITY =
     "(p=>{if(p&&p.setPlaybackQualityRange){window.__ytaQAt=Date.now();const q=yta.quality();p.setPlaybackQualityRange(q,q)}})" +
-        "(document.getElementById('movie_player'))"
+        "(document.getElementById('${PLAYER_ID}'))"
 
 // Sets the saved speed and turns captions on/off on the current video. load/unloadModule is used because
 // toggleSubtitlesOn proved unreliable on m.youtube.com (stale isSubtitlesOn, toggles ignored).
 // ponytail: internal player API of m.youtube.com, re-check via chrome://inspect if speed or captions stop applying
 private const val JS_APPLY_PLAYBACK =
     "(p=>{if(!p||!p.setPlaybackRate)return;window.__ytaRAt=Date.now();p.setPlaybackRate(+yta.speed());" +
-        "p[yta.flag('captions')?'loadModule':'unloadModule']('captions')})(document.getElementById('movie_player'))"
+        "p[yta.flag('captions')?'loadModule':'unloadModule']('captions')})(document.getElementById('${PLAYER_ID}'))"
 
 // Injected on every full page load (m.youtube.com is a SPA, so the guard keeps it to once per window):
 // - fakes a visible page so YouTube keeps playing while the car shows another app (Maps etc.), if "background" is on
@@ -101,16 +109,16 @@ private const val PAGE_JS =
         "window.addEventListener('visibilitychange',e=>{if(yta.flag('background'))e.stopImmediatePropagation()},true);" +
         "const meta=()=>{const m=navigator.mediaSession&&navigator.mediaSession.metadata;" +
         "const id=new URLSearchParams(location.search).get('v');" +
-        "const pv=document.getElementById('movie_player'),vd=pv&&pv.getVideoData&&pv.getVideoData();" +
+        "const pv=document.getElementById('${PLAYER_ID}'),vd=pv&&pv.getVideoData&&pv.getVideoData();" +
         // document.title is a bare "YouTube" until the page fills it in: skip that placeholder.
         "const tt=m&&m.title||document.title.replace(/ - YouTube\$/,'');if(tt==='YouTube')return;" +
         "yta.meta(tt,m&&m.artist||vd&&vd.author||''," +
         "m&&m.artwork&&m.artwork.length?m.artwork[m.artwork.length-1].src:(id?'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg':''))};" +
         // Only the main player (watch page or miniplayer) counts: a feed preview playing is not "a video playing".
-        "const main=e=>e.target.closest&&!!e.target.closest('#movie_player');" +
+        "const main=e=>e.target.closest&&!!e.target.closest('#${PLAYER_ID}');" +
         "document.addEventListener('play',e=>{if(!main(e))return;yta.playing(true);meta();setTimeout(meta,1500)},true);" +
         "document.addEventListener('pause',e=>main(e)&&yta.playing(false),true);" +
-        "let qId='';document.addEventListener('play',()=>{const p=document.getElementById('movie_player');" +
+        "let qId='';document.addEventListener('play',()=>{const p=document.getElementById('${PLAYER_ID}');" +
         "const id=p&&p.getVideoData&&p.getVideoData().video_id;" +
         "if(!id||id===qId||!p.setPlaybackQualityRange)return;qId=id;" + JS_APPLY_QUALITY + ";" + JS_APPLY_PLAYBACK + ";" +
         // Changes in the first 5 s are our own call or a video lacking that quality, not the user's pick.
@@ -120,14 +128,14 @@ private const val PAGE_JS =
         "p.addEventListener('onPlaybackRateChange',r=>{if(Date.now()-window.__ytaRAt>2000&&" +
         "p.getVideoData().video_id===qId)yta.saveSpeed(String(r))})}},true);" +
         "const s=document.createElement('style');" +
-        "s.textContent='ytm-playlist-engagement-panel{display:none!important}" +
-        "html.yta-watch #player-container-id{position:fixed!important;inset:0!important;" +
+        "s.textContent='${PLAYLIST_PANEL}{display:none!important}" +
+        "html.yta-watch ${PLAYER_CONTAINER}{position:fixed!important;inset:0!important;" +
         "width:100vw!important;height:100vh!important;z-index:99999!important;background:#000!important}" +
         // Wrappers between the container and the video (#player keeps an aspect-ratio padding, the video
         // container has height 0): without this the video gets 100% of 0 px and the screen stays black.
-        "html.yta-watch #player-container-id #player,html.yta-watch #player-container-id .html5-video-container" +
+        "html.yta-watch ${PLAYER_CONTAINER} #player,html.yta-watch ${PLAYER_CONTAINER} .html5-video-container" +
         "{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;padding:0!important}" +
-        "html.yta-watch #player-container-id .html5-video-player,html.yta-watch #player-container-id video" +
+        "html.yta-watch ${PLAYER_CONTAINER} .html5-video-player,html.yta-watch ${PLAYER_CONTAINER} video" +
         "{width:100%!important;height:100%!important;left:0!important;top:0!important;object-fit:var(--yta-fit,contain)!important}';" +
         "document.head.appendChild(s);" +
         "let umId='',umN=0,pl=null;setInterval(()=>{" +
@@ -137,16 +145,16 @@ private const val PAGE_JS =
         // Play/pause and metadata also by polling: a video that starts before this script is injected (loadUrl from
         // the phone or the media card) fires its play event too early to be heard.
         // pl starts unknown so a new document (Início after a video) reports its state even when nothing plays.
-        "const v=document.querySelector('#movie_player video'),on=!!v&&!v.paused&&!v.ended;if(on!==pl){pl=on;yta.playing(on)}" +
+        "const v=document.querySelector('${MAIN_VIDEO}'),on=!!v&&!v.paused&&!v.ended;if(on!==pl){pl=on;yta.playing(on)}" +
         // Title and channel fill in late after a load (document.title is "YouTube" at first): report while playing;
         // the app drops repeats.
         "if(on&&location.pathname==='/watch')meta();" +
         "document.documentElement.classList.toggle('yta-watch'," +
         "yta.flag('fullscreen')&&location.pathname==='/watch');" +
         "document.documentElement.style.setProperty('--yta-fit',yta.aspect());" +
-        "if(yta.flag('skipAds'))document.querySelector('.ytp-skip-ad-button,.ytp-ad-skip-button,.ytp-ad-skip-button-modern')?.click();" +
+        "if(yta.flag('skipAds'))document.querySelector('${SKIP_AD_BUTTONS}')?.click();" +
         // Only the URL's own video counts: during an ad the player reports the ad's id and time.
-        "const p=document.getElementById('movie_player'),id=new URLSearchParams(location.search).get('v');" +
+        "const p=document.getElementById('${PLAYER_ID}'),id=new URLSearchParams(location.search).get('v');" +
         // A video opened without a tap on the car (phone remote, media card) autoplays muted, and the player mutes it
         // again right after the play event; unmute during its first 5 s of playback, so a later mute by hand sticks.
         "if(id&&p&&p.isMuted&&p.getPlayerState()===1&&p.getVideoData().video_id===id){if(id!==umId){umId=id;umN=0}if(umN++<10&&p.isMuted())p.unMute()}" +
@@ -169,12 +177,15 @@ private const val PHONE_JS =
         "else if(location.href!==last){last=location.href;if(remote.cast(last))history.back()}},300)})()"
 
 // Controls act on the main player (watch page or miniplayer), the same video whose state yta.playing reports.
-private const val JS_PLAY = "document.querySelector('#movie_player video')?.play()"
-private const val JS_PAUSE = "document.querySelector('#movie_player video')?.pause()"
-private const val JS_TOGGLE = "(v=>v&&(v.paused?v.play():v.pause()))(document.querySelector('#movie_player video'))"
-private const val JS_RESTART = "(v=>v&&(v.currentTime=0))(document.querySelector('#movie_player video'))"
+private const val JS_PLAY = "document.querySelector('${MAIN_VIDEO}')?.play()"
+private const val JS_PAUSE = "document.querySelector('${MAIN_VIDEO}')?.pause()"
+private const val JS_TOGGLE = "(v=>v&&(v.paused?v.play():v.pause()))(document.querySelector('${MAIN_VIDEO}'))"
+private const val JS_RESTART = "(v=>v&&(v.currentTime=0))(document.querySelector('${MAIN_VIDEO}'))"
+// Moves the main video [seconds] back (negative) or forward, within the video.
+private fun jsSeekBy(seconds: Int) =
+    "(v=>v&&(v.currentTime=Math.max(0,Math.min(v.duration||1e9,v.currentTime+($seconds)))))(document.querySelector('${MAIN_VIDEO}'))"
 // Player's own "next": the playlist's next item, or the autoplay pick outside a playlist.
-private const val JS_NEXT = "document.getElementById('movie_player')?.nextVideo?.()"
+private const val JS_NEXT = "document.getElementById('${PLAYER_ID}')?.nextVideo?.()"
 
 // Player quality names (YouTube's) -> label string ids. "medium" (360p) is the bandwidth-saving default.
 internal val QUALITIES = linkedMapOf(
@@ -215,12 +226,14 @@ internal val TEXT_ZOOM = Choice(
 internal val ASPECT = Choice(
     "aspect", R.string.aspect_title,
     linkedMapOf("contain" to R.string.aspect_fit, "cover" to R.string.aspect_fill, "fill" to R.string.aspect_stretch),
-    "contain",
+    "cover", // fills the car screen; the button switches it (and the switch is kept, see nextAspect)
 )
 internal val CHOICES = listOf(QUALITY, SPEED, ASPECT, HOME_PAGE, TEXT_ZOOM)
-// Flags default to on (the behavior before they were settings), except captions.
+// Flags default to on (the behavior before they were settings), except captions and audio-only while moving.
 internal val FLAGS = listOf(
     Flag("skipAds", R.string.flag_skip_ads),
+    Flag("sponsorBlock", R.string.flag_sponsor_block),
+    Flag("audioWhileMoving", R.string.flag_audio_while_moving, default = false),
     Flag("fullscreen", R.string.flag_fullscreen),
     Flag("background", R.string.flag_background),
     Flag("captions", R.string.flag_captions, default = false),
@@ -238,18 +251,12 @@ internal fun flag(prefs: SharedPreferences, key: String) =
     prefs.getBoolean(key, FLAGS.find { it.key == key }?.default ?: true)
 internal fun setFlag(prefs: SharedPreferences, key: String, on: Boolean) = prefs.edit().putBoolean(key, on).apply()
 
-// Aspect picked with the car button, over the saved default. Not saved, so it lasts until the process dies
-// or the saved default changes (tapAfterChange).
-internal fun aspect(prefs: SharedPreferences, tap: String?) = tap ?: choice(prefs, ASPECT)
-
-// Next mode in ASPECT's order: Ajustar -> Preencher -> Esticar -> Ajustar.
-internal fun tapAspect(prefs: SharedPreferences, tap: String?): String {
+// Aspect button (car and phone): saves the next mode in ASPECT's order (Ajustar -> Preencher -> Esticar -> Ajustar)
+// as the default, so the pick stays for every video and run.
+internal fun nextAspect(prefs: SharedPreferences): String {
     val keys = ASPECT.options.keys.toList()
-    return keys[(keys.indexOf(aspect(prefs, tap)) + 1) % keys.size]
+    return keys[(keys.indexOf(choice(prefs, ASPECT)) + 1) % keys.size].also { setChoice(prefs, ASPECT, it) }
 }
-
-// A new default, set from the car or the phone, drops the button's pick.
-internal fun tapAfterChange(key: String?, tap: String?) = if (key == ASPECT.key) null else tap
 
 // Home button label (string id): the chosen home page's name (Home / Subscriptions / History).
 internal fun homeLabel(prefs: SharedPreferences) = HOME_PAGE.options.getValue(choice(prefs, HOME_PAGE))
@@ -285,17 +292,8 @@ private var resumeAt: Pair<String, Int>? = null
 // The live car screen, for what the phone remote controls beyond the media session; null while there's none.
 private var carLink: YoutubeScreen? = null
 
-// Next aspect for this run (car button and phone remote); returns its label. The page picks it up on its next poll.
-private fun cycleAspect(ctx: Context): String {
-    val p = prefs(ctx)
-    aspectTap = tapAspect(p, aspectTap)
-    return ctx.label(ASPECT, aspect(p, aspectTap))
-}
-
-// See aspect(); process-wide like pageUrl.
-@Volatile private var aspectTap: String? = null
-// Held here because SharedPreferences keeps listeners only weakly.
-private val dropAspectTap = SharedPreferences.OnSharedPreferenceChangeListener { _, key -> aspectTap = tapAfterChange(key, aspectTap) }
+// Next aspect (car button and phone remote), saved; returns its label. The page picks it up on its next poll.
+private fun cycleAspect(ctx: Context) = ctx.label(ASPECT, nextAspect(prefs(ctx)))
 
 /** [url] with `t=` set to the saved position when it is a watch page of that same video, else [url]. */
 internal fun withResume(url: String, at: Pair<String, Int>?): String {
@@ -330,9 +328,29 @@ internal fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + java
 
 // Callback while no car screen is alive: the WebView (the actual player) only exists in that screen.
 private val idleCallback = object : MediaSession.Callback() {
-    override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
-        pendingUrl = watchUrl(mediaId)
-        sharedSession?.setPlaybackState(waitingForCar())
+    override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) = waitForCar(watchUrl(mediaId))
+    override fun onPlayFromSearch(query: String?, extras: Bundle?) = searchToPlay(query, ::waitForCar)
+}
+
+private fun waitForCar(url: String) {
+    pendingUrl = url
+    sharedSession?.setPlaybackState(waitingForCar())
+}
+
+// Search results page the car opens for [query].
+internal fun searchUrl(query: String) = "https://m.youtube.com/results?search_query=" + java.net.URLEncoder.encode(query, "UTF-8")
+
+/**
+ * Voice ("Ok Google, play X on YT Auto"): looks up [query] and calls [open] on the main thread with the first
+ * result's watch page, or the results page when the lookup finds nothing or fails. A blank query does nothing.
+ */
+private fun searchToPlay(query: String?, open: (String) -> Unit) {
+    if (query.isNullOrBlank()) return
+    thread {
+        val id = runCatching {
+            parseFeed(fetchHtml("https://www.youtube.com/results?search_query=" + java.net.URLEncoder.encode(query, "UTF-8"))).firstOrNull()?.id
+        }.getOrNull()
+        android.os.Handler(android.os.Looper.getMainLooper()).post { open(id?.let(::watchUrl) ?: searchUrl(query)) }
     }
 }
 
@@ -358,24 +376,42 @@ private fun mediaSession(ctx: Context) = sharedSession
         sharedSession = it
     }
 
+// Custom actions of the session: 10 s back and forward.
+internal const val REWIND = "rewind"
+internal const val FORWARD = "forward"
+
 // [positionMs] is extrapolated by readers (car media card, phone bar) while playing, so a report every 500 ms is enough.
 private fun playbackState(playing: Boolean, positionMs: Long = PlaybackState.PLAYBACK_POSITION_UNKNOWN, rate: Float = 1f): PlaybackState =
     PlaybackState.Builder()
         .setActions(
             PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE or
                 PlaybackState.ACTION_SKIP_TO_NEXT or PlaybackState.ACTION_SKIP_TO_PREVIOUS or
-                PlaybackState.ACTION_PLAY_FROM_MEDIA_ID
+                PlaybackState.ACTION_PLAY_FROM_MEDIA_ID or PlaybackState.ACTION_PLAY_FROM_SEARCH
             // No ACTION_SEEK_TO: with it Android Auto swaps previous/next for -10/+10 s on its media card (session
             // extras don't stop it). onSeekTo still runs for the phone bar, which calls seekTo directly.
+            // -10/+10 s come as custom actions instead, beside previous/next.
         )
+        .addCustomAction(PlaybackState.CustomAction.Builder(REWIND, appContext.getString(R.string.rewind_10), R.drawable.ic_rewind).build())
+        .addCustomAction(PlaybackState.CustomAction.Builder(FORWARD, appContext.getString(R.string.forward_10), R.drawable.ic_forward).build())
         .setState(if (playing) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED, positionMs, rate)
         .build()
 
-// Browse tree: root -> History / Subscriptions -> videos (mediaId = videoId).
+// Browse tree: root -> History / Subscriptions / Watch later / Liked -> videos (mediaId = videoId),
+// and root -> Playlists -> the account's playlists (mediaId = "list:<id>") -> videos.
 private val FEEDS = linkedMapOf(
     "history" to (R.string.history to "https://www.youtube.com/feed/history"),
     "subscriptions" to (R.string.subscriptions to "https://www.youtube.com/feed/subscriptions"),
+    "watch_later" to (R.string.watch_later to "https://www.youtube.com/playlist?list=WL"),
+    "liked" to (R.string.liked to "https://www.youtube.com/playlist?list=LL"),
 )
+private const val PLAYLISTS = "playlists"
+private const val LIST_PREFIX = "list:"
+private val PLAYLIST_ID = Regex("[A-Za-z0-9_-]{2,64}")
+
+/** Feed page of a browse node: a fixed feed or "list:<playlist id>"; null for anything else. */
+internal fun feedUrl(mediaId: String): String? = FEEDS[mediaId]?.second
+    ?: mediaId.removePrefix(LIST_PREFIX).takeIf { mediaId.startsWith(LIST_PREFIX) && PLAYLIST_ID.matches(it) }
+        ?.let { "https://www.youtube.com/playlist?list=$it" }
 
 /** Plain text of a YouTube text object: {simpleText}, {runs:[{text}]} or {content}. */
 private fun ytText(o: Any?): String? = (o as? JSONObject)?.let { t ->
@@ -404,6 +440,33 @@ private fun collectVideos(v: Any?, out: LinkedHashMap<String, Pair<String, Strin
 
 internal data class FeedVideo(val id: String, val title: String, val channel: String)
 
+/**
+ * Playlists (id to title) on the account's playlists page, in page order, first occurrence only, at most 50.
+ * Watch later and Liked are left out: they have their own entries.
+ */
+internal fun parsePlaylists(html: String): List<Pair<String, String>> {
+    val marker = "var ytInitialData = "
+    val start = html.indexOf(marker).takeIf { it >= 0 } ?: return emptyList()
+    val out = LinkedHashMap<String, String>()
+    fun walk(v: Any?) {
+        when (v) {
+            is JSONObject -> {
+                // Old grid renderers carry playlistId; lockups carry contentId with a playlist content type.
+                val id = v.optString("playlistId").ifEmpty {
+                    if (v.optString("contentType") == "LOCKUP_CONTENT_TYPE_PLAYLIST") v.optString("contentId") else ""
+                }
+                val lockup = v.optJSONObject("metadata")?.optJSONObject("lockupMetadataViewModel")
+                val title = ytText(v.opt("title")) ?: ytText(lockup?.opt("title"))
+                if (PLAYLIST_ID.matches(id) && id != "WL" && id != "LL" && title != null && id !in out) out[id] = title
+                for (k in v.keys()) walk(v.opt(k))
+            }
+            is JSONArray -> for (i in 0 until v.length()) walk(v.opt(i))
+        }
+    }
+    walk(JSONTokener(html.substring(start + marker.length)).nextValue())
+    return out.entries.take(50).map { it.key to it.value }
+}
+
 /** Videos of a feed page's ytInitialData, in page order, first occurrence only, at most 50. */
 internal fun parseFeed(html: String): List<FeedVideo> {
     val marker = "var ytInitialData = "
@@ -420,7 +483,16 @@ internal fun parseFeed(html: String): List<FeedVideo> {
  */
 // ponytail: HTML scrape of ytInitialData, breaks if YouTube changes it; innertube /youtubei/v1/browse with
 // SAPISIDHASH auth is the sturdier upgrade.
-private fun fetchFeed(url: String): List<MediaBrowser.MediaItem> {
+private fun fetchFeed(url: String): List<MediaBrowser.MediaItem> = parseFeed(fetchHtml(url)).map { v ->
+    MediaBrowser.MediaItem(
+        MediaDescription.Builder().setMediaId(v.id).setTitle(v.title).setSubtitle(v.channel)
+            .setIconUri(Uri.parse("content://$THUMBS_AUTHORITY/${v.id}")).build(),
+        MediaBrowser.MediaItem.FLAG_PLAYABLE
+    )
+}
+
+/** Desktop YouTube page [url], fetched with the signed-in WebView cookies. */
+private fun fetchHtml(url: String): String {
     val conn = URL(url).openConnection().apply {
         setRequestProperty("Cookie", CookieManager.getInstance().getCookie(url).orEmpty())
         setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36")
@@ -428,15 +500,40 @@ private fun fetchFeed(url: String): List<MediaBrowser.MediaItem> {
         connectTimeout = 10_000
         readTimeout = 15_000
     }
-    val html = conn.getInputStream().bufferedReader().use { it.readText() }
-    return parseFeed(html).map { v ->
-        MediaBrowser.MediaItem(
-            MediaDescription.Builder().setMediaId(v.id).setTitle(v.title).setSubtitle(v.channel)
-                .setIconUri(Uri.parse("content://$THUMBS_AUTHORITY/${v.id}")).build(),
-            MediaBrowser.MediaItem.FLAG_PLAYABLE
-        )
-    }
+    return conn.getInputStream().bufferedReader().use { it.readText() }
 }
+
+/**
+ * SponsorBlock query for [videoId]. Only the first 4 hex digits of the id's SHA-256 leave the phone (the API's
+ * privacy mode); [parseSegments] picks this video out of the answer.
+ */
+internal fun sponsorUrl(videoId: String): String {
+    val hash = java.security.MessageDigest.getInstance("SHA-256").digest(videoId.toByteArray())
+        .joinToString("") { "%02x".format(it) }
+    return "https://sponsor.ajay.app/api/skipSegments/" + hash.take(4) +
+        "?categories=" + java.net.URLEncoder.encode("""["sponsor","selfpromo","interaction"]""", "UTF-8")
+}
+
+/** Skip segments (start to end, seconds) of [videoId] in a SponsorBlock hash-prefix answer. */
+internal fun parseSegments(json: String, videoId: String): List<Pair<Double, Double>> {
+    val all = JSONArray(json)
+    for (i in 0 until all.length()) {
+        val v = all.optJSONObject(i) ?: continue
+        if (v.optString("videoID") != videoId) continue
+        val segs = v.optJSONArray("segments") ?: return emptyList()
+        return (0 until segs.length()).mapNotNull { j ->
+            val s = segs.optJSONObject(j) ?: return@mapNotNull null
+            val r = s.optJSONArray("segment") ?: return@mapNotNull null
+            if (s.optString("actionType", "skip") != "skip" || r.length() < 2) return@mapNotNull null
+            (r.optDouble(0) to r.optDouble(1)).takeIf { it.second > it.first }
+        }
+    }
+    return emptyList()
+}
+
+/** Segment playing at [seconds], unless it ends within the next second (nothing left worth a jump). */
+internal fun segmentAt(segments: List<Pair<Double, Double>>, seconds: Int) =
+    segments.firstOrNull { seconds >= it.first && seconds < it.second - 1 }
 
 /** Artwork size capped at 320 px on the longest side, proportion kept; smaller art is left as is. */
 internal fun artSize(w: Int, h: Int): Pair<Int, Int> {
@@ -458,6 +555,10 @@ internal fun videoIdFromUrl(url: String): String? {
         ?: return null
     return m.groupValues[1].takeIf(::isVideoId)
 }
+
+// Video id of the first YouTube link in shared text (the YouTube app shares "Title https://youtu.be/<id>?si=…").
+internal fun sharedVideoId(text: String?): String? =
+    text?.let { t -> Regex("""https?://\S+""").findAll(t).firstNotNullOfOrNull { videoIdFromUrl(it.value) } }
 
 // Car's Tocar/Pausar: only with a video to control - a video page (playing or paused) or one playing elsewhere (miniplayer).
 internal fun playToggleShown(url: String, playing: Boolean) = playing || videoIdFromUrl(url) != null
@@ -518,21 +619,23 @@ class MediaService : MediaBrowserService() {
     override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?) = BrowserRoot("root", null)
 
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowser.MediaItem>>) {
+        fun folder(id: String, title: String) =
+            MediaBrowser.MediaItem(MediaDescription.Builder().setMediaId(id).setTitle(title).build(), MediaBrowser.MediaItem.FLAG_BROWSABLE)
         if (parentId == "root") {
-            result.sendResult(FEEDS.map { (id, feed) ->
-                MediaBrowser.MediaItem(
-                    MediaDescription.Builder().setMediaId(id).setTitle(getString(feed.first)).build(),
-                    MediaBrowser.MediaItem.FLAG_BROWSABLE
-                )
-            }.toMutableList())
+            result.sendResult((FEEDS.map { (id, feed) -> folder(id, getString(feed.first)) } +
+                folder(PLAYLISTS, getString(R.string.playlists))).toMutableList())
             return
         }
-        val url = FEEDS[parentId]?.second ?: return result.sendResult(mutableListOf())
+        val url = if (parentId == PLAYLISTS) "https://www.youtube.com/feed/playlists" else feedUrl(parentId)
+            ?: return result.sendResult(mutableListOf())
         result.detach()
         thread {
             // SAPISID is the cookie Google sets on sign-in.
             val signedIn = "SAPISID=" in CookieManager.getInstance().getCookie(url).orEmpty()
-            val fetched = runCatching { fetchFeed(url) }
+            val fetched = runCatching {
+                if (parentId == PLAYLISTS) parsePlaylists(fetchHtml(url)).map { (id, title) -> folder(LIST_PREFIX + id, title) }
+                else fetchFeed(url)
+            }
             val items = fetched.getOrDefault(emptyList()).ifEmpty {
                 val (title, subtitle) = feedNotice(signedIn, fetched.isFailure)
                 listOf(
@@ -578,6 +681,24 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var meta: MediaMetadata? = null
     // Title, channel and artwork URL of the metadata last published, to skip duplicate reports and stale downloads.
     private var metaKey = ""
+    // Audio-only cover over the page while the car moves (flag "audioWhileMoving"), with the video's art and title.
+    private var cover: View? = null
+    private var coverArt: android.widget.ImageView? = null
+    private var coverTitle: android.widget.TextView? = null
+    private var moving = false
+    private var lastFix: android.location.Location? = null
+    private val speedListener = android.location.LocationListener { l ->
+        // Fixes without a speed get one from the distance to the previous fix.
+        val prev = lastFix
+        lastFix = l
+        val dt = prev?.let { (l.elapsedRealtimeNanos - it.elapsedRealtimeNanos) / 1e9f } ?: 0f
+        val mps = if (l.hasSpeed()) l.speed else if (dt > 0) l.distanceTo(prev!!) / dt else return@LocationListener
+        val m = movingAfter(moving, mps)
+        if (m != moving) {
+            moving = m
+            updateCover()
+        }
+    }
 
     // Steering-wheel / car media-card controls land here while this screen is alive.
     private val session = mediaSession(ctx).apply {
@@ -586,11 +707,16 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             override fun onPause() { js(JS_PAUSE) }
             override fun onSkipToNext() { js(JS_NEXT) }
             override fun onSkipToPrevious() { js(JS_RESTART) }
-            override fun onSeekTo(pos: Long) { js("(v=>v&&(v.currentTime=${pos / 1000.0}))(document.querySelector('#movie_player video'))") }
-            override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
-                pageUrl = watchUrl(mediaId) // no player yet: it loads pageUrl when the car shows the screen
-                val wv = webView
-                if (wv != null) wv.loadUrl(pageUrl) else sharedSession?.setPlaybackState(waitingForCar())
+            override fun onSeekTo(pos: Long) { js("(v=>v&&(v.currentTime=${pos / 1000.0}))(document.querySelector('${MAIN_VIDEO}'))") }
+            override fun onCustomAction(action: String, extras: Bundle?) {
+                when (action) {
+                    REWIND -> js(jsSeekBy(-10))
+                    FORWARD -> js(jsSeekBy(10))
+                }
+            }
+            override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) = open(watchUrl(mediaId))
+            override fun onPlayFromSearch(query: String?, extras: Bundle?) {
+                if (query.isNullOrBlank()) js(JS_PLAY) else searchToPlay(query, ::open)
             }
         })
     }
@@ -601,10 +727,11 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         pendingUrl?.let { pageUrl = it }
         pendingUrl = null
         if (pageUrl.isEmpty()) pageUrl = choice(ctx, HOME_PAGE)
-        prefs(ctx).registerOnSharedPreferenceChangeListener(dropAspectTap) // same listener: registering again is a no-op
         setPlaying(false)
+        listenSpeed()
         lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onDestroy(owner: LifecycleOwner) {
+                stopSpeed()
                 teardown()
                 if (carLink === this@YoutubeScreen) carLink = null
                 // Session is process-wide (MediaService holds its token): detach, don't release.
@@ -615,6 +742,44 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
 
     val hasPlayer get() = webView != null
+
+    // Speed for the audio-only cover, from the phone's GPS while the flag is on. Not the car's speed sensor: Android
+    // Auto only hands that to apps holding CAR_SPEED, which a sideloaded app can't get. Location access is asked on
+    // the phone (LoginActivity); without it the page just stays.
+    // ponytail: GPS runs while the car screen lives; fine in a car on a charger, add a lower-power source if battery shows up
+    private fun listenSpeed() {
+        if (!flag(carContext, "audioWhileMoving")) return stopSpeed()
+        if (carContext.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) return
+        runCatching {
+            carContext.getSystemService(android.location.LocationManager::class.java).requestLocationUpdates(
+                android.location.LocationManager.GPS_PROVIDER, 1000L, 0f, speedListener, android.os.Looper.getMainLooper(),
+            )
+        }
+    }
+
+    private fun stopSpeed() {
+        runCatching { carContext.getSystemService(android.location.LocationManager::class.java).removeUpdates(speedListener) }
+        moving = false
+        updateCover()
+    }
+
+    // Shows the cover while moving with the flag on; the video keeps playing under it.
+    private fun updateCover() {
+        val on = moving && flag(carContext, "audioWhileMoving")
+        cover?.visibility = if (on) View.VISIBLE else View.GONE
+        coverTitle?.text = meta?.getString(MediaMetadata.METADATA_KEY_TITLE).orEmpty()
+        val art = meta?.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART)
+        coverArt?.setImageBitmap(art)
+        coverArt?.visibility = if (art != null) View.VISIBLE else View.GONE
+    }
+
+    // Opens [url] in the car; with no player yet it loads pageUrl when the car shows the screen.
+    private fun open(url: String) {
+        if (!lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) return waitForCar(url) // screen gone meanwhile
+        pageUrl = url
+        val wv = webView
+        if (wv != null) wv.loadUrl(url) else sharedSession?.setPlaybackState(waitingForCar())
+    }
 
     /** Re-applies the saved quality and speed to the current video (after the car settings or the phone change them). */
     fun applyPlayback() {
@@ -644,11 +809,13 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         positionMs = PlaybackState.PLAYBACK_POSITION_UNKNOWN
         session.setMetadata(null)
         session.setPlaybackState(playbackState(false))
+        updateCover()
     }
 
     // Position and duration of the URL's video, from the page every 500 ms. No invalidate(): the template doesn't show them.
     private fun setTime(id: String, seconds: Int, duration: Int, playbackRate: Float) {
         resumeAt = id to seconds
+        skipSponsors(id, seconds)
         // Readers extrapolate from the last published state, so republish only when that drifts (seek, rate change,
         // stall), not every 500 ms.
         val now = SystemClock.elapsedRealtime()
@@ -668,6 +835,33 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         }
     }
 
+    // SponsorBlock segments of video sbId, and those already jumped (a seek back into one plays it).
+    private var sbId = ""
+    private var sbSegments: List<Pair<Double, Double>> = emptyList()
+    private val sbSkipped = mutableSetOf<Pair<Double, Double>>()
+
+    // Fetches a new video's segments once, then jumps each one as playback enters it.
+    private fun skipSponsors(id: String, seconds: Int) {
+        if (!flag(carContext, "sponsorBlock")) return
+        if (id != sbId) {
+            sbId = id
+            sbSegments = emptyList()
+            sbSkipped.clear()
+            thread {
+                // 404 means no segments for that prefix: the same empty list as a failure.
+                val segs = runCatching {
+                    parseSegments(URL(sponsorUrl(id)).openStream().bufferedReader().use { it.readText() }, id)
+                }.getOrDefault(emptyList())
+                carContext.mainExecutor.execute { if (sbId == id) sbSegments = segs }
+            }
+            return
+        }
+        val seg = segmentAt(sbSegments, seconds) ?: return
+        if (!sbSkipped.add(seg)) return
+        js("(v=>v&&(v.currentTime=${seg.second}))(document.querySelector('${MAIN_VIDEO}'))")
+        CarToast.makeText(carContext, R.string.sponsor_skipped, CarToast.LENGTH_SHORT).show()
+    }
+
     private fun setMeta(title: String, artist: String, art: String) {
         val key = "$title|$artist|$art"
         if (key == metaKey) return
@@ -682,6 +876,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 .apply { if (durationMs > 0) putLong(MediaMetadata.METADATA_KEY_DURATION, durationMs) }
                 .build()
             session.setMetadata(meta)
+            updateCover()
         }
         publish(null)
         if (!art.startsWith("https://")) return
@@ -712,7 +907,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 }
                 .addAction(Action.Builder().setTitle(carContext.getString(R.string.search)).setOnClickListener {
                     screenManager.push(SearchScreen(carContext) { query ->
-                        pageUrl = "https://m.youtube.com/results?search_query=" + Uri.encode(query)
+                        pageUrl = searchUrl(query)
                         webView?.loadUrl(pageUrl)
                     })
                 }.build())
@@ -720,7 +915,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         )
         .setMapActionStrip(
             ActionStrip.Builder()
-                // Video aspect: Ajustar -> Preencher -> Esticar, for this run only (the default is a setting).
+                // Video aspect: Ajustar -> Preencher -> Esticar, saved as the default.
                 .addAction(
                     Action.Builder()
                         .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_aspect_ratio)).build())
@@ -735,6 +930,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                                 // Flags are read live by the page; zoom, quality, speed and captions need a push.
                                 webView?.settings?.textZoom = choice(carContext, TEXT_ZOOM).toInt()
                                 applyPlayback()
+                                listenSpeed() // the audio flag may have just been turned on
+                                updateCover()
                                 invalidate() // home button label
                             })
                         }
@@ -792,7 +989,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     fun flag(key: String) = flag(carContext, key)
 
                     @JavascriptInterface
-                    fun aspect() = aspect(prefs(carContext), aspectTap)
+                    fun aspect() = choice(carContext, ASPECT)
 
                     @JavascriptInterface
                     fun meta(title: String, artist: String, art: String) =
@@ -817,7 +1014,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     override fun onShowCustomView(view: View, callback: CustomViewCallback) {
                         custom = view
                         exitFullscreen = callback
-                        frame.addView(view)
+                        frame.addView(view, 1) // over the page, under the offline screen and the audio cover
                         fitToArea() // the native fullscreen video also stops at a media card
                     }
 
@@ -833,6 +1030,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             root = frame
             frame.addView(wv)
             frame.addView(offline)
+            frame.addView(audioCover(context).also { cover = it })
+            updateCover()
             fitToArea()
             setContentView(frame)
             show()
@@ -853,6 +1052,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         display?.release()
         webView = null
         root = null
+        cover = null
+        coverArt = null
+        coverTitle = null
         exitFullscreen = null
         presentation = null
         display = null
@@ -888,6 +1090,36 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 topMargin = t
             }
         }
+    }
+
+    // Black screen with the video's art, title and "Audio only while driving"; swallows taps.
+    private fun audioCover(ctx: Context): View = FrameLayout(ctx).apply {
+        setBackgroundColor(android.graphics.Color.BLACK)
+        visibility = View.GONE
+        isClickable = true
+        addView(
+            android.widget.LinearLayout(ctx).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                gravity = android.view.Gravity.CENTER_HORIZONTAL
+                setPadding(32, 0, 32, 0)
+                addView(android.widget.ImageView(ctx).also { coverArt = it }, android.widget.LinearLayout.LayoutParams(320, 180))
+                addView(android.widget.TextView(ctx).also { coverTitle = it }.apply {
+                    setTextColor(android.graphics.Color.WHITE)
+                    textSize = 22f
+                    maxLines = 2
+                    ellipsize = android.text.TextUtils.TruncateAt.END
+                    gravity = android.view.Gravity.CENTER
+                    setPadding(0, 24, 0, 8)
+                })
+                addView(android.widget.TextView(ctx).apply {
+                    setText(R.string.audio_only_moving)
+                    setTextColor(0xB3FFFFFF.toInt())
+                    textSize = 18f
+                    gravity = android.view.Gravity.CENTER
+                })
+            },
+            FrameLayout.LayoutParams(-1, -2, android.view.Gravity.CENTER),
+        )
     }
 
     override fun onScroll(distanceX: Float, distanceY: Float) {
@@ -1017,11 +1249,16 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
             }
         })
     }
+    // -10 s and +10 s sit at the ends of the time row: the top row has no room left on narrow phones.
+    private val rewind = button(R.drawable.ic_rewind) { car.transportControls.sendCustomAction(REWIND, null) }
+    private val forward = button(R.drawable.ic_forward) { car.transportControls.sendCustomAction(FORWARD, null) }
     private val timeRow = android.widget.LinearLayout(ctx).apply {
         gravity = android.view.Gravity.CENTER_VERTICAL
+        addView(rewind)
         addView(position)
         addView(seek, LayoutParams(0, -2, 1f))
         addView(duration)
+        addView(forward)
     }
     private val callback = object : MediaController.Callback() {
         override fun onMetadataChanged(m: MediaMetadata?) = update()
@@ -1062,11 +1299,11 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         car.unregisterCallback(callback)
     }
 
-    // Proporção (this run only, like the car button), Qualidade and Velocidade (saved, then pushed to the car video).
+    // Proporção (cycles and saves, like the car button), Qualidade and Velocidade (saved, then pushed to the car video).
     private fun showMenu(anchor: View) {
         val ctx = context
         android.widget.PopupMenu(ctx, anchor).apply {
-            menu.add(ctx.getString(R.string.aspect_value, ctx.label(ASPECT, aspect(prefs(ctx), aspectTap)))).setOnMenuItemClickListener {
+            menu.add(ctx.getString(R.string.aspect_value, ctx.label(ASPECT, choice(prefs(ctx), ASPECT)))).setOnMenuItemClickListener {
                 android.widget.Toast.makeText(ctx, ctx.getString(R.string.aspect_value, cycleAspect(ctx)), android.widget.Toast.LENGTH_SHORT).show()
                 true
             }
@@ -1127,6 +1364,8 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         seek.max = d.toInt()
         // No duration yet (new video, ad, live): a touch would seek the car to 0.
         seek.isEnabled = d > 0 && carOpen
+        rewind.isEnabled = carOpen
+        forward.isEnabled = carOpen
         // Metadata from earlier but no car player now: nothing would answer the buttons.
         controls.alpha = if (carOpen) 1f else 0.4f
         for (i in 0 until controls.childCount) controls.getChildAt(i).isEnabled = carOpen
@@ -1147,6 +1386,10 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         position.text = clock(seconds)
     }
 }
+
+// Moving above 2 m/s (7 km/h), stopped again below 0.5 m/s: the gap keeps a crawl in traffic from flickering.
+// ponytail: thresholds picked, not measured; retune if the cover lags at a stop or blinks in stop-and-go
+internal fun movingAfter(was: Boolean, mps: Float) = if (was) mps >= 0.5f else mps > 2f
 
 /** Black loading screen with a spinner and "Sem conexão. Tentando de novo…", hidden until a page fails. */
 private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
@@ -1240,6 +1483,28 @@ class SearchScreen(ctx: CarContext, private val onQuery: (String) -> Unit) : Scr
         .build()
 }
 
+// GPS speed for the car's audio-only cover (see YoutubeScreen.listenSpeed); only the phone can show the prompt.
+private fun Activity.requestLocation() {
+    if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED)
+        requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION), 1)
+}
+
+// Latest release of this app on GitHub: the app isn't on the Play Store, so it checks there for updates.
+private const val RELEASES_API = "https://api.github.com/repos/begati/yt-auto/releases/latest"
+
+/** Whether release tag [tag] ("v1.1") is a newer version than [current] ("1.0"), number by number. */
+internal fun isNewer(tag: String, current: String): Boolean {
+    fun parts(v: String) = v.trim().trimStart('v', 'V').split('.').map { p -> p.takeWhile(Char::isDigit).toIntOrNull() ?: 0 }
+    val a = parts(tag)
+    val b = parts(current)
+    for (i in 0 until maxOf(a.size, b.size)) {
+        val x = a.getOrElse(i) { 0 }
+        val y = b.getOrElse(i) { 0 }
+        if (x != y) return x > y
+    }
+    return false
+}
+
 /**
  * Phone launcher screen to sign in to YouTube. WebView cookies are app-wide, so the car WebView
  * picks up the session. Google rejects embedded WebViews by the "; wv" UA token, hence the strip.
@@ -1292,6 +1557,31 @@ class LoginActivity : Activity() {
             addView(page, android.widget.LinearLayout.LayoutParams(-1, 0, 1f))
             addView(bar)
         })
+        if (savedInstanceState == null) {
+            checkUpdate()
+            // Audio-only turned on in the car: the car can't ask for location, so the phone does on its next launch.
+            if (flag(this, "audioWhileMoving")) requestLocation()
+        }
+    }
+
+    // Offers a newer GitHub release once per launch, until it's installed or skipped. Failures stay silent.
+    private fun checkUpdate() = thread {
+        val release = runCatching {
+            JSONObject(URL(RELEASES_API).openStream().bufferedReader().use { it.readText() })
+        }.getOrNull() ?: return@thread
+        val tag = release.optString("tag_name")
+        val page = release.optString("html_url").takeIf { it.startsWith("https://github.com/") } ?: return@thread
+        val current = packageManager.getPackageInfo(packageName, 0).versionName ?: return@thread
+        if (!isNewer(tag, current) || prefs(this).getString("skippedUpdate", null) == tag) return@thread
+        runOnUiThread {
+            if (isFinishing || isDestroyed) return@runOnUiThread
+            android.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.update_title, tag))
+                .setMessage(R.string.update_message)
+                .setPositiveButton(R.string.update_download) { _, _ -> startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(page))) }
+                .setNegativeButton(R.string.update_skip) { _, _ -> prefs(this).edit().putString("skippedUpdate", tag).apply() }
+                .show()
+        }
     }
 
     override fun onDestroy() {
@@ -1321,6 +1611,25 @@ class LoginActivity : Activity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         startActivity(Intent(this, SettingsActivity::class.java))
         return true
+    }
+}
+
+/**
+ * Share target: a YouTube link shared from any app (the YouTube app's Share > YT Auto) plays in the car, or waits
+ * for the car screen like a video tapped in the phone remote. No UI of its own: a toast, then gone.
+ */
+class ShareActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val id = sharedVideoId(intent.getStringExtra(Intent.EXTRA_TEXT) ?: intent.dataString)
+        val msg = when {
+            id == null -> R.string.share_no_video
+            carPlaying() -> R.string.video_sent
+            else -> R.string.video_saved
+        }
+        if (id != null) MediaController(this, mediaSession(this).sessionToken).transportControls.playFromMediaId(id, null)
+        android.widget.Toast.makeText(this, msg, android.widget.Toast.LENGTH_LONG).show()
+        finish()
     }
 }
 
@@ -1369,6 +1678,11 @@ class SettingsActivity : Activity() {
                 key = f.key
                 setTitle(f.title)
                 setDefaultValue(f.default)
+                // Turning audio-only on asks for the GPS speed it runs on (see YoutubeScreen.listenSpeed).
+                if (f.key == "audioWhileMoving") setOnPreferenceChangeListener { _, on ->
+                    if (on == true) ctx.requestLocation()
+                    true
+                }
             }
             category(R.string.category_video).apply {
                 addPreference(list(QUALITY))

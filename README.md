@@ -23,9 +23,17 @@ with your account, subscriptions and history, and turns your phone into a remote
 
 - YouTube home page, subscriptions, history and search in the car (search uses the car keyboard).
 - Sign in once on the phone; the car uses the same session.
-- Phone remote: tap a video on the phone and it plays in the car; play/pause, next, seek and settings from the phone bar.
-- Android Auto now-playing card and steering wheel buttons (play/pause, next, previous).
-- History and Subscriptions lists in Android Auto's media browser.
+- Phone remote: tap a video on the phone and it plays in the car; play/pause, next, seek, 10 s back/forward and
+  settings from the phone bar.
+- Share to the car: in the YouTube app (or any app), Share > YT Auto plays the link in the car.
+- Voice: "Hey Google, play <something> on YT Auto" plays the first search result.
+- Android Auto now-playing card (with 10 s back/forward) and steering wheel buttons (play/pause, next, previous).
+- History, Subscriptions, Watch later, Liked videos and your playlists in Android Auto's media browser.
+- Video fills the car screen by default; the aspect button (fit / fill / stretch) remembers your pick.
+- Skips sponsor segments with [SponsorBlock](https://sponsor.ajay.app) (only a 4-character hash prefix of the
+  video id is sent).
+- Optional audio-only mode while the car is moving (uses the phone's GPS speed; off by default).
+- Tells you when a new version is out on GitHub.
 - Settings: video quality, speed, aspect (fit / fill / stretch), captions, fullscreen on open, home page, text size.
 - Resumes the video where it stopped when the car reconnects.
 - Languages: English, Português (Brasil), Español, Français, Italiano, Русский and العربية. The app follows the

@@ -40,4 +40,19 @@
     <string name="notice_failed_hint">Verifique a conexão do celular</string>
     <string name="notice_empty">Nada por aqui</string>
     <string name="notice_empty_hint">Essa lista está vazia no YouTube</string>
+    <string name="flag_sponsor_block">Pular patrocínios (SponsorBlock)</string>
+    <string name="flag_audio_while_moving">Só áudio com o carro em movimento</string>
+    <string name="audio_only_moving">Só áudio enquanto dirige. O vídeo volta quando o carro parar.</string>
+    <string name="rewind_10">Voltar 10 s</string>
+    <string name="forward_10">Avançar 10 s</string>
+    <string name="watch_later">Assistir mais tarde</string>
+    <string name="liked">Vídeos curtidos</string>
+    <string name="playlists">Playlists</string>
+    <string name="share_no_video">Nenhum vídeo do YouTube no que foi compartilhado</string>
+    <string name="video_sent">Tocando no carro</string>
+    <string name="sponsor_skipped">Patrocínio pulado</string>
+    <string name="update_title">YT Auto %1$s disponível</string>
+    <string name="update_message">Saiu uma versão nova. Baixe o APK e instale com o KingInstaller, como da primeira vez.</string>
+    <string name="update_download">Baixar</string>
+    <string name="update_skip">Pular esta versão</string>
 </resources>

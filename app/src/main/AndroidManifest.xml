@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="androidx.car.app.NAVIGATION_TEMPLATES" />
     <uses-permission android:name="androidx.car.app.ACCESS_SURFACE" />
+    <!-- GPS speed, for the audio-only cover while the car moves. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -29,6 +32,19 @@
         </activity>
 
         <activity android:name=".SettingsActivity" />
+
+        <!-- Share target: Share > YT Auto on a YouTube link plays it in the car. No UI, a toast only. -->
+        <activity
+            android:name=".ShareActivity"
+            android:exported="true"
+            android:label="YT Auto"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
 
         <!-- Thumbnails for the car's media list (Android Auto only loads content:// artwork). -->
         <provider

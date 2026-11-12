@@ -40,4 +40,19 @@
     <string name="notice_failed_hint">تحقق من اتصال الهاتف</string>
     <string name="notice_empty">لا يوجد شيء هنا</string>
     <string name="notice_empty_hint">هذه القائمة فارغة على YouTube</string>
+    <string name="flag_sponsor_block">تخطي مقاطع الرعاية (SponsorBlock)</string>
+    <string name="flag_audio_while_moving">الصوت فقط أثناء سير السيارة</string>
+    <string name="audio_only_moving">الصوت فقط أثناء القيادة. يعود الفيديو عند توقف السيارة.</string>
+    <string name="rewind_10">رجوع 10 ث</string>
+    <string name="forward_10">تقديم 10 ث</string>
+    <string name="watch_later">المشاهدة لاحقًا</string>
+    <string name="liked">الفيديوهات التي أعجبتك</string>
+    <string name="playlists">قوائم التشغيل</string>
+    <string name="share_no_video">لا يوجد فيديو YouTube فيما تمت مشاركته</string>
+    <string name="video_sent">يُشغَّل في السيارة</string>
+    <string name="sponsor_skipped">تم تخطي الرعاية</string>
+    <string name="update_title">يتوفر YT Auto %1$s</string>
+    <string name="update_message">صدر إصدار جديد. نزّل ملف APK وثبّته باستخدام KingInstaller كما في المرة الأولى.</string>
+    <string name="update_download">تنزيل</string>
+    <string name="update_skip">تخطي هذا الإصدار</string>
 </resources>

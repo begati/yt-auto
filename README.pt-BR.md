@@ -23,10 +23,18 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
 
 - Página inicial, inscrições, histórico e pesquisa do YouTube no carro (a pesquisa usa o teclado do carro).
 - Login uma vez no celular; o carro usa a mesma sessão.
-- Controle pelo celular: toque num vídeo no celular e ele toca no carro; tocar/pausar, próximo, avançar e
-  configurações pela barra do celular.
-- Card "tocando agora" do Android Auto e botões do volante (tocar/pausar, próximo, anterior).
-- Listas de Histórico e Inscrições no navegador de mídia do Android Auto.
+- Controle pelo celular: toque num vídeo no celular e ele toca no carro; tocar/pausar, próximo, barra de
+  progresso, voltar/avançar 10 s e configurações pela barra do celular.
+- Compartilhar para o carro: no app do YouTube (ou em qualquer app), Compartilhar > YT Auto toca o link no carro.
+- Voz: "Ok Google, tocar <algo> no YT Auto" toca o primeiro resultado da busca.
+- Card "tocando agora" do Android Auto (com voltar/avançar 10 s) e botões do volante (tocar/pausar, próximo,
+  anterior).
+- Histórico, Inscrições, Assistir mais tarde, Vídeos curtidos e suas playlists no navegador de mídia do Android Auto.
+- O vídeo preenche a tela do carro por padrão; o botão de proporção (ajustar / preencher / esticar) lembra a escolha.
+- Pula patrocínios com o [SponsorBlock](https://sponsor.ajay.app) (só um prefixo de 4 caracteres do hash do id do
+  vídeo é enviado).
+- Modo só áudio opcional com o carro em movimento (usa a velocidade do GPS do celular; desligado por padrão).
+- Avisa quando sai versão nova no GitHub.
 - Configurações: qualidade, velocidade, proporção (ajustar / preencher / esticar), legendas, tela cheia ao abrir,
   página inicial, tamanho do texto.
 - Retoma o vídeo de onde parou quando o carro reconecta.
