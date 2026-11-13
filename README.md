@@ -1,5 +1,10 @@
 # YT Auto
 
+[![Downloads](https://img.shields.io/github/downloads/begati/yt-auto/total)](https://github.com/begati/yt-auto/releases)
+[![Stars](https://img.shields.io/github/stars/begati/yt-auto)](https://github.com/begati/yt-auto/stargazers)
+[![Release](https://img.shields.io/github/v/release/begati/yt-auto)](https://github.com/begati/yt-auto/releases/latest)
+[![License](https://img.shields.io/github/license/begati/yt-auto)](LICENSE)
+
 **English** · [Português (Brasil)](README.pt-BR.md)
 
 Watch YouTube on your car's Android Auto screen. YT Auto shows the YouTube mobile site on the car display,
