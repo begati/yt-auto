@@ -102,8 +102,8 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7
 
 **Done when**:
 
-- [ ] Walk: Início/busca no DHU sem blocos de anúncio com a opção ligada; com ela desligada, os blocos aparecem
-- [ ] Gate check passes: `./gradlew assembleDebug`
+- [x] Walk: Início/busca no DHU sem blocos de anúncio com a opção ligada; com ela desligada, os blocos aparecem
+- [x] Gate check passes: `./gradlew assembleDebug`
 
 **Tests**: none (walk - injected CSS layer)
 **Gate**: full
@@ -271,4 +271,5 @@ Proof: `grep -qi "account.*optional" README.md && grep -qi "conta.*opcional" REA
 - T2 / C8: página do carro com `window.__ytaStart` 1, `JSON.parse` embrulhado e `ytInitialPlayerResponse` como accessor (definido antes do `var` da página, que é não-configurável).
 - C11 controle (opção desligada via `shared_prefs/settings.xml` + `force-stop`): `ytInitialPlayerResponse` com `playerAds`, `adPlacements`, `adBreakHeartbeatParams`; pós-roll de dQw4w9WgXcQ visível 50 amostras (12,5 s).
 - C11 (opção ligada): dQw4w9WgXcQ, kJQP7kiw5Fk, 9bZkp7q19f0, JGwWNGJdvx8, OPf0YbXqDm0 = 0 amostras com `ad-showing`, sem campos de anúncio; o fim do vídeo leva direto ao próximo (autoplay pelo SPA). Primeira rodada achou `getPlayerResponse()` do vídeo do autoplay com os campos (via `get_watch`): corrigido em 02e8467 (ADS-13); segunda rodada: os 5 vídeos do autoplay com `ad: []`.
+- T3 / C12, C13: sem conta (e com Premium) o YouTube não mostra anúncios no feed nem na busca (buscas "carro novo", "celular", "iphone", "seguro auto": nenhuma tag de anúncio). Prova com os três elementos (`ad-slot-renderer`, `ytm-promoted-sparkles-web-renderer`, `ytm-companion-ad-renderer`) inseridos via DevTools na busca "carro": opção ligada = `html.yta-noads`, `display` none nos três; opção desligada (prefs + `force-stop`) = sem a classe, `display` inline nos três. Ressalva: as tags vêm do markup conhecido do m.youtube.com, não de um anúncio real observado.
 - C9/C10: build com o `if` da injeção forçado a falso (revertido em seguida): `__ytaStart` ausente, página abre, campos presentes, pós-roll visível só 3 amostras (0,75 s) - levado ao fim pelo pulo da v1.2.

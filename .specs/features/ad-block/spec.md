@@ -161,8 +161,8 @@ seguir sem conta. O carro já carrega o m.youtube.com com ou sem sessão; só o 
 | ADS-07 | P1 (AC 7) | Execute | Implementing |
 | ADS-08 | P1 (AC 8) | Execute | Implementing |
 | ADS-09 | P1 (AC 9) | Execute | Implementing |
-| ADS-10 | P2 (AC 1) | Execute | Pending |
-| ADS-11 | P2 (AC 2) | Execute | Pending |
+| ADS-10 | P2 (AC 1) | Execute | Implementing |
+| ADS-11 | P2 (AC 2) | Execute | Implementing |
 | ADS-12 | P3 (AC 1) | Execute | Pending |
 | ADS-13 | P1 (AC 10) | Execute | Implementing |
 | CC-01 | P1 Legenda (AC 1) | Execute | Pending |

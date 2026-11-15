@@ -72,6 +72,9 @@ private const val MAIN_VIDEO = "#movie_player video"
 private const val PLAYER_CONTAINER = "#player-container-id"
 private const val SKIP_AD_BUTTONS = ".ytp-skip-ad-button,.ytp-ad-skip-button,.ytp-ad-skip-button-modern"
 private const val PLAYLIST_PANEL = "ytm-playlist-engagement-panel"
+// Promoted items in the feed and search, and the companion ad under the player (hidden under html.yta-noads).
+private const val FEED_ADS = "html.yta-noads ad-slot-renderer,html.yta-noads ytm-promoted-sparkles-web-renderer," +
+    "html.yta-noads ytm-companion-ad-renderer"
 
 // Sets the saved quality on the current video; stamps the time so the resulting change event isn't saved as a pick.
 private const val JS_APPLY_QUALITY =
@@ -90,6 +93,7 @@ private const val JS_APPLY_PLAYBACK =
 // - reports play/pause of the main player (not feed previews) and the video's title/channel/thumbnail to the app through the `yta` bridge
 //   (from the page's navigator.mediaSession, falling back to document.title, the player's author and the ytimg thumbnail)
 // - hides the playlist "Próximo / Mix de ..." bar that covers the player on short car screens
+// - hides promoted items in the feed and search (FEED_ADS), if "skipAds" is on
 // - stretches the player over the whole screen on /watch pages (polled, SPA navigation has no load event), if "fullscreen" is on,
 //   with the video's object-fit from yta.aspect() (Ajustar/Preencher/Esticar)
 // - runs ads to their end and clicks "Pular anúncio", if "skipAds" is on (ads that got past assets/page_start.js)
@@ -132,6 +136,7 @@ private const val PAGE_JS =
         "p.getVideoData().video_id===qId)yta.saveSpeed(String(r))})}},true);" +
         "const s=document.createElement('style');" +
         "s.textContent='${PLAYLIST_PANEL}{display:none!important}" +
+        "${FEED_ADS}{display:none!important}" +
         "html.yta-watch ${PLAYER_CONTAINER}{position:fixed!important;inset:0!important;" +
         "width:100vw!important;height:100vh!important;z-index:99999!important;background:#000!important}" +
         // Wrappers between the container and the video (#player keeps an aspect-ratio padding, the video
@@ -155,6 +160,7 @@ private const val PAGE_JS =
         "document.documentElement.classList.toggle('yta-watch'," +
         "yta.flag('fullscreen')&&location.pathname==='/watch');" +
         "document.documentElement.style.setProperty('--yta-fit',yta.aspect());" +
+        "document.documentElement.classList.toggle('yta-noads',yta.flag('skipAds'));" +
         // Only the URL's own video counts: during an ad the player reports the ad's id and time.
         "const p=document.getElementById('${PLAYER_ID}'),id=new URLSearchParams(location.search).get('v');" +
         // Ads: unskippable ones have no button, and YouTube may ignore a scripted click, so the ad is also run to
