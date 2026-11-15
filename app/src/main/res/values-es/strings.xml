@@ -18,7 +18,7 @@
     <string name="aspect_fill">Rellenar</string>
     <string name="aspect_stretch">Estirar</string>
     <string name="aspect_value">Proporción: %1$s</string>
-    <string name="flag_skip_ads">Saltar anuncios</string>
+    <string name="flag_skip_ads">Bloquear anuncios</string>
     <string name="flag_fullscreen">Pantalla completa al abrir un video</string>
     <string name="flag_background">Seguir reproduciendo con otra app en pantalla</string>
     <string name="flag_captions">Subtítulos</string>

@@ -133,3 +133,21 @@ class SettingsTest {
         assertEquals(R.string.home_home, homeLabel(MemoryPrefs()))
     }
 }
+
+/** ADS-12 (spec ad-block). */
+class AdBlockLabelTest {
+    @Test
+    fun `ADS-12 the ads setting reads Block ads in every language and is on by default`() {
+        val expected = mapOf(
+            "values" to "Block ads", "values-pt" to "Bloquear anúncios", "values-es" to "Bloquear anuncios",
+            "values-fr" to "Bloquer les annonces", "values-it" to "Blocca annunci", "values-ru" to "Блокировать рекламу",
+            "values-ar" to "حظر الإعلانات",
+        )
+        for ((dir, label) in expected) {
+            val xml = java.io.File("src/main/res/$dir/strings.xml").readText()
+            assertEquals(dir, label, Regex("""<string name="flag_skip_ads">([^<]*)</string>""").find(xml)?.groupValues?.get(1))
+        }
+        assertEquals(R.string.flag_skip_ads, FLAGS.single { it.key == "skipAds" }.title)
+        assertTrue(flag(MemoryPrefs(), "skipAds"))
+    }
+}

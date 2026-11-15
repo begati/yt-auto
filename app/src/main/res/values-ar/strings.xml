@@ -18,7 +18,7 @@
     <string name="aspect_fill">ملء</string>
     <string name="aspect_stretch">تمديد</string>
     <string name="aspect_value">نسبة العرض: %1$s</string>
-    <string name="flag_skip_ads">تخطي الإعلانات</string>
+    <string name="flag_skip_ads">حظر الإعلانات</string>
     <string name="flag_fullscreen">ملء الشاشة عند فتح فيديو</string>
     <string name="flag_background">مواصلة التشغيل مع تطبيق آخر على الشاشة</string>
     <string name="flag_captions">الترجمة</string>

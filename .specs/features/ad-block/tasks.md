@@ -122,7 +122,7 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7
 
 **Done when**:
 
-- [ ] Teste `ADS-12` passa: `./gradlew testDebugUnitTest --rerun`
+- [x] Teste `ADS-12` passa: `./gradlew testDebugUnitTest --rerun`
 
 **Tests**: unit
 **Gate**: quick

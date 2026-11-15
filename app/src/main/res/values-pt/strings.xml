@@ -18,7 +18,7 @@
     <string name="aspect_fill">Preencher</string>
     <string name="aspect_stretch">Esticar</string>
     <string name="aspect_value">Proporção: %1$s</string>
-    <string name="flag_skip_ads">Pular anúncios</string>
+    <string name="flag_skip_ads">Bloquear anúncios</string>
     <string name="flag_fullscreen">Tela cheia ao abrir vídeo</string>
     <string name="flag_background">Tocar com outro app na tela</string>
     <string name="flag_captions">Legendas</string>

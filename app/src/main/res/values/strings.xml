@@ -18,7 +18,7 @@
     <string name="aspect_fill">Fill</string>
     <string name="aspect_stretch">Stretch</string>
     <string name="aspect_value">Aspect: %1$s</string>
-    <string name="flag_skip_ads">Skip ads</string>
+    <string name="flag_skip_ads">Block ads</string>
     <string name="flag_fullscreen">Fullscreen when opening a video</string>
     <string name="flag_background">Keep playing with another app on screen</string>
     <string name="flag_captions">Captions</string>
