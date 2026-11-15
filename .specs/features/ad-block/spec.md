@@ -43,7 +43,7 @@ seguir sem conta. O carro já carrega o m.youtube.com com ou sem sessão; só o 
 | Configuração | A chave existente `skipAds` controla bloqueio e pulo; o rótulo vira "Bloquear anúncios" em todas as línguas; ligada por padrão | Resposta do usuário | y - user: "Mesma chave (Recomendado)" |
 | Momento da injeção | Script no início do documento (`WebViewCompat.addDocumentStartJavaScript`, dependência nova `androidx.webkit:webkit`), só na origem `https://m.youtube.com` | `onPageFinished` chega depois de `ytInitialPlayerResponse` já ter sido lido; não há outro jeito nativo de rodar antes dos scripts da página | n |
 | Campos removidos | `adPlacements`, `adSlots`, `playerAds`, `adBreakHeartbeatParams`, no topo da resposta do player | Os campos que agendam anúncios no player; o resto da resposta fica intacto | n |
-| Onde a resposta passa | `JSON.parse`, `Response.prototype.json` e a variável global `ytInitialPlayerResponse` | Primeira carga traz a resposta no HTML; navegação no SPA busca `/youtubei/v1/player` | n |
+| Onde a resposta passa | `JSON.parse`, `Response.prototype.json` e a variável global `ytInitialPlayerResponse`; também aninhada em `playerResponse` (achado no walk do T2: a navegação do SPA usa `/youtubei/v1/get_watch`, que responde `[{playerResponse}, {watchNextResponse}]`) | Primeira carga traz a resposta no HTML; navegação no SPA busca `/youtubei/v1/player` | n |
 | Anúncios no feed (vídeos promovidos no Início e na busca) | Escondidos por CSS com a opção ligada | O pedido é "remover as propagandas por completo"; CSS é uma linha | n |
 | Causa das legendas na instalação nova | A preferência de legenda que o próprio YouTube guarda na página (`localStorage`) não existe numa instalação nova, e o YouTube liga legendas por conta própria; ligar e desligar "Legendas" chama `loadModule`/`unloadModule` com o vídeo tocando, o que grava essa preferência. Hipótese a confirmar no aparelho (chrome://inspect) antes do conserto | Explica por que só o liga/desliga resolve; a janela de 10 s do commit 6824b1f não cobre esse caso | n |
 | Conserto das legendas | No início de cada documento, gravar na preferência do YouTube o estado de "Legendas" do app, antes do player ler | Mesmo efeito do liga/desliga manual, sem toque; a forma exata sai da confirmação acima | n |
@@ -76,6 +76,7 @@ seguir sem conta. O carro já carrega o m.youtube.com com ou sem sessão; só o 
 7. IF a WebView não suporta script no início do documento THEN the app SHALL abrir a página normalmente, só com o pulo da v1.2
 8. WHERE "Bloquear anúncios" está ligada, WHILE o player mostra um anúncio (`ad-showing`) the app SHALL continuar levando o anúncio ao fim e clicando "Pular anúncio", como na v1.2
 9. WHEN um vídeo é aberto no carro com "Bloquear anúncios" ligada THEN the app SHALL começar o vídeo sem o player passar por `ad-showing`
+10. WHERE "Bloquear anúncios" está ligada, WHEN uma resposta traz a resposta do player aninhada em `playerResponse` (objeto, ou itens de uma lista como a de `/youtubei/v1/get_watch`) THEN the app SHALL entregar essa `playerResponse` sem os campos de anúncio
 
 **Independent Test**: no DHU, abrir 5 vídeos seguidos com a opção ligada: nenhum mostra anúncio; desligar e abrir de novo: anúncios voltam.
 
@@ -163,6 +164,7 @@ seguir sem conta. O carro já carrega o m.youtube.com com ou sem sessão; só o 
 | ADS-10 | P2 (AC 1) | Execute | Pending |
 | ADS-11 | P2 (AC 2) | Execute | Pending |
 | ADS-12 | P3 (AC 1) | Execute | Pending |
+| ADS-13 | P1 (AC 10) | Execute | Implementing |
 | CC-01 | P1 Legenda (AC 1) | Execute | Pending |
 | CC-02 | P1 Legenda (AC 2) | Execute | Pending |
 | CC-03 | P1 Legenda (AC 3) | Execute | Pending |
@@ -172,7 +174,7 @@ seguir sem conta. O carro já carrega o m.youtube.com com ou sem sessão; só o 
 | ANON-04 | P1 Sem conta (AC 4) | Execute | Pending |
 | ANON-05 | P1 Sem conta (AC 5) | Execute | Pending |
 
-**Coverage:** 20 total, 0 mapped to tasks, 20 unmapped ⚠️
+**Coverage:** 21 total, 0 mapped to tasks, 20 unmapped ⚠️
 
 ---
 

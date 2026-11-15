@@ -66,6 +66,19 @@ test('ADS-05 with the flag off responses pass unchanged', async () => {
   assert.deepEqual(noAdFields(vm.runInContext('ytInitialPlayerResponse', ctx)), AD_FIELDS)
 })
 
+test('ADS-13 a nested playerResponse loses the ad fields, alone or inside a list', async () => {
+  const ctx = page()
+  const list = vm.runInContext(`JSON.parse(${JSON.stringify(JSON.stringify([{ playerResponse: withAds() }, { watchNextResponse: { adPlacements: 1 } }]))})`, ctx)
+  assert.deepEqual(noAdFields(list[0].playerResponse), [])
+  assert.equal(list[0].playerResponse.videoDetails.videoId, 'abc')
+  assert.deepEqual(JSON.parse(JSON.stringify(list[1])), { watchNextResponse: { adPlacements: 1 } }) // only playerResponse is ad data
+  ctx.body = { playerResponse: withAds() }
+  assert.deepEqual(noAdFields((await vm.runInContext('new Response(body).json()', ctx)).playerResponse), [])
+  const off = page({ skipAds: false })
+  const kept = vm.runInContext(`JSON.parse(${JSON.stringify(JSON.stringify([{ playerResponse: withAds() }]))})`, off)
+  assert.deepEqual(noAdFields(kept[0].playerResponse), AD_FIELDS)
+})
+
 test('EDGE non-object responses pass unchanged', () => {
   const ctx = page()
   for (const s of ['42', '"adPlacements"', '[{"adPlacements":1}]', 'null', 'true']) {
