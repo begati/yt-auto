@@ -27,7 +27,7 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
 ## Recursos
 
 - Página inicial, inscrições, histórico e pesquisa do YouTube no carro (a pesquisa usa o teclado do carro).
-- Login uma vez no celular; o carro usa a mesma sessão.
+- Não precisa de conta; faça login uma vez no celular (opcional) e o carro usa a mesma sessão.
 - Controle pelo celular: toque num vídeo no celular e ele toca no carro; tocar/pausar, próximo, barra de
   progresso, voltar/avançar 10 s e configurações pela barra do celular.
 - Compartilhar para o carro: no app do YouTube (ou em qualquer app), Compartilhar > YT Auto toca o link no carro.
@@ -40,6 +40,7 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
   vídeo é enviado).
 - Modo só áudio opcional com o carro em movimento (usa a velocidade do GPS do celular; desligado por padrão).
 - Avisa quando sai versão nova no GitHub.
+- Bloqueia os anúncios do YouTube (o vídeo começa sem a espera do anúncio) e esconde os itens promovidos do feed.
 - Configurações: qualidade, velocidade, proporção (ajustar / preencher / esticar), legendas, tela cheia ao abrir,
   página inicial, tamanho do texto.
 - Retoma o vídeo de onde parou quando o carro reconecta.
@@ -50,7 +51,7 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
 
 - Android 10 ou mais novo.
 - Android Auto (projeção do celular) ou carro/central multimídia com Android Auto.
-- Uma conta do YouTube (com YouTube Premium não há anúncios).
+- Uma conta do YouTube é opcional (necessária para inscrições, histórico e playlists).
 
 ## Instalação
 
@@ -80,7 +81,7 @@ ou gerenciador de arquivos).
 
 ### 4. Use
 
-1. Abra o **YT Auto** no celular e faça login na sua conta do YouTube.
+1. Abra o **YT Auto** no celular. Para usar sua conta do YouTube, toque em **Você** > **Fazer login** (opcional).
 2. Conecte o celular ao carro e abra o **YT Auto** pelo menu do Android Auto.
 
 Atualizações: instale o APK novo pelo KingInstaller do mesmo jeito. Login e configurações são mantidos.

@@ -27,7 +27,7 @@ with your account, subscriptions and history, and turns your phone into a remote
 ## Features
 
 - YouTube home page, subscriptions, history and search in the car (search uses the car keyboard).
-- Sign in once on the phone; the car uses the same session.
+- No account needed; sign in once on the phone (optional) and the car uses the same session.
 - Phone remote: tap a video on the phone and it plays in the car; play/pause, next, seek, 10 s back/forward and
   settings from the phone bar.
 - Share to the car: in the YouTube app (or any app), Share > YT Auto plays the link in the car.
@@ -39,6 +39,7 @@ with your account, subscriptions and history, and turns your phone into a remote
   video id is sent).
 - Optional audio-only mode while the car is moving (uses the phone's GPS speed; off by default).
 - Tells you when a new version is out on GitHub.
+- Blocks YouTube ads (videos start without the ad wait) and hides promoted items in the feed.
 - Settings: video quality, speed, aspect (fit / fill / stretch), captions, fullscreen on open, home page, text size.
 - Resumes the video where it stopped when the car reconnects.
 - Languages: English, Português (Brasil), Español, Français, Italiano, Русский and العربية. The app follows the
@@ -48,7 +49,7 @@ with your account, subscriptions and history, and turns your phone into a remote
 
 - Android 10 or newer.
 - Android Auto (phone projection) or a car/head unit with Android Auto.
-- A YouTube account (YouTube Premium avoids ads).
+- A YouTube account is optional (needed for subscriptions, history and playlists).
 
 ## Installation
 
@@ -81,7 +82,7 @@ The screenshot shows KingInstaller in Portuguese: "Selecione o APK para instalar
 
 ### 4. Use it
 
-1. Open **YT Auto** on the phone and sign in to your YouTube account.
+1. Open **YT Auto** on the phone. To use your YouTube account, tap **You** > **Sign in** (optional).
 2. Connect the phone to the car and open **YT Auto** from the Android Auto launcher.
 
 Updates: install the new APK with KingInstaller the same way. Your sign-in and settings are kept.
