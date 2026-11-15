@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: none - inline (one document-start script, one URL, strings)
-**Status**: In Progress
+**Status**: Done (Verifier independente não rodado: usuário pediu para commitar e lançar - "pode comitar tudo, parece que ta tudo funcionando")
 **Approved**: 2026-11-15 - user: "sim"
 **Build**: `./gradlew assembleDebug`
 **Run unit**: `./gradlew testDebugUnitTest --rerun`
