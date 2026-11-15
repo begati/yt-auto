@@ -56,6 +56,8 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature
 import java.io.File
 import java.net.URL
 import org.json.JSONArray
@@ -90,7 +92,7 @@ private const val JS_APPLY_PLAYBACK =
 // - hides the playlist "Próximo / Mix de ..." bar that covers the player on short car screens
 // - stretches the player over the whole screen on /watch pages (polled, SPA navigation has no load event), if "fullscreen" is on,
 //   with the video's object-fit from yta.aspect() (Ajustar/Preencher/Esticar)
-// - runs ads to their end and clicks "Pular anúncio", if "skipAds" is on
+// - runs ads to their end and clicks "Pular anúncio", if "skipAds" is on (ads that got past assets/page_start.js)
 // - keeps YouTube from turning captions back on in a video's first 10 s and after ads, while "captions" is off
 // Flags are read through the bridge on every use, so settings changes apply without a reload.
 // - starts each video at the saved default quality (360p unless changed); applied once per video id, and ads
@@ -1036,6 +1038,12 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         custom = null
                         exitFullscreen = null
                     }
+                }
+                // Ads are stripped from the player responses before the page reads them (assets/page_start.js); a
+                // WebView without document-start scripts keeps only the skip in PAGE_JS.
+                if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
+                    val start = carContext.assets.open("page_start.js").bufferedReader().use { it.readText() }
+                    WebViewCompat.addDocumentStartJavaScript(this, start, setOf("https://m.youtube.com"))
                 }
                 loadUrl(withResume(pageUrl, resumeAt))
             }

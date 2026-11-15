@@ -37,6 +37,8 @@ tasks.withType<Test>().configureEach {
 
 dependencies {
     implementation("androidx.car.app:app:1.4.0")
+    // Document-start script (ad data stripped before the page reads it).
+    implementation("androidx.webkit:webkit:1.12.1")
     testImplementation("junit:junit:4.13.2")
     // android.jar's org.json is a throwing stub on the JVM; the real one runs the feed parser in tests.
     testImplementation("org.json:json:20240303")

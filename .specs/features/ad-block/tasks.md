@@ -82,8 +82,8 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7
 
 **Done when**:
 
-- [ ] Walk: 5 vídeos seguidos no DHU com a opção ligada, nenhum com `ad-showing`; opção desligada, anúncio volta e é pulado pelo código da v1.2
-- [ ] Gate check passes: `./gradlew assembleDebug`
+- [x] Walk: 5 vídeos seguidos no DHU com a opção ligada, nenhum com `ad-showing`; opção desligada, anúncio volta e é pulado pelo código da v1.2
+- [x] Gate check passes: `./gradlew assembleDebug`
 
 **Tests**: none (walk - WebView wiring layer)
 **Gate**: full
@@ -213,6 +213,9 @@ Proof: run js | ✔ EDGE non-object responses pass unchanged
 **C7** - Sem `yta`, a opção vale como ligada (edge case 2)
 Proof: run js | ✔ EDGE without yta the flag reads as on
 
+**C23** - `playerResponse` aninhada (objeto ou lista, como `get_watch`) fica sem os campos de anúncio (ADS-13, AC 10)
+Proof: run js | ✔ ADS-13 a nested playerResponse loses the ad fields, alone or inside a list
+
 **C8** - O script roda no início dos documentos de `https://m.youtube.com`, antes da página (ADS-06, AC 6)
 Proof: walk - chrome://inspect no carro: `window.__ytaStart` existe e `ytInitialPlayerResponse.adPlacements` é `undefined` na primeira carga de `/watch`
 
@@ -262,6 +265,10 @@ Proof: `grep -qi "account.*optional" README.md && grep -qi "conta.*opcional" REA
 
 ## Handoff
 
-**Settled mid-build:** none
+**Settled mid-build:** walk do T2 achou o caminho do SPA (`/youtubei/v1/get_watch`, `[{playerResponse}, ...]`) sem filtro; virou ADS-13 / C23, com teste, antes do commit do T2
 **Dispatched:** none
-**Walked:** none
+**Walked:** DHU 800x480 + telefone via USB; estado lido pelo DevTools da WebView do carro (`adb forward tcp:9222 localabstract:webview_devtools_remote_<pid>`, script CDP `Runtime.evaluate`). Conta logada era Premium (sem anúncios): `pm clear` deixou o app sem conta, onde o YouTube manda só pós-roll (`AD_PLACEMENT_KIND_END`); anúncio provocado com `currentTime = duration - 4` e `ad-showing` amostrado a cada 250 ms por 25 s.
+- T2 / C8: página do carro com `window.__ytaStart` 1, `JSON.parse` embrulhado e `ytInitialPlayerResponse` como accessor (definido antes do `var` da página, que é não-configurável).
+- C11 controle (opção desligada via `shared_prefs/settings.xml` + `force-stop`): `ytInitialPlayerResponse` com `playerAds`, `adPlacements`, `adBreakHeartbeatParams`; pós-roll de dQw4w9WgXcQ visível 50 amostras (12,5 s).
+- C11 (opção ligada): dQw4w9WgXcQ, kJQP7kiw5Fk, 9bZkp7q19f0, JGwWNGJdvx8, OPf0YbXqDm0 = 0 amostras com `ad-showing`, sem campos de anúncio; o fim do vídeo leva direto ao próximo (autoplay pelo SPA). Primeira rodada achou `getPlayerResponse()` do vídeo do autoplay com os campos (via `get_watch`): corrigido em 02e8467 (ADS-13); segunda rodada: os 5 vídeos do autoplay com `ad: []`.
+- C9/C10: build com o `if` da injeção forçado a falso (revertido em seguida): `__ytaStart` ausente, página abre, campos presentes, pós-roll visível só 3 amostras (0,75 s) - levado ao fim pelo pulo da v1.2.
