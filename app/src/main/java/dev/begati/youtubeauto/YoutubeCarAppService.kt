@@ -97,7 +97,7 @@ private const val JS_APPLY_PLAYBACK =
 // - stretches the player over the whole screen on /watch pages (polled, SPA navigation has no load event), if "fullscreen" is on,
 //   with the video's object-fit from yta.aspect() (Ajustar/Preencher/Esticar)
 // - runs ads to their end and clicks "Pular anúncio", if "skipAds" is on (ads that got past assets/page_start.js)
-// - keeps YouTube from turning captions back on in a video's first 10 s and after ads, while "captions" is off
+// - keeps captions unloaded whenever YouTube turns them on by itself, while "captions" is off
 // Flags are read through the bridge on every use, so settings changes apply without a reload.
 // - starts each video at the saved default quality (360p unless changed); applied once per video id, and ads
 //   have their own id so they don't eat it. A quality picked later in the player menu becomes the new default.
@@ -146,7 +146,7 @@ private const val PAGE_JS =
         "html.yta-watch ${PLAYER_CONTAINER} .html5-video-player,html.yta-watch ${PLAYER_CONTAINER} video" +
         "{width:100%!important;height:100%!important;left:0!important;top:0!important;object-fit:var(--yta-fit,contain)!important}';" +
         "document.head.appendChild(s);" +
-        "let umId='',umN=0,ccId='',ccN=0,pl=null;setInterval(()=>{" +
+        "let umId='',umN=0,pl=null;setInterval(()=>{" +
         // Shorts pages on m.youtube.com block playback behind an "Assistir no app YouTube" dialog; the watch page of
         // the same id plays normally, so open that instead (as videos sent from the phone do).
         "const sh=location.pathname.match(/^\\/shorts\\/([\\w-]{11})/);if(sh){location.replace('/watch?v='+sh[1]);return}" +
@@ -165,17 +165,15 @@ private const val PAGE_JS =
         "const p=document.getElementById('${PLAYER_ID}'),id=new URLSearchParams(location.search).get('v');" +
         // Ads: unskippable ones have no button, and YouTube may ignore a scripted click, so the ad is also run to
         // its end (the player then moves on to the video by itself).
-        // An ad also reopens the captions window below (the player reports the video's own id during it).
-        "const ad=!!p&&p.classList.contains('ad-showing');if(ad)ccN=0;" +
+        "const ad=!!p&&p.classList.contains('ad-showing');" +
         "if(ad&&yta.flag('skipAds')){" +
         "if(v&&v.duration>0&&isFinite(v.duration)&&v.currentTime<v.duration-0.1)v.currentTime=v.duration;" +
         "document.querySelector('${SKIP_AD_BUTTONS}')?.click()}" +
-        // YouTube turns (auto-generated) captions on by itself around ads and as a muted autoplay is unmuted, after
-        // our per-video apply: while captions are off in the settings, unload them in the video's first 10 s and
-        // the 10 s after an ad.
-        "if(id&&p&&p.getOption&&!ad&&!yta.flag('captions')&&p.getPlayerState()===1&&" +
-        "p.getVideoData().video_id===id){if(id!==ccId){ccId=id;ccN=0}" +
-        "if(ccN++<20){const t=p.getOption('captions','track');if(t&&t.languageCode)p.unloadModule('captions')}}" +
+        // YouTube turns (auto-generated) captions on by itself after our per-video apply: around ads, as a muted
+        // autoplay is unmuted and, on a fresh install, after a seek (a SponsorBlock skip). While captions are off in
+        // the settings they are unloaded whenever they show up, the player's own CC button included.
+        "if(p&&p.getOption&&!ad&&!yta.flag('captions')){" +
+        "const t=p.getOption('captions','track');if(t&&t.languageCode)p.unloadModule('captions')}" +
         // A video opened without a tap on the car (phone remote, media card) autoplays muted, and the player mutes it
         // again right after the play event; unmute during its first 5 s of playback, so a later mute by hand sticks.
         "if(id&&p&&p.isMuted&&p.getPlayerState()===1&&p.getVideoData().video_id===id){if(id!==umId){umId=id;umN=0}if(umN++<10&&p.isMuted())p.unMute()}" +

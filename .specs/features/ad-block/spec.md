@@ -45,8 +45,9 @@ seguir sem conta. O carro já carrega o m.youtube.com com ou sem sessão; só o 
 | Campos removidos | `adPlacements`, `adSlots`, `playerAds`, `adBreakHeartbeatParams`, no topo da resposta do player | Os campos que agendam anúncios no player; o resto da resposta fica intacto | n |
 | Onde a resposta passa | `JSON.parse`, `Response.prototype.json` e a variável global `ytInitialPlayerResponse`; também aninhada em `playerResponse` (achado no walk do T2: a navegação do SPA usa `/youtubei/v1/get_watch`, que responde `[{playerResponse}, {watchNextResponse}]`) | Primeira carga traz a resposta no HTML; navegação no SPA busca `/youtubei/v1/player` | n |
 | Anúncios no feed (vídeos promovidos no Início e na busca) | Escondidos por CSS com a opção ligada | O pedido é "remover as propagandas por completo"; CSS é uma linha | n |
-| Causa das legendas na instalação nova | A preferência de legenda que o próprio YouTube guarda na página (`localStorage`) não existe numa instalação nova, e o YouTube liga legendas por conta própria; ligar e desligar "Legendas" chama `loadModule`/`unloadModule` com o vídeo tocando, o que grava essa preferência. Hipótese a confirmar no aparelho (chrome://inspect) antes do conserto | Explica por que só o liga/desliga resolve; a janela de 10 s do commit 6824b1f não cobre esse caso | n |
-| Conserto das legendas | No início de cada documento, gravar na preferência do YouTube o estado de "Legendas" do app, antes do player ler | Mesmo efeito do liga/desliga manual, sem toque; a forma exata sai da confirmação acima | n |
+| Causa das legendas na instalação nova | Confirmada no DHU (pilha de chamadas): com os dados zerados, o próprio `ytmweb` chama `loadModule('captions')` depois de um salto no vídeo (o pulo do SponsorBlock em ~81 s de PAIbJhS0Pzw), fora da janela de 10 s do commit 6824b1f. Num estado já usado não acontece. A hipótese do `localStorage` estava errada: liga/desliga não grava nada lá | Reproduzido duas vezes (@81 e @82); o usuário notou que a legenda liga quando o patrocínio é pulado | y - user: "parece que quando pula patrocinio, legenda ativa" |
+| Conserto das legendas | Com "Legendas" desligada, o app descarrega a legenda sempre que ela aparece (a cada 500 ms), o botão CC do player incluído | Resposta do usuário | y - user: "Bloquear sempre" |
+| Auto Backup do Android (achado no walk) | Fora desta spec: a reinstalação restaura `app_webview` (cookies da sessão, storage) do backup | Resposta do usuário | y - user: "Fora desta spec" |
 | Tela inicial do celular | Abre `https://m.youtube.com` em vez da tela de login; quem quer entrar usa o "Fazer login" do próprio YouTube, que segue para `accounts.google.com` na mesma WebView (o UA sem `; wv` continua) | Uma linha (troca de URL); quem já está logado chega no mesmo lugar que o `continue` de hoje | n |
 | Sem conta: Histórico, Inscrições, Assistir mais tarde, playlists | Continuam mostrando "Você não está logado / Faça login no app do celular" no navegador de mídia do Android Auto | Esses feeds só existem com conta; a mensagem já existe e segue verdadeira | n |
 | Sem conta: Início | Mostra o que o YouTube mostra para visitante (pode vir vazio pedindo uma pesquisa); a pesquisa funciona | Comportamento do próprio YouTube, fora do controle do app | n |
@@ -116,7 +117,7 @@ seguir sem conta. O carro já carrega o m.youtube.com com ou sem sessão; só o 
 **Acceptance Criteria**:
 
 1. WHEN o primeiro vídeo abre no carro numa instalação nova, com "Legendas" nunca alterada (desligada) THEN the app SHALL mostrar o vídeo sem legenda
-2. WHERE "Legendas" está desligada, WHEN um vídeo abre THEN the app SHALL deixar gravada na página a preferência do YouTube de legenda desligada, antes do player ler
+2. WHILE "Legendas" está desligada, IF o YouTube liga a legenda a qualquer momento do vídeo (salto do SponsorBlock, anúncio, autoplay sem som, botão CC do player) THEN the app SHALL descarregar a legenda em até 0,5 s
 3. WHERE "Legendas" está ligada, WHEN um vídeo abre THEN the app SHALL mostrar o vídeo com legenda, como na v1.2
 
 **Independent Test**: limpar os dados do app (`adb shell pm clear dev.begati.youtubeauto`), entrar na conta, abrir no carro um vídeo com legendas automáticas: aparece sem legenda.
@@ -165,9 +166,9 @@ seguir sem conta. O carro já carrega o m.youtube.com com ou sem sessão; só o 
 | ADS-11 | P2 (AC 2) | Execute | Implementing |
 | ADS-12 | P3 (AC 1) | Execute | Implementing |
 | ADS-13 | P1 (AC 10) | Execute | Implementing |
-| CC-01 | P1 Legenda (AC 1) | Execute | Pending |
-| CC-02 | P1 Legenda (AC 2) | Execute | Pending |
-| CC-03 | P1 Legenda (AC 3) | Execute | Pending |
+| CC-01 | P1 Legenda (AC 1) | Execute | Implementing |
+| CC-02 | P1 Legenda (AC 2) | Execute | Implementing |
+| CC-03 | P1 Legenda (AC 3) | Execute | Implementing |
 | ANON-01 | P1 Sem conta (AC 1) | Execute | Pending |
 | ANON-02 | P1 Sem conta (AC 2) | Execute | Pending |
 | ANON-03 | P1 Sem conta (AC 3) | Execute | Pending |

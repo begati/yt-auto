@@ -133,18 +133,18 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7
 
 ### T5: Preferência de legenda do YouTube no início do documento
 
-**What**: confirmar no aparelho (`pm clear`, chrome://inspect) a chave de `localStorage` que o liga/desliga grava, e gravar nela o estado de `yta.flag('captions')` em `page_start.js`
-**Where**: `app/src/main/assets/page_start.js` (+ `app/src/test/js/page_start.test.mjs`)
+**What**: em `PAGE_JS`, trocar a janela de 10 s por descarregar a legenda sempre que ela aparece com "Legendas" desligada
+**Where**: `app/src/main/java/dev/begati/youtubeauto/YoutubeCarAppService.kt`
 **Depends on**: T4
 **Reuses**: T1, T2 (mesmo script e injeção)
 **Requirement**: CC-01, CC-02, CC-03
 
 **Done when**:
 
-- [ ] Teste node `CC-02` passa
-- [ ] Walk: após `pm clear` e login, primeiro vídeo com legendas automáticas aparece sem legenda; com "Legendas" ligada, aparece com legenda
+- [x] Walk: após `pm clear`, primeiro vídeo (PAIbJhS0Pzw, enviado pelo celular) passa do pulo do SponsorBlock em ~81 s sem legenda; com "Legendas" ligada, aparece com legenda
+- [x] Gate check passes: `./gradlew assembleDebug`
 
-**Tests**: unit
+**Tests**: none (walk - injected page script in PAGE_JS)
 **Gate**: full
 
 **Commit**: `fix: keep captions off on a fresh install`
@@ -240,8 +240,8 @@ Proof: run unit | ADS-12 the ads setting reads Block ads in every language and i
 **C15** - Instalação nova com "Legendas" no padrão: primeiro vídeo sem legenda (CC-01, AC 1)
 Proof: walk - `pm clear`, login, vídeo com legendas automáticas no DHU: sem legenda
 
-**C16** - Com "Legendas" desligada, a preferência do YouTube fica gravada como desligada antes do player (CC-02, AC 2)
-Proof: run js | ✔ CC-02 captions off is written to the YouTube preference at document start
+**C16** - Com "Legendas" desligada, legenda ligada pelo YouTube depois de um salto é descarregada em até 0,5 s (CC-02, AC 2)
+Proof: walk - `pm clear`, PAIbJhS0Pzw enviado pelo celular, `loadModule` instrumentado: depois do pulo do SponsorBlock em ~81 s a faixa volta a vazio em até 0,5 s e a tela do DHU fica sem legenda
 
 **C17** - Com "Legendas" ligada, vídeo aparece com legenda (CC-03, AC 3)
 Proof: walk - "Legendas" ligada no celular, mesmo vídeo no DHU: com legenda
@@ -265,11 +265,15 @@ Proof: `grep -qi "account.*optional" README.md && grep -qi "conta.*opcional" REA
 
 ## Handoff
 
-**Settled mid-build:** walk do T2 achou o caminho do SPA (`/youtubei/v1/get_watch`, `[{playerResponse}, ...]`) sem filtro; virou ADS-13 / C23, com teste, antes do commit do T2
+**Settled mid-build:** T5 - causa real das legendas achada no walk (`loadModule('captions')` do próprio YouTube depois do pulo do SponsorBlock, só com dados zerados); usuário escolheu "Bloquear sempre"; CC-02 e T5 reescritos; Auto Backup fora desta spec ("Fora desta spec"). Walk do T2 achou o caminho do SPA (`/youtubei/v1/get_watch`, `[{playerResponse}, ...]`) sem filtro; virou ADS-13 / C23, com teste, antes do commit do T2
 **Dispatched:** none
 **Walked:** DHU 800x480 + telefone via USB; estado lido pelo DevTools da WebView do carro (`adb forward tcp:9222 localabstract:webview_devtools_remote_<pid>`, script CDP `Runtime.evaluate`). Conta logada era Premium (sem anúncios): `pm clear` deixou o app sem conta, onde o YouTube manda só pós-roll (`AD_PLACEMENT_KIND_END`); anúncio provocado com `currentTime = duration - 4` e `ad-showing` amostrado a cada 250 ms por 25 s.
 - T2 / C8: página do carro com `window.__ytaStart` 1, `JSON.parse` embrulhado e `ytInitialPlayerResponse` como accessor (definido antes do `var` da página, que é não-configurável).
 - C11 controle (opção desligada via `shared_prefs/settings.xml` + `force-stop`): `ytInitialPlayerResponse` com `playerAds`, `adPlacements`, `adBreakHeartbeatParams`; pós-roll de dQw4w9WgXcQ visível 50 amostras (12,5 s).
 - C11 (opção ligada): dQw4w9WgXcQ, kJQP7kiw5Fk, 9bZkp7q19f0, JGwWNGJdvx8, OPf0YbXqDm0 = 0 amostras com `ad-showing`, sem campos de anúncio; o fim do vídeo leva direto ao próximo (autoplay pelo SPA). Primeira rodada achou `getPlayerResponse()` do vídeo do autoplay com os campos (via `get_watch`): corrigido em 02e8467 (ADS-13); segunda rodada: os 5 vídeos do autoplay com `ad: []`.
 - T3 / C12, C13: sem conta (e com Premium) o YouTube não mostra anúncios no feed nem na busca (buscas "carro novo", "celular", "iphone", "seguro auto": nenhuma tag de anúncio). Prova com os três elementos (`ad-slot-renderer`, `ytm-promoted-sparkles-web-renderer`, `ytm-companion-ad-renderer`) inseridos via DevTools na busca "carro": opção ligada = `html.yta-noads`, `display` none nos três; opção desligada (prefs + `force-stop`) = sem a classe, `display` inline nos três. Ressalva: as tags vêm do markup conhecido do m.youtube.com, não de um anúncio real observado.
+- T5 / C15, C16, C17 (causa): `pm clear` + PAIbJhS0Pzw enviado pelo celular, com `loadModule`/`unloadModule`/`setOption` do player instrumentados (pilha) e a faixa amostrada a cada 250 ms: build antigo = `loadModule ["captions"]` vindo de `_.aa.publish` do `ytmweb` em @81, logo após o pulo do SponsorBlock, faixa `pt` (asr) ligada e na tela até o fim (duas vezes: @81 e @82; uma terceira em estado restaurado do Auto Backup, também @82). Estado já usado: 150 s sem ligar. Usuário notou: "parece que quando pula patrocinio, legenda ativa".
+- T5 (conserto, build novo): `pm clear`, mesmo envio; tempo 61 → 89 (pulo), `loadModule ["captions"]` em @81 seguido de `unloadModule` do app no mesmo instante, a faixa nunca aparece na amostragem de 250 ms; screenshot do DHU em 100 s sem legenda (C15, C16). Com `captions` true em `shared_prefs` + `force-stop`, mesmo vídeo: faixa `pt`, 2 segmentos, legenda na tela do DHU em 11 s (C17).
+- T5 (investigação inicial, sem conclusão): estado limpo (`pm clear`), sem conta, vídeo PAIbJhS0Pzw (legendas automáticas em pt) aberto por toque na busca e por `location.href`: `getOption('captions','track')` vazio e nenhum `.ytp-caption-segment` em 16 s. `loadModule`/`unloadModule('captions')` mostra/esconde a legenda (`asr` pt) sem mudar nada no `localStorage` (só existe `yt-player-caption-persistence`). Hipótese da spec não confirmada; bug não reproduzido no DHU - pergunta ao usuário.
+- T6 / C18, C19: `pm clear`, app aberto no celular = m.youtube.com sem conta ("Que tal uma pesquisa para começar?"), sem tela do Google; busca "flow podcast" no celular, toque no 1º vídeo = carro em `/watch?v=PAIbJhS0Pzw` tocando, sem `SAPISID`; celular continua em `/results`. C20 parcial: aba "Você" > "Fazer login" = `accounts.google.com/v3/signin/identifier` dentro do próprio app (LoginActivity no topo, barra do controle remoto embaixo); falta o usuário entrar com a conta.
 - C9/C10: build com o `if` da injeção forçado a falso (revertido em seguida): `__ytaStart` ausente, página abre, campos presentes, pós-roll visível só 3 amostras (0,75 s) - levado ao fim pelo pulo da v1.2.
