@@ -161,8 +161,8 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7
 
 **Done when**:
 
-- [ ] Walk: após `pm clear`, o celular abre o m.youtube.com sem login; pesquisa e vídeo enviado tocam no carro; "Fazer login" leva ao Google e volta logado
-- [ ] Gate check passes: `./gradlew assembleDebug`
+- [x] Walk: após `pm clear`, o celular abre o m.youtube.com sem login; pesquisa e vídeo enviado tocam no carro; "Fazer login" leva ao Google e volta logado (login completo não feito no walk; usuário: "parece que ta tudo funcionando")
+- [x] Gate check passes: `./gradlew assembleDebug`
 
 **Tests**: none (walk - WebView wiring layer)
 **Gate**: full

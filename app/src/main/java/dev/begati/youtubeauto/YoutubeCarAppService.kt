@@ -1531,7 +1531,7 @@ internal fun isNewer(tag: String, current: String): Boolean {
 }
 
 /**
- * Phone launcher screen to sign in to YouTube. WebView cookies are app-wide, so the car WebView
+ * Phone launcher screen: YouTube, signed in or not (sign in from the page). WebView cookies are app-wide, so the car WebView
  * picks up the session. Google rejects embedded WebViews by the "; wv" UA token, hence the strip.
  */
 // ponytail: UA trick can break if Google tightens WebView detection; fallback is a cookie export from a real browser
@@ -1573,7 +1573,8 @@ class LoginActivity : Activity() {
                     }
                 }, "remote")
                 webViewClient = retrying
-                loadUrl("https://accounts.google.com/ServiceLogin?service=youtube&continue=https://m.youtube.com")
+                // No sign-in required: the page's own "Fazer login" leads to accounts.google.com in this WebView.
+                loadUrl("https://m.youtube.com")
             })
             addView(offline)
         }

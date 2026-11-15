@@ -169,10 +169,10 @@ seguir sem conta. O carro já carrega o m.youtube.com com ou sem sessão; só o 
 | CC-01 | P1 Legenda (AC 1) | Execute | Implementing |
 | CC-02 | P1 Legenda (AC 2) | Execute | Implementing |
 | CC-03 | P1 Legenda (AC 3) | Execute | Implementing |
-| ANON-01 | P1 Sem conta (AC 1) | Execute | Pending |
-| ANON-02 | P1 Sem conta (AC 2) | Execute | Pending |
-| ANON-03 | P1 Sem conta (AC 3) | Execute | Pending |
-| ANON-04 | P1 Sem conta (AC 4) | Execute | Pending |
+| ANON-01 | P1 Sem conta (AC 1) | Execute | Implementing |
+| ANON-02 | P1 Sem conta (AC 2) | Execute | Implementing |
+| ANON-03 | P1 Sem conta (AC 3) | Execute | Implementing |
+| ANON-04 | P1 Sem conta (AC 4) | Execute | Implementing |
 | ANON-05 | P1 Sem conta (AC 5) | Execute | Pending |
 
 **Coverage:** 21 total, 0 mapped to tasks, 20 unmapped ⚠️
