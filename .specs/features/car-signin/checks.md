@@ -23,5 +23,5 @@ Proof: walk - phone: "Fazer login" in YT Auto opens accounts.google.com; screens
 
 ## Handoff
 
-**Dispatched:** none yet
+**Dispatched:** Verifier round 1 at `a7c154a` (no screens sub-agent: no criterion cites a capture)
 **Walked:** 2026-11-17: DHU 800x480 + phone 0091479724 over USB, debug build installed, app data cleared (`pm clear`). Car: tap "Você", then the "Fazer login" banner at the top of `/feed/library` (its `href` is `https://accounts.google.com/ServiceLogin?service=youtube...`, read via DevTools); the toast "Faça login no app do celular" appears and DevTools still reads `location.href` `https://m.youtube.com/feed/library` (C2). Phone: YT Auto, "Você", "Fazer login": the page goes to `https://accounts.google.com/v3/signin/identifier?...` and shows Google's "Faça login" form with the e-mail field (C4).
