@@ -1,6 +1,6 @@
 # car-signin proofs
 
-**HEAD**: a7c154a
+**HEAD**: 205abed
 **Tree**: clean
 **Shell**: /bin/sh
 **Result**: 5 pass, 0 fail
@@ -31,6 +31,6 @@ CarSignInTest > SIGNIN-01 accounts google com is blocked on the car PASSED
 
 CarSignInTest > SIGNIN-03 other hosts and bad urls are not blocked PASSED
 
-BUILD SUCCESSFUL in 1s
+BUILD SUCCESSFUL in 2s
 22 actionable tasks: 1 executed, 21 up-to-date
 ```
