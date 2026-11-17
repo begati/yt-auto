@@ -81,8 +81,8 @@ T12 → T13
 
 **Done when**:
 
-- [ ] Every icon above exists as a vector drawable
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Every icon above exists as a vector drawable
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
 
 **Tests**: none
 **Gate**: build
