@@ -179,7 +179,7 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 | SIGN-04 | P1 Guided sign-in (AC 4) | Tasks | Implementing |
 | SIGN-05 | P1 Guided sign-in (AC 5) | Tasks | Pending |
 | SIGN-06 | P1 Guided sign-in (AC 6, edge 1) | Tasks | Pending |
-| SIGN-07 | P1 Guided sign-in (AC 7, edge 2) | Tasks | Pending |
+| SIGN-07 | P1 Guided sign-in (AC 7, edge 2) | Tasks | Implementing |
 | SIGN-08 | P1 Guided sign-in (AC 8) | Tasks | Pending |
 | NAV-01 | P1 Car navigation (AC 1, edge 3) | Tasks | Pending |
 | NAV-02 | P1 Car navigation (AC 2) | Tasks | Implementing |
@@ -191,14 +191,14 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 | CSET-01 | P2 Car settings (AC 1) | Tasks | Implementing |
 | CSET-02 | P2 Car settings (AC 2) | Tasks | Implementing |
 | CSET-03 | P2 Car settings (AC 3) | Tasks | Pending |
-| PSET-01 | P2 Phone settings (AC 1) | Tasks | Pending |
+| PSET-01 | P2 Phone settings (AC 1) | Tasks | Implementing |
 | PSET-02 | P2 Phone settings (AC 2) | Tasks | Implementing |
-| PSET-03 | P2 Phone settings (AC 3) | Tasks | Pending |
+| PSET-03 | P2 Phone settings (AC 3) | Tasks | Implementing |
 | PSET-04 | P2 Phone settings (AC 4) | Tasks | Pending |
 | REMOTE-01 | P2 Remote bar (AC 1) | Tasks | Implementing |
 | REMOTE-02 | P2 Remote bar (AC 2) | Tasks | Pending |
 | REMOTE-03 | P2 Remote bar (AC 3) | Tasks | Pending |
-| REMOTE-04 | P2 Remote bar (AC 4) | Tasks | Pending |
+| REMOTE-04 | P2 Remote bar (AC 4) | Tasks | Implementing |
 | OVL-01 | P3 Car overlays (AC 1) | Tasks | Implementing |
 | OVL-02 | P3 Car overlays (AC 2) | Tasks | Implementing |
 | OVL-03 | P3 Car overlays (AC 3) | Tasks | Pending |

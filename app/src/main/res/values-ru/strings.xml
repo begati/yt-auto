@@ -55,4 +55,24 @@
     <string name="update_message">Вышла новая версия. Скачайте APK и установите его через KingInstaller, как в первый раз.</string>
     <string name="update_download">Скачать</string>
     <string name="update_skip">Пропустить версию</string>
+    <string name="signin_car_title">Войдите на телефоне</string>
+    <string name="signin_car_text">Откройте YT Auto на телефоне и нажмите «Войти». Машина использует тот же аккаунт.</string>
+    <string name="banner_text">Войдите, чтобы видеть подписки в машине</string>
+    <string name="banner_signin">Войти</string>
+    <string name="close">Закрыть</string>
+    <string name="signed_in_toast">Готово: машина использует ваш аккаунт</string>
+    <string name="more_on_phone">Другие настройки на телефоне</string>
+    <string name="group_playback">Воспроизведение</string>
+    <string name="group_ads">Реклама</string>
+    <string name="group_car">В машине</string>
+    <string name="summary_skip_ads">Пропускает рекламу в видео</string>
+    <string name="summary_sponsor_block">Пропускает спонсорские фрагменты, отмеченные сообществом</string>
+    <string name="summary_audio_while_moving">Скрывает видео, пока машина едет (по GPS)</string>
+    <string name="summary_fullscreen">Открывает видео на весь экран машины</string>
+    <string name="summary_background">Продолжает играть, когда впереди Карты или другое приложение</string>
+    <string name="summary_captions">Показывает субтитры, если они есть у видео</string>
+    <string name="offline_hint">Проверьте интернет на телефоне</string>
+    <string name="previous">Предыдущее</string>
+    <string name="next">Следующее</string>
+    <string name="playback_options">Параметры воспроизведения</string>
 </resources>

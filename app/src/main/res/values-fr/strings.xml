@@ -55,4 +55,24 @@
     <string name="update_message">Une nouvelle version est sortie. Téléchargez l\'APK et installez-le avec KingInstaller, comme la première fois.</string>
     <string name="update_download">Télécharger</string>
     <string name="update_skip">Ignorer cette version</string>
+    <string name="signin_car_title">Connectez-vous sur le téléphone</string>
+    <string name="signin_car_text">Ouvrez YT Auto sur le téléphone et touchez Se connecter. La voiture utilise le même compte.</string>
+    <string name="banner_text">Connectez-vous pour voir vos abonnements dans la voiture</string>
+    <string name="banner_signin">Se connecter</string>
+    <string name="close">Fermer</string>
+    <string name="signed_in_toast">C\'est fait : la voiture utilise votre compte</string>
+    <string name="more_on_phone">Plus d\'options sur le téléphone</string>
+    <string name="group_playback">Lecture</string>
+    <string name="group_ads">Annonces</string>
+    <string name="group_car">Dans la voiture</string>
+    <string name="summary_skip_ads">Passe les annonces des vidéos</string>
+    <string name="summary_sponsor_block">Passe les passages sponsorisés signalés par la communauté</string>
+    <string name="summary_audio_while_moving">Masque la vidéo quand la voiture roule (utilise le GPS)</string>
+    <string name="summary_fullscreen">Ouvre la vidéo en plein écran de la voiture</string>
+    <string name="summary_background">Continue la lecture avec Maps ou une autre app devant</string>
+    <string name="summary_captions">Affiche les sous-titres quand la vidéo en a</string>
+    <string name="offline_hint">Vérifiez l\'internet du téléphone</string>
+    <string name="previous">Précédent</string>
+    <string name="next">Suivant</string>
+    <string name="playback_options">Options de lecture</string>
 </resources>

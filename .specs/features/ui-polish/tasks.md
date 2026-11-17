@@ -99,8 +99,8 @@ T12 → T13
 
 **Done when**:
 
-- [ ] `I18nTest` passes with the new keys in all 7 files
-- [ ] Gate check passes: `./gradlew testDebugUnitTest`
+- [x] `I18nTest` passes with the new keys in all 7 files
+- [x] Gate check passes: `./gradlew testDebugUnitTest`
 
 **Tests**: unit
 **Gate**: quick

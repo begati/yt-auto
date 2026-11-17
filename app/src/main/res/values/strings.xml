@@ -55,6 +55,26 @@
     <string name="update_message">A new version is out. Download the APK and install it with KingInstaller, as before.</string>
     <string name="update_download">Download</string>
     <string name="update_skip">Skip this version</string>
+    <string name="signin_car_title">Sign in on the phone</string>
+    <string name="signin_car_text">Open YT Auto on the phone and tap Sign in. The car uses the same account.</string>
+    <string name="banner_text">Sign in to see your subscriptions in the car</string>
+    <string name="banner_signin">Sign in</string>
+    <string name="close">Close</string>
+    <string name="signed_in_toast">Done: the car now uses your account</string>
+    <string name="more_on_phone">More options on the phone</string>
+    <string name="group_playback">Playback</string>
+    <string name="group_ads">Ads</string>
+    <string name="group_car">In the car</string>
+    <string name="summary_skip_ads">Skips the ads in videos</string>
+    <string name="summary_sponsor_block">Skips sponsored parts marked by the community</string>
+    <string name="summary_audio_while_moving">Hides the video while the car moves (uses GPS)</string>
+    <string name="summary_fullscreen">Opens the video filling the car screen</string>
+    <string name="summary_background">Keeps playing with Maps or another app in front</string>
+    <string name="summary_captions">Shows captions when the video has them</string>
+    <string name="offline_hint">Check the phone\'s internet</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="playback_options">Playback options</string>
     <!-- Same in every language. -->
     <string name="quality_240" translatable="false">240p</string>
     <string name="quality_360" translatable="false">360p</string>

@@ -55,4 +55,24 @@
     <string name="update_message">صدر إصدار جديد. نزّل ملف APK وثبّته باستخدام KingInstaller كما في المرة الأولى.</string>
     <string name="update_download">تنزيل</string>
     <string name="update_skip">تخطي هذا الإصدار</string>
+    <string name="signin_car_title">سجّل الدخول من الهاتف</string>
+    <string name="signin_car_text">افتح YT Auto على الهاتف واضغط تسجيل الدخول. تستخدم السيارة الحساب نفسه.</string>
+    <string name="banner_text">سجّل الدخول لترى اشتراكاتك في السيارة</string>
+    <string name="banner_signin">تسجيل الدخول</string>
+    <string name="close">إغلاق</string>
+    <string name="signed_in_toast">تم: السيارة تستخدم حسابك الآن</string>
+    <string name="more_on_phone">خيارات أكثر على الهاتف</string>
+    <string name="group_playback">التشغيل</string>
+    <string name="group_ads">الإعلانات</string>
+    <string name="group_car">في السيارة</string>
+    <string name="summary_skip_ads">يتخطى الإعلانات في الفيديوهات</string>
+    <string name="summary_sponsor_block">يتخطى المقاطع الممولة التي حددها المجتمع</string>
+    <string name="summary_audio_while_moving">يخفي الفيديو أثناء سير السيارة (يستخدم GPS)</string>
+    <string name="summary_fullscreen">يفتح الفيديو بملء شاشة السيارة</string>
+    <string name="summary_background">يواصل التشغيل مع الخرائط أو تطبيق آخر في المقدمة</string>
+    <string name="summary_captions">يعرض الترجمة عندما تتوفر في الفيديو</string>
+    <string name="offline_hint">تحقق من إنترنت الهاتف</string>
+    <string name="previous">السابق</string>
+    <string name="next">التالي</string>
+    <string name="playback_options">خيارات التشغيل</string>
 </resources>
