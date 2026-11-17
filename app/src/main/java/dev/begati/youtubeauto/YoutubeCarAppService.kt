@@ -1019,6 +1019,13 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         view.evaluateJavascript(PAGE_JS, null)
                     }
 
+                    // The car has no keyboard for Google's sign-in form: keep the page, point to the phone.
+                    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                        if (!request.isForMainFrame || !isCarSignIn(request.url.toString())) return false
+                        CarToast.makeText(carContext, R.string.notice_signed_out_hint, CarToast.LENGTH_LONG).show()
+                        return true
+                    }
+
                     override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
                         url ?: return
                         pageUrl = url
@@ -1165,6 +1172,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
 // No network (DNS, connection, timeout, I/O; UNKNOWN covers ERR_INTERNET_DISCONNECTED on some WebView builds).
 // Anything else (an intent:// or app link, a bad URL, SSL) is not cured by retrying, so it keeps the WebView's page.
+/** Google's sign-in host: its forms need a keyboard, which the car's virtual display doesn't have. */
+internal fun isCarSignIn(url: String?) =
+    runCatching { java.net.URI(url).host.equals("accounts.google.com", ignoreCase = true) }.getOrDefault(false)
+
 internal fun isNetworkError(code: Int) = code in setOf(
     WebViewClient.ERROR_HOST_LOOKUP, WebViewClient.ERROR_CONNECT, WebViewClient.ERROR_TIMEOUT,
     WebViewClient.ERROR_IO, WebViewClient.ERROR_UNKNOWN,
