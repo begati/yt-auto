@@ -64,10 +64,10 @@ user is stuck on a form they cannot fill. Sign-in only works on the phone app (c
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| SIGNIN-01 | P1 (AC 1) | Execute | Implementing |
-| SIGNIN-02 | P1 (AC 2) | Execute | Implementing |
-| SIGNIN-03 | P1 (AC 3) | Execute | Implementing |
-| SIGNIN-04 | P1 (AC 4) | Execute | Implementing |
+| SIGNIN-01 | P1 (AC 1) | Execute | Verified |
+| SIGNIN-02 | P1 (AC 2) | Execute | Verified |
+| SIGNIN-03 | P1 (AC 3) | Execute | Verified |
+| SIGNIN-04 | P1 (AC 4) | Execute | Verified |
 
 **Coverage:** 4 total, 4 mapped to tasks, 0 unmapped
 
