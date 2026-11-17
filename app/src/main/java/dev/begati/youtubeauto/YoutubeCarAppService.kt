@@ -75,6 +75,12 @@ private const val PLAYLIST_PANEL = "ytm-playlist-engagement-panel"
 // Promoted items in the feed and search, and the companion ad under the player (hidden under html.yta-noads).
 private const val FEED_ADS = "html.yta-noads ad-slot-renderer,html.yta-noads ytm-promoted-sparkles-web-renderer," +
     "html.yta-noads ytm-companion-ad-renderer"
+// YouTube's own navigation (top bar, bottom tab bar): the car's action strip replaces it. ytm-app keeps 48 px of
+// padding for the top bar and the feed's chip bar is fixed under it, so both move up.
+private const val YT_NAV = "ytm-mobile-topbar-renderer,ytm-pivot-bar-renderer"
+private const val YT_NAV_GAPS = "ytm-app{padding-top:0!important}ytm-feed-filter-chip-bar-renderer{top:0!important}"
+// Google sign-in links ("Fazer login" rows and buttons, like buttons while signed out): sign-in happens on the phone.
+private const val SIGN_IN_LINKS = "a[href*=\"accounts.google.com\"],ytm-button-renderer:has(>a[href*=\"accounts.google.com\"])"
 
 // Sets the saved quality on the current video; stamps the time so the resulting change event isn't saved as a pick.
 private const val JS_APPLY_QUALITY =
@@ -94,6 +100,7 @@ private const val JS_APPLY_PLAYBACK =
 //   (from the page's navigator.mediaSession, falling back to document.title, the player's author and the ytimg thumbnail)
 // - hides the playlist "Próximo / Mix de ..." bar that covers the player on short car screens
 // - hides promoted items in the feed and search (FEED_ADS), if "skipAds" is on
+// - hides YouTube's top bar and tab bar (YT_NAV) and its sign-in links (SIGN_IN_LINKS)
 // - stretches the player over the whole screen on /watch pages (polled, SPA navigation has no load event), if "fullscreen" is on,
 //   with the video's object-fit from yta.aspect() (Ajustar/Preencher/Esticar)
 // - runs ads to their end and clicks "Pular anúncio", if "skipAds" is on (ads that got past assets/page_start.js)
@@ -137,6 +144,7 @@ private const val PAGE_JS =
         "const s=document.createElement('style');" +
         "s.textContent='${PLAYLIST_PANEL}{display:none!important}" +
         "${FEED_ADS}{display:none!important}" +
+        "${YT_NAV},${SIGN_IN_LINKS}{display:none!important}${YT_NAV_GAPS}" +
         "html.yta-watch ${PLAYER_CONTAINER}{position:fixed!important;inset:0!important;" +
         "width:100vw!important;height:100vh!important;z-index:99999!important;background:#000!important}" +
         // Wrappers between the container and the video (#player keeps an aspect-ratio padding, the video

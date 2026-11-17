@@ -117,9 +117,9 @@ T12 → T13
 
 **Done when**:
 
-- [ ] DHU: no YouTube header, no tab bar, no "Fazer login" link on Início and `/feed/library`
-- [ ] Phone page still shows YouTube's header and tabs
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] DHU: no YouTube header, no tab bar, no "Fazer login" link on Início and `/feed/library`
+- [x] Phone page still shows YouTube's header and tabs
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
 
 **Tests**: none
 **Gate**: build
