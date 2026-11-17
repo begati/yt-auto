@@ -1174,7 +1174,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 // Anything else (an intent:// or app link, a bad URL, SSL) is not cured by retrying, so it keeps the WebView's page.
 /** Google's sign-in host: its forms need a keyboard, which the car's virtual display doesn't have. */
 internal fun isCarSignIn(url: String?) =
-    runCatching { java.net.URI(url).host.equals("accounts.google.com", ignoreCase = true) }.getOrDefault(false)
+    runCatching { java.net.URL(url).host.equals("accounts.google.com", ignoreCase = true) }.getOrDefault(false)
 
 internal fun isNetworkError(code: Int) = code in setOf(
     WebViewClient.ERROR_HOST_LOOKUP, WebViewClient.ERROR_CONNECT, WebViewClient.ERROR_TIMEOUT,

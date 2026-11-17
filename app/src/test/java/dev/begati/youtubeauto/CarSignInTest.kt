@@ -13,6 +13,9 @@ class CarSignInTest {
             "https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fm.youtube.com",
             "https://ACCOUNTS.GOOGLE.COM/AccountChooser",
             "http://accounts.google.com/",
+            // Chromium leaves these unescaped in the query; a strict parser rejects them.
+            "https://accounts.google.com/ServiceLogin?continue=https://m.youtube.com/results?search_query=a|b",
+            "https://accounts.google.com/ServiceLogin?q={a}^b",
         )) assertTrue(url, isCarSignIn(url))
     }
 
