@@ -72,6 +72,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: THEME-01 / C21 (webview)
 - last seen: 2026-11-11T17:18:32Z
 
+### L-011 - To read a host from a WebView URL use java.net.URL (or Uri.host), not java.net.URI: Chromium leaves | { } ^ unescaped in queries and URI throws on them; test with such a URL.
+- signal: `weak_test` · recurrence: 1 feature(s) · scope: `webview` · harmful: 0
+- features: car-signin
+- evidence: C1 / SIGNIN-01 (webview)
+- last seen: 2026-11-17T23:34:16Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

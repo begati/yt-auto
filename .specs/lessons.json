@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 11,
+  "next_id": 12,
   "lessons": [
     {
       "id": "L-001",
@@ -186,6 +186,24 @@
       ],
       "created": "2026-11-11T17:18:32Z",
       "last_seen": "2026-11-11T17:18:32Z"
+    },
+    {
+      "id": "L-011",
+      "key": "weak_test::to read a host from a webview url use java net url or uri host not java net uri chromium leaves unescaped in queries and uri throws on them test with such a url",
+      "text": "To read a host from a WebView URL use java.net.URL (or Uri.host), not java.net.URI: Chromium leaves | { } ^ unescaped in queries and URI throws on them; test with such a URL.",
+      "signal": "weak_test",
+      "scope": "webview",
+      "status": "candidate",
+      "features": [
+        "car-signin"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "C1 / SIGNIN-01 (webview)"
+      ],
+      "created": "2026-11-17T23:34:16Z",
+      "last_seen": "2026-11-17T23:34:16Z"
     }
   ]
 }
