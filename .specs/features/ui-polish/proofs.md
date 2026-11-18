@@ -1,7 +1,7 @@
 # ui-polish proofs
 
-**HEAD**: 30844b9
-**Tree**: dirty - app/build.gradle.kts
+**HEAD**: d590419
+**Tree**: clean
 **Shell**: /bin/sh
 **Result**: 32 pass, 0 fail
 
@@ -58,6 +58,6 @@ VideoFillTest > ASPECT-07 default on a fresh install is cover (fill the screen) 
 
 VideoFillTest > ASPECT-05 the saved aspect applies PASSED
 
-BUILD SUCCESSFUL in 11s
-22 actionable tasks: 12 executed, 10 up-to-date
+BUILD SUCCESSFUL in 1s
+22 actionable tasks: 1 executed, 21 up-to-date
 ```
