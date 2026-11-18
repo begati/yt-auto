@@ -1,7 +1,7 @@
 # ui-polish proofs
 
-**HEAD**: 38aadf5
-**Tree**: clean
+**HEAD**: 30844b9
+**Tree**: dirty - app/build.gradle.kts
 **Shell**: /bin/sh
 **Result**: 32 pass, 0 fail
 
@@ -35,7 +35,7 @@
 | C26 | `walk - uiautomator dump: content-desc Anterior, Pausar (playing) then Tocar (paused), Próximo, Voltar 10 s, Av` | pass (Walked) |
 | C27 | `walk - DHU, phone network cut with svc wifi disable and svc data disable: screenshot` | pass (Walked) |
 | C28 | `walk - DHU, audio-only on and moving simulated, a page with no artwork: screenshot` | pass (Walked) |
-| C29 | `walk - DHU screenshots of both overlays at the DHU density: artwork 160x90 dp, paddings as in code` | pass (Walked) |
+| C29 | `walk - DHU screenshots of both overlays at the DHU density: artwork 320x180 dp, paddings as in code` | pass (Walked) |
 | C30 | `walk - phone signed out: screenshot of the banner above YouTube with icon, text, Entrar and X` | pass (Walked) |
 | C31 | `walk - DHU: three taps on the aspect action show open_in_full, fit_screen, crop; pref back to cover` | pass (Walked) |
 | Build | `./gradlew assembleDebug` | pass |
@@ -58,6 +58,6 @@ VideoFillTest > ASPECT-07 default on a fresh install is cover (fill the screen) 
 
 VideoFillTest > ASPECT-05 the saved aspect applies PASSED
 
-BUILD SUCCESSFUL in 1s
-22 actionable tasks: 1 executed, 21 up-to-date
+BUILD SUCCESSFUL in 11s
+22 actionable tasks: 12 executed, 10 up-to-date
 ```
