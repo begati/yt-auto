@@ -102,6 +102,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: C15 (walk)
 - last seen: 2026-11-18T15:11:03Z
 
+### L-016 - Anything shown on the car screen in reaction to playback must check the video is on screen (surface attached, no audio cover): background play keeps the page running behind other apps.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `car-screen` · harmful: 0
+- features: gesture-hint
+- evidence: HINT-04 (car-screen)
+- last seen: 2026-11-18T15:25:56Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

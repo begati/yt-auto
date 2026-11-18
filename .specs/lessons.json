@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 16,
+  "next_id": 17,
   "lessons": [
     {
       "id": "L-001",
@@ -276,6 +276,24 @@
       ],
       "created": "2026-11-18T15:11:03Z",
       "last_seen": "2026-11-18T15:11:03Z"
+    },
+    {
+      "id": "L-016",
+      "key": "ac_gap::anything shown on the car screen in reaction to playback must check the video is on screen surface attached no audio cover background play keeps the page running behind other apps",
+      "text": "Anything shown on the car screen in reaction to playback must check the video is on screen (surface attached, no audio cover): background play keeps the page running behind other apps.",
+      "signal": "ac_gap",
+      "scope": "car-screen",
+      "status": "candidate",
+      "features": [
+        "gesture-hint"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "HINT-04 (car-screen)"
+      ],
+      "created": "2026-11-18T15:25:56Z",
+      "last_seen": "2026-11-18T15:25:56Z"
     }
   ]
 }
