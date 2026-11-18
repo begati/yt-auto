@@ -29,7 +29,7 @@
     <string name="settings">Ajustes</string>
     <string name="category_video">Video</string>
     <string name="category_navigation">Navegación</string>
-    <string name="open_car_to_play">Abre YT Auto en el auto para reproducir</string>
+    <string name="open_car_to_play">Abre YT Auto en el auto para reproducir. ¿No aparece en la lista de apps del auto? Activa Fuentes desconocidas en la configuración para desarrolladores de Android Auto</string>
     <string name="open_car_to_control">Abre YT Auto en el auto para controlar</string>
     <string name="phone_notice">Los videos solo se reproducen en el auto. Abre YT Auto en Android Auto.</string>
     <string name="video_saved">Video guardado: se reproducirá cuando abras YT Auto en el auto</string>

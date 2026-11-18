@@ -29,7 +29,7 @@
     <string name="settings">Paramètres</string>
     <string name="category_video">Vidéo</string>
     <string name="category_navigation">Navigation</string>
-    <string name="open_car_to_play">Ouvrez YT Auto dans la voiture pour lancer la lecture</string>
+    <string name="open_car_to_play">Ouvrez YT Auto dans la voiture pour lancer la lecture. Absent de la liste des applis de la voiture ? Activez Sources inconnues dans les paramètres pour les développeurs d\'Android Auto</string>
     <string name="open_car_to_control">Ouvrez YT Auto dans la voiture pour contrôler</string>
     <string name="phone_notice">Les vidéos ne sont lues que dans la voiture. Ouvrez YT Auto dans Android Auto.</string>
     <string name="video_saved">Vidéo enregistrée : elle sera lue à l\'ouverture de YT Auto dans la voiture</string>

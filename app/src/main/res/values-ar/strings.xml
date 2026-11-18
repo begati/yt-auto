@@ -29,7 +29,7 @@
     <string name="settings">الإعدادات</string>
     <string name="category_video">الفيديو</string>
     <string name="category_navigation">التصفح</string>
-    <string name="open_car_to_play">افتح YT Auto في السيارة للتشغيل</string>
+    <string name="open_car_to_play">افتح YT Auto في السيارة للتشغيل. لا يظهر في قائمة تطبيقات السيارة؟ فعّل «مصادر غير معروفة» في إعدادات المطوّر في Android Auto</string>
     <string name="open_car_to_control">افتح YT Auto في السيارة للتحكم</string>
     <string name="phone_notice">يتم تشغيل الفيديوهات في السيارة فقط. افتح YT Auto في Android Auto.</string>
     <string name="video_saved">تم حفظ الفيديو: سيتم تشغيله عند فتح YT Auto في السيارة</string>

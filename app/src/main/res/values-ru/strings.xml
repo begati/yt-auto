@@ -29,7 +29,7 @@
     <string name="settings">Настройки</string>
     <string name="category_video">Видео</string>
     <string name="category_navigation">Навигация</string>
-    <string name="open_car_to_play">Откройте YT Auto в автомобиле для воспроизведения</string>
+    <string name="open_car_to_play">Откройте YT Auto в автомобиле для воспроизведения. Нет в списке приложений автомобиля? Включите «Неизвестные источники» в настройках разработчика Android Auto</string>
     <string name="open_car_to_control">Откройте YT Auto в автомобиле для управления</string>
     <string name="phone_notice">Видео воспроизводится только в автомобиле. Откройте YT Auto в Android Auto.</string>
     <string name="video_saved">Видео сохранено: оно начнётся, когда вы откроете YT Auto в автомобиле</string>
