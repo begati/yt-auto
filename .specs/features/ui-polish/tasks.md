@@ -172,9 +172,9 @@ T12 → T13
 
 **Done when**:
 
-- [ ] DHU: a sign-in navigation (via DevTools) opens the message screen; OK returns to the same page
-- [ ] `CarSignInTest` still passes
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] DHU: a sign-in navigation (via DevTools) opens the message screen; OK returns to the same page
+- [x] `CarSignInTest` still passes
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
 
 **Tests**: none
 **Gate**: build

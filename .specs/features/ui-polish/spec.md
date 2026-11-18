@@ -174,7 +174,7 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
 | SIGN-01 | P1 Guided sign-in (AC 1) | Tasks | Implementing |
-| SIGN-02 | P1 Guided sign-in (AC 2) | Tasks | Pending |
+| SIGN-02 | P1 Guided sign-in (AC 2) | Tasks | Implementing |
 | SIGN-03 | P1 Guided sign-in (AC 3) | Tasks | Implementing |
 | SIGN-04 | P1 Guided sign-in (AC 4) | Tasks | Implementing |
 | SIGN-05 | P1 Guided sign-in (AC 5) | Tasks | Pending |

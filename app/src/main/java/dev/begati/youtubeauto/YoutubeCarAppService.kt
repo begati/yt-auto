@@ -46,6 +46,7 @@ import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.ListTemplate
+import androidx.car.app.model.MessageTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.SearchTemplate
@@ -1055,7 +1056,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     // The car has no keyboard for Google's sign-in form: keep the page, point to the phone.
                     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                         if (!request.isForMainFrame || !isCarSignIn(request.url.toString())) return false
-                        CarToast.makeText(carContext, R.string.notice_signed_out_hint, CarToast.LENGTH_LONG).show()
+                        if (screenManager.top !is SignInScreen) screenManager.push(SignInScreen(carContext))
                         return true
                     }
 
@@ -1559,6 +1560,15 @@ class HomeMenuScreen(ctx: CarContext, private val onPick: (String) -> Unit) : Sc
             .setSingleList(list.build())
             .build()
     }
+}
+
+/** "Entre pelo celular": shown instead of Google's sign-in form, which needs a keyboard the car lacks. OK goes back. */
+class SignInScreen(ctx: CarContext) : Screen(ctx) {
+    override fun onGetTemplate() = MessageTemplate.Builder(carContext.getString(R.string.signin_car_text))
+        .setTitle(carContext.getString(R.string.signin_car_title))
+        .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_smartphone)).build())
+        .addAction(Action.Builder().setTitle(carContext.getString(android.R.string.ok)).setOnClickListener { screenManager.pop() }.build())
+        .build()
 }
 
 /** Car keyboard: the virtual display has no IME, so text input goes through the host's SearchTemplate. */
