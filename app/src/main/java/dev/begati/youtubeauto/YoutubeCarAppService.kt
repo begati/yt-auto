@@ -647,6 +647,42 @@ internal fun clock(seconds: Long): String {
     return if (s >= 3600) "%d:%02d:%02d".format(s / 3600, s % 3600 / 60, s % 60) else "%d:%02d".format(s / 60, s % 60)
 }
 
+// Car video gestures. Points and rects (left, top, right, bottom) are in car surface pixels.
+
+// The host turns a double tap into onScale with factor 2 (a map zoom) and drops both taps: seconds to skip, 0 for none.
+internal fun doubleTapSkip(onWatch: Boolean, scale: Float, x: Float, y: Float, player: List<Float>?): Int {
+    if (!onWatch || scale != 2f || player == null) return 0
+    val (l, t, r, b) = player
+    if (x !in l..r || y !in t..b) return 0
+    return if (x < (l + r) / 2) -10 else 10
+}
+
+// Total the bubble shows: double taps on the same side within 1 s add up.
+internal fun addSkip(total: Int, at: Long, skip: Int, now: Long) =
+    if (total != 0 && (total > 0) == (skip > 0) && now - at <= 1000) total + skip else skip
+
+// Tap on YouTube's progress bar (null while its controls are hidden): where to seek, or null to pass the tap on.
+internal fun barTapMs(x: Float, y: Float, bar: List<Float>?, durationMs: Long): Long? {
+    if (bar == null || durationMs <= 0) return null
+    val (l, t, r, b) = bar
+    if (x !in l..r || y !in t..b) return null
+    return ((x - l) / (r - l) * durationMs).toLong()
+}
+
+// A drag seeks when it starts mostly sideways on a video with a known duration; otherwise it scrolls the page.
+internal fun dragSeeks(onWatch: Boolean, durationMs: Long, dx: Float, dy: Float) =
+    onWatch && durationMs > 0 && kotlin.math.abs(dx) > kotlin.math.abs(dy)
+
+// The player's width is the whole video; [fingerDx] is positive to the right.
+internal fun dragTargetMs(startMs: Long, fingerDx: Float, width: Float, durationMs: Long) =
+    (startMs + fingerDx / width * durationMs).toLong().coerceIn(0L, durationMs)
+
+// "target / duration" and the signed difference from where the drag started.
+internal fun dragLabel(targetMs: Long, durationMs: Long, startMs: Long): Pair<String, String> {
+    val diff = targetMs / 1000 - startMs / 1000
+    return "${clock(targetMs / 1000)} / ${clock(durationMs / 1000)}" to (if (diff < 0) "-" else "+") + clock(kotlin.math.abs(diff))
+}
+
 /**
  * Serves content://…thumbs/<videoId> as the video's i.ytimg.com thumbnail: Android Auto only loads
  * browse-list artwork from content:// URIs. Exported because the car host reads it; it only ever
