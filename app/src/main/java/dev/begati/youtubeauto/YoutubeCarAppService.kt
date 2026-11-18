@@ -1466,11 +1466,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         shape = android.graphics.drawable.GradientDrawable.OVAL
                         setColor(0xFF000000.toInt())
                     }
-                }, FrameLayout.LayoutParams(dp(22), dp(22), android.view.Gravity.BOTTOM or android.view.Gravity.END).apply {
-                    rightMargin = -dp(4)
-                    bottomMargin = -dp(4)
-                })
-                clipChildren = false
+                }, FrameLayout.LayoutParams(dp(22), dp(22), android.view.Gravity.BOTTOM or android.view.Gravity.END))
+                // Inside the icon's box: the card clips anything past it (a negative margin cut the badge).
             }, android.widget.LinearLayout.LayoutParams(dp(52), dp(52)).apply {
                 marginEnd = dp(14)
             })
