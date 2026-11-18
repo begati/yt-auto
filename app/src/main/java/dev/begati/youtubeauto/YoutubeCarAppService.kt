@@ -1967,6 +1967,35 @@ internal class NavFeed {
 
 internal fun navToShow(prefs: SharedPreferences, feed: NavFeed) = if (flag(prefs, "navOverlay")) feed.current else null
 
+// Filled by NavListener, read by the car screen; both run on the main thread.
+internal val navFeed = NavFeed()
+internal var onNavChanged: (() -> Unit)? = null
+
+/** Reads the navigation notifications of NAV_APPS into [navFeed]; Android runs it once notification access is granted. */
+class NavListener : android.service.notification.NotificationListenerService() {
+    override fun onListenerConnected() {
+        runCatching { activeNotifications }.getOrNull()?.forEach(::onNotificationPosted)
+    }
+
+    override fun onNotificationPosted(sbn: android.service.notification.StatusBarNotification) {
+        val n = sbn.notification
+        val i = navInstruction(
+            sbn.packageName, n.category,
+            n.extras.getCharSequence(android.app.Notification.EXTRA_TITLE), n.extras.getCharSequence(android.app.Notification.EXTRA_TEXT),
+        )
+        // An update that is no longer an instruction ends it, like a removal.
+        if (i == null) navFeed.remove(sbn.key) ?: return else navFeed.post(sbn.key, i.copy(icon = n.getLargeIcon()))
+        onNavChanged?.invoke()
+    }
+
+    override fun onNotificationRemoved(sbn: android.service.notification.StatusBarNotification) {
+        if (navFeed.remove(sbn.key) != null) onNavChanged?.invoke()
+    }
+}
+
+internal fun Context.navAccess() = getSystemService(android.app.NotificationManager::class.java)
+    .isNotificationListenerAccessGranted(android.content.ComponentName(this, NavListener::class.java))
+
 internal enum class Maneuver { ARRIVE, ROUNDABOUT, U_TURN, KEEP_LEFT, KEEP_RIGHT, LEFT, RIGHT, STRAIGHT }
 
 // Words per maneuver in the app's 7 languages (the text is in Waze's or Maps' language). Checked in this order:
@@ -2247,6 +2276,11 @@ class SettingsActivity : Activity() {
                 // Turning audio-only on asks for the GPS speed it runs on (see YoutubeScreen.listenSpeed).
                 if (f.key == "audioWhileMoving") setOnPreferenceChangeListener { _, on ->
                     if (on == true) ctx.requestLocation()
+                    true
+                }
+                // On-screen navigation reads Waze's and Maps' notifications: turning it on without access opens the grant.
+                if (f.key == "navOverlay") setOnPreferenceChangeListener { _, on ->
+                    if (on == true && !ctx.navAccess()) ctx.startActivity(Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
                     true
                 }
             }

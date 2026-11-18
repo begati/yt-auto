@@ -114,7 +114,7 @@ instrução numa notificação no celular. Pedido do usuário: "faz isso" (desen
 ## Execution Plan
 
 1. [x] Regras puras e testes (filtro da notificação, ícone pela manobra, última publicada vence, chave desligada esconde) e a chave `navOverlay` nas configurações do celular, com textos nos 7 idiomas e ícone -> `YoutubeCarAppService.kt`, `NavInstructionTest.kt`, `UiPolishTest.kt` (chave nova nas listas completas), `values*/strings.xml`, `ic_navigation.xml` -> `testDebugUnitTest` -> `feat: read the turn instruction from waze and maps notifications`
-2. Listener de notificações e o pedido de acesso ao ligar a chave -> `YoutubeCarAppService.kt`, `AndroidManifest.xml` -> build + testes -> `feat: listen to navigation notifications and ask for access`
+2. [x] Listener de notificações e o pedido de acesso ao ligar a chave -> `YoutubeCarAppService.kt`, `AndroidManifest.xml` -> build + testes -> `feat: listen to navigation notifications and ask for access`
 3. Overlay no carro com os ícones de manobra (visual pelo impeccable) -> `YoutubeCarAppService.kt`, drawables -> build + walk no DHU -> `feat: show the next turn over the car screen`
 
 ## Checks
