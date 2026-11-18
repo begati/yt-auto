@@ -57,4 +57,85 @@ class UiPolishTest {
             CAR_SETTINGS,
         )
     }
+
+    @Test
+    fun `PSET-01 phone groups and order`() {
+        assertEquals(
+            listOf(
+                // Reprodução: Qualidade, Velocidade, Proporção, Legendas, Tela cheia ao abrir vídeo
+                R.string.group_playback to listOf("quality", "speed", "aspect", "captions", "fullscreen"),
+                // Anúncios: Bloquear anúncios, Pular patrocínios
+                R.string.group_ads to listOf("skipAds", "sponsorBlock"),
+                // No carro: Só áudio, Tocar com outro app na tela, Página inicial, Tamanho do texto
+                R.string.group_car to listOf("audioWhileMoving", "background", "home", "textZoom"),
+            ),
+            PHONE_GROUPS,
+        )
+    }
+
+    @Test
+    fun `PSET-02 every phone setting has its icon`() {
+        val expected = mapOf(
+            "quality" to R.drawable.ic_high_quality, "speed" to R.drawable.ic_speed, "aspect" to R.drawable.ic_aspect_ratio,
+            "captions" to R.drawable.ic_closed_caption, "fullscreen" to R.drawable.ic_fullscreen, "skipAds" to R.drawable.ic_block,
+            "sponsorBlock" to R.drawable.ic_fast_forward, "audioWhileMoving" to R.drawable.ic_headphones,
+            "background" to R.drawable.ic_picture_in_picture_alt, "home" to R.drawable.ic_home,
+            "textZoom" to R.drawable.ic_format_size,
+        )
+        PHONE_GROUPS.flatMap { it.second }.forEach { key -> assertEquals(key, expected[key], SETTING_ICONS[key]) }
+        assertEquals(expected.keys, PHONE_GROUPS.flatMap { it.second }.toSet())
+    }
+
+    @Test
+    fun `PSET-03 every switch has its summary`() {
+        val expected = mapOf(
+            "skipAds" to R.string.summary_skip_ads, // Pula os anúncios dos vídeos
+            "sponsorBlock" to R.string.summary_sponsor_block, // Pula trechos patrocinados marcados pela comunidade
+            "audioWhileMoving" to R.string.summary_audio_while_moving, // Esconde o vídeo enquanto o carro anda (usa o GPS)
+            "fullscreen" to R.string.summary_fullscreen, // Abre o vídeo ocupando a tela do carro
+            "background" to R.string.summary_background, // Continua tocando com o Maps ou outro app na frente
+            "captions" to R.string.summary_captions, // Mostra legendas quando o vídeo tem
+        )
+        assertEquals(expected.keys, FLAGS.map { it.key }.toSet())
+        FLAGS.forEach { f -> assertEquals(f.key, expected[f.key], SWITCH_SUMMARIES[f.key]) }
+    }
+
+    @Test
+    fun `PSET-04 keys and defaults unchanged`() {
+        // Values of release 1.3: keys, defaults and stored value formats.
+        assertEquals(
+            mapOf(
+                "quality" to ("medium" to listOf("auto", "small", "medium", "large", "hd720", "hd1080")),
+                "speed" to ("1" to listOf("0.75", "1", "1.25", "1.5", "1.75", "2")),
+                "aspect" to ("cover" to listOf("contain", "cover", "fill")),
+                "home" to ("https://m.youtube.com" to listOf(
+                    "https://m.youtube.com", "https://m.youtube.com/feed/subscriptions", "https://m.youtube.com/feed/history",
+                )),
+                "textZoom" to ("130" to listOf("100", "115", "130", "150")),
+            ),
+            CHOICES.associate { it.key to (it.default to it.options.keys.toList()) },
+        )
+        assertEquals(
+            mapOf(
+                "skipAds" to true, "sponsorBlock" to true, "audioWhileMoving" to false,
+                "fullscreen" to true, "background" to true, "captions" to false,
+            ),
+            FLAGS.associate { it.key to it.default },
+        )
+        // The phone screen shows every setting once, by those keys.
+        val shown = PHONE_GROUPS.flatMap { it.second }
+        assertEquals(shown.size, shown.toSet().size)
+        assertEquals((CHOICES.map { it.key } + FLAGS.map { it.key }).toSet(), shown.toSet())
+        // A value saved by 1.3 is read unchanged.
+        val saved = MemoryPrefs().apply {
+            map["quality"] = "hd720"; map["speed"] = "1.5"; map["aspect"] = "contain"
+            map["home"] = "https://m.youtube.com/feed/history"; map["textZoom"] = "100"; map["skipAds"] = false
+        }
+        assertEquals("hd720", choice(saved, QUALITY))
+        assertEquals("1.5", choice(saved, SPEED))
+        assertEquals("contain", choice(saved, ASPECT))
+        assertEquals("https://m.youtube.com/feed/history", choice(saved, HOME_PAGE))
+        assertEquals("100", choice(saved, TEXT_ZOOM))
+        assertEquals(false, flag(saved, "skipAds"))
+    }
 }

@@ -194,7 +194,7 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 | PSET-01 | P2 Phone settings (AC 1) | Tasks | Implementing |
 | PSET-02 | P2 Phone settings (AC 2) | Tasks | Implementing |
 | PSET-03 | P2 Phone settings (AC 3) | Tasks | Implementing |
-| PSET-04 | P2 Phone settings (AC 4) | Tasks | Pending |
+| PSET-04 | P2 Phone settings (AC 4) | Tasks | Implementing |
 | REMOTE-01 | P2 Remote bar (AC 1) | Tasks | Implementing |
 | REMOTE-02 | P2 Remote bar (AC 2) | Tasks | Pending |
 | REMOTE-03 | P2 Remote bar (AC 3) | Tasks | Pending |

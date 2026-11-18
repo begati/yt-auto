@@ -274,6 +274,26 @@ internal val CAR_SETTINGS = listOf(
     "captions" to R.drawable.ic_closed_caption,
 )
 
+// Phone settings layout: group title -> setting keys, in order. Keys are those of CHOICES and FLAGS, unchanged.
+internal val PHONE_GROUPS = listOf(
+    R.string.group_playback to listOf("quality", "speed", "aspect", "captions", "fullscreen"),
+    R.string.group_ads to listOf("skipAds", "sponsorBlock"),
+    R.string.group_car to listOf("audioWhileMoving", "background", "home", "textZoom"),
+)
+// Phone settings row icon per setting key.
+internal val SETTING_ICONS = mapOf(
+    "quality" to R.drawable.ic_high_quality, "speed" to R.drawable.ic_speed, "aspect" to R.drawable.ic_aspect_ratio,
+    "captions" to R.drawable.ic_closed_caption, "fullscreen" to R.drawable.ic_fullscreen, "skipAds" to R.drawable.ic_block,
+    "sponsorBlock" to R.drawable.ic_fast_forward, "audioWhileMoving" to R.drawable.ic_headphones,
+    "background" to R.drawable.ic_picture_in_picture_alt, "home" to R.drawable.ic_home, "textZoom" to R.drawable.ic_format_size,
+)
+// Summary shown under each phone switch: what it does, in the driver's words.
+internal val SWITCH_SUMMARIES = mapOf(
+    "skipAds" to R.string.summary_skip_ads, "sponsorBlock" to R.string.summary_sponsor_block,
+    "audioWhileMoving" to R.string.summary_audio_while_moving, "fullscreen" to R.string.summary_fullscreen,
+    "background" to R.string.summary_background, "captions" to R.string.summary_captions,
+)
+
 // Label of option [key] of [c], in the device's language.
 private fun Context.label(c: Choice, key: String) = getString(c.options.getValue(key))
 
@@ -1796,15 +1816,21 @@ class SettingsActivity : Activity() {
                     true
                 }
             }
-            category(R.string.category_video).apply {
-                addPreference(list(QUALITY))
-                addPreference(list(SPEED))
-                addPreference(list(ASPECT))
-                FLAGS.forEach { addPreference(switch(it)) }
+            // Icons are white; tint them to the theme's icon color so they show in light mode too.
+            val tint = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal)).run {
+                getColorStateList(0).also { recycle() }
             }
-            category(R.string.category_navigation).apply {
-                addPreference(list(HOME_PAGE))
-                addPreference(list(TEXT_ZOOM))
+            PHONE_GROUPS.forEach { (title, keys) ->
+                category(title).apply {
+                    keys.forEach { key ->
+                        val c = CHOICES.find { it.key == key }
+                        val p = if (c != null) list(c) else switch(FLAGS.first { it.key == key }).apply {
+                            setSummary(SWITCH_SUMMARIES.getValue(key))
+                        }
+                        p.icon = ctx.getDrawable(SETTING_ICONS.getValue(key))!!.mutate().apply { setTintList(tint) }
+                        addPreference(p)
+                    }
+                }
             }
         }
     }

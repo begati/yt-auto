@@ -209,8 +209,8 @@ T12 → T13
 
 **Done when**:
 
-- [ ] Tests `PSET-01`, `PSET-02`, `PSET-03`, `PSET-04` in `UiPolishTest.kt` pass
-- [ ] Gate check passes: `./gradlew testDebugUnitTest`
+- [x] Tests `PSET-01`, `PSET-02`, `PSET-03`, `PSET-04` in `UiPolishTest.kt` pass
+- [x] Gate check passes: `./gradlew testDebugUnitTest`
 
 **Tests**: unit
 **Gate**: quick
