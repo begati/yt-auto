@@ -299,8 +299,8 @@ T12 → T13
 
 **Done when**:
 
-- [ ] DHU with the cover forced on (flag on, moving simulated) and no artwork: headphones icon
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] DHU with the cover forced on (flag on, moving simulated) and no artwork: headphones icon
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
 
 **Tests**: none
 **Gate**: build

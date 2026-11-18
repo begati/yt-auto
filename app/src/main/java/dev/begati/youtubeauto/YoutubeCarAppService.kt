@@ -843,8 +843,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         cover?.visibility = if (on) View.VISIBLE else View.GONE
         coverTitle?.text = meta?.getString(MediaMetadata.METADATA_KEY_TITLE).orEmpty()
         val art = meta?.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART)
-        coverArt?.setImageBitmap(art)
-        coverArt?.visibility = if (art != null) View.VISIBLE else View.GONE
+        // No artwork: a headphones icon in its place.
+        coverArt?.imageTintList = if (art != null) null else android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+        if (art != null) coverArt?.setImageBitmap(art) else coverArt?.setImageResource(R.drawable.ic_headphones)
     }
 
     // Opens [url] in the car; with no player yet it loads pageUrl when the car shows the screen.
@@ -1191,7 +1192,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
 
     // Black screen with the video's art, title and "Audio only while driving"; swallows taps.
+    // Sizes in dp of [ctx]'s display: the car's virtual display.
     private fun audioCover(ctx: Context): View = FrameLayout(ctx).apply {
+        fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
         setBackgroundColor(android.graphics.Color.BLACK)
         visibility = View.GONE
         isClickable = true
@@ -1199,15 +1202,15 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             android.widget.LinearLayout(ctx).apply {
                 orientation = android.widget.LinearLayout.VERTICAL
                 gravity = android.view.Gravity.CENTER_HORIZONTAL
-                setPadding(32, 0, 32, 0)
-                addView(android.widget.ImageView(ctx).also { coverArt = it }, android.widget.LinearLayout.LayoutParams(320, 180))
+                setPadding(dp(32), 0, dp(32), 0)
+                addView(android.widget.ImageView(ctx).also { coverArt = it }, android.widget.LinearLayout.LayoutParams(dp(160), dp(90)))
                 addView(android.widget.TextView(ctx).also { coverTitle = it }.apply {
                     setTextColor(android.graphics.Color.WHITE)
                     textSize = 22f
                     maxLines = 2
                     ellipsize = android.text.TextUtils.TruncateAt.END
                     gravity = android.view.Gravity.CENTER
-                    setPadding(0, 24, 0, 8)
+                    setPadding(0, dp(24), 0, dp(8))
                 })
                 addView(android.widget.TextView(ctx).apply {
                     setText(R.string.audio_only_moving)
