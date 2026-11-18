@@ -227,8 +227,8 @@ T12 → T13
 
 **Done when**:
 
-- [ ] Tests `SIGN-04` and `SIGN-06` in `UiPolishTest.kt` pass
-- [ ] Gate check passes: `./gradlew testDebugUnitTest`
+- [x] Tests `SIGN-04` and `SIGN-06` in `UiPolishTest.kt` pass
+- [x] Gate check passes: `./gradlew testDebugUnitTest`
 
 **Tests**: unit
 **Gate**: quick

@@ -855,6 +855,11 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         if (wv != null) wv.loadUrl(url) else sharedSession?.setPlaybackState(waitingForCar())
     }
 
+    /** Reloads the car page (after the phone signs in, so it shows the account). */
+    fun reload() {
+        webView?.reload()
+    }
+
     /** Re-applies the saved quality and speed to the current video (after the car settings or the phone change them). */
     fun applyPlayback() {
         js(JS_APPLY_QUALITY)
@@ -1636,6 +1641,24 @@ internal fun isNewer(tag: String, current: String): Boolean {
     return false
 }
 
+// Phone sign-in banner: shown while signed out, unless closed since the last sign-in state change.
+internal fun bannerShown(signedIn: Boolean, closedWhileSignedOut: Boolean) = !signedIn && !closedWhileSignedOut
+internal fun bannerClosed(prefs: SharedPreferences) = prefs.getBoolean("bannerClosed", false)
+internal fun closeBanner(prefs: SharedPreferences) = prefs.edit().putBoolean("bannerClosed", true).apply()
+
+/** Records the sign-in state [signedIn]; a change clears the banner's closing. True when it went from out to in. */
+internal fun signInChanged(prefs: SharedPreferences, signedIn: Boolean): Boolean {
+    val was = prefs.getBoolean("signedIn", signedIn) // first run: no change
+    val edit = prefs.edit().putBoolean("signedIn", signedIn)
+    if (was != signedIn) edit.putBoolean("bannerClosed", false)
+    edit.apply()
+    return !was && signedIn
+}
+
+// Google's sign-in for YouTube, back to the mobile site; the same link as the page's own "Fazer login".
+private const val SIGN_IN_URL = "https://accounts.google.com/ServiceLogin?service=youtube&uilel=3&passive=true&continue=" +
+    "https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Dm%26next%3D%252F"
+
 /**
  * Phone launcher screen: YouTube, signed in or not (sign in from the page). WebView cookies are app-wide, so the car WebView
  * picks up the session. Google rejects embedded WebViews by the "; wv" UA token, hence the strip.
@@ -1645,6 +1668,7 @@ class LoginActivity : Activity() {
     private var client: OfflineRetry? = null
     private var web: WebView? = null
     private var bar: RemoteBar? = null
+    private var banner: View? = null
     // Phone -> car: the same session the steering wheel uses; it opens the video in the car, or keeps it for later.
     private val car by lazy { MediaController(this, mediaSession(this).sessionToken) }
 
@@ -1652,7 +1676,10 @@ class LoginActivity : Activity() {
         super.onCreate(savedInstanceState)
         val offline = offlineView(this)
         val retrying = object : OfflineRetry(this, offline) {
-            override fun onLoaded(view: WebView) = view.evaluateJavascript(PHONE_JS, null)
+            override fun onLoaded(view: WebView) {
+                view.evaluateJavascript(PHONE_JS, null)
+                checkSignIn()
+            }
         }.also { client = it }
         bar = RemoteBar(this, car)
         val page = FrameLayout(this).apply {
@@ -1686,14 +1713,63 @@ class LoginActivity : Activity() {
         }
         setContentView(android.widget.LinearLayout(this).apply {
             orientation = android.widget.LinearLayout.VERTICAL
+            addView(signInBanner().also { banner = it })
             addView(page, android.widget.LinearLayout.LayoutParams(-1, 0, 1f))
             addView(bar)
         })
+        checkSignIn()
         if (savedInstanceState == null) {
             checkUpdate()
             // Audio-only turned on in the car: the car can't ask for location, so the phone does on its next launch.
             if (flag(this, "audioWhileMoving")) requestLocation()
         }
+    }
+
+    // Account icon, "Entre para ver suas inscrições no carro", Entrar (Google's sign-in here) and X (closes until the next change).
+    private fun signInBanner() = android.widget.LinearLayout(this).apply {
+        val dp = resources.displayMetrics.density
+        gravity = android.view.Gravity.CENTER_VERTICAL
+        setBackgroundColor(0xFF1F1F1F.toInt()) // same as the remote bar
+        setPadding((12 * dp).toInt(), (4 * dp).toInt(), 0, (4 * dp).toInt())
+        val white = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+        addView(android.widget.ImageView(context).apply {
+            setImageResource(R.drawable.ic_account_circle)
+            imageTintList = white
+        })
+        addView(android.widget.TextView(context).apply {
+            setText(R.string.banner_text)
+            setTextColor(android.graphics.Color.WHITE)
+            setPadding((12 * dp).toInt(), 0, (8 * dp).toInt(), 0)
+        }, android.widget.LinearLayout.LayoutParams(0, -2, 1f))
+        addView(android.widget.Button(context, null, android.R.attr.borderlessButtonStyle).apply {
+            setText(R.string.banner_signin)
+            setOnClickListener { web?.loadUrl(SIGN_IN_URL) }
+        })
+        addView(android.widget.ImageButton(context).apply {
+            setImageResource(R.drawable.ic_close)
+            imageTintList = white
+            contentDescription = getString(R.string.close)
+            setBackgroundResource(obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackgroundBorderless)).run {
+                getResourceId(0, 0).also { recycle() }
+            })
+            minimumWidth = (48 * dp).toInt()
+            minimumHeight = (48 * dp).toInt()
+            setOnClickListener {
+                closeBanner(prefs(this@LoginActivity))
+                checkSignIn()
+            }
+        })
+    }
+
+    // SAPISID is the cookie Google sets on sign-in (as in MediaService). On sign-in: toast, and the car reloads signed in.
+    private fun checkSignIn() {
+        val signedIn = "SAPISID=" in CookieManager.getInstance().getCookie("https://m.youtube.com").orEmpty()
+        val p = prefs(this)
+        if (signInChanged(p, signedIn)) {
+            android.widget.Toast.makeText(this, R.string.signed_in_toast, android.widget.Toast.LENGTH_LONG).show()
+            carLink?.reload()
+        }
+        banner?.visibility = if (bannerShown(signedIn, bannerClosed(p))) View.VISIBLE else View.GONE
     }
 
     // Offers a newer GitHub release once per launch, until it's installed or skipped. Failures stay silent.

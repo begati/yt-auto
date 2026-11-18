@@ -177,8 +177,8 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 | SIGN-02 | P1 Guided sign-in (AC 2) | Tasks | Implementing |
 | SIGN-03 | P1 Guided sign-in (AC 3) | Tasks | Implementing |
 | SIGN-04 | P1 Guided sign-in (AC 4) | Tasks | Implementing |
-| SIGN-05 | P1 Guided sign-in (AC 5) | Tasks | Pending |
-| SIGN-06 | P1 Guided sign-in (AC 6, edge 1) | Tasks | Pending |
+| SIGN-05 | P1 Guided sign-in (AC 5) | Tasks | Implementing |
+| SIGN-06 | P1 Guided sign-in (AC 6, edge 1) | Tasks | Implementing |
 | SIGN-07 | P1 Guided sign-in (AC 7, edge 2) | Tasks | Implementing |
 | SIGN-08 | P1 Guided sign-in (AC 8) | Tasks | Pending |
 | NAV-01 | P1 Car navigation (AC 1, edge 3) | Tasks | Implementing |

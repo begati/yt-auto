@@ -1,6 +1,8 @@
 package dev.begati.youtubeauto
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** Requirements of spec ui-polish decided by pure data and functions. */
@@ -137,5 +139,41 @@ class UiPolishTest {
         assertEquals("https://m.youtube.com/feed/history", choice(saved, HOME_PAGE))
         assertEquals("100", choice(saved, TEXT_ZOOM))
         assertEquals(false, flag(saved, "skipAds"))
+    }
+
+    @Test
+    fun `SIGN-04 banner shows only while signed out and not closed`() {
+        assertTrue(bannerShown(signedIn = false, closedWhileSignedOut = false))
+        assertFalse(bannerShown(signedIn = false, closedWhileSignedOut = true))
+        assertFalse(bannerShown(signedIn = true, closedWhileSignedOut = false))
+        assertFalse(bannerShown(signedIn = true, closedWhileSignedOut = true))
+        // A first launch, signed out, never closed: shown.
+        val prefs = MemoryPrefs()
+        assertFalse(signInChanged(prefs, false))
+        assertTrue(bannerShown(false, bannerClosed(prefs)))
+    }
+
+    @Test
+    fun `SIGN-06 closing lasts until the sign-in state changes`() {
+        val prefs = MemoryPrefs()
+        signInChanged(prefs, false)
+        closeBanner(prefs)
+        assertFalse(bannerShown(false, bannerClosed(prefs)))
+        // Still signed out on later pages and launches (same stored prefs): stays closed.
+        assertFalse(signInChanged(prefs, false))
+        assertFalse(signInChanged(prefs, false))
+        assertFalse(bannerShown(false, bannerClosed(prefs)))
+        // Signing in is reported once and hides the banner.
+        assertTrue(signInChanged(prefs, true))
+        assertFalse(bannerShown(true, bannerClosed(prefs)))
+        assertFalse(signInChanged(prefs, true))
+        // Signing out shows it again, even though it was closed before.
+        assertFalse(signInChanged(prefs, false))
+        assertTrue(bannerShown(false, bannerClosed(prefs)))
+        // Closed while signed out, then sign in and out again: shown again.
+        closeBanner(prefs)
+        signInChanged(prefs, true)
+        signInChanged(prefs, false)
+        assertTrue(bannerShown(false, bannerClosed(prefs)))
     }
 }
