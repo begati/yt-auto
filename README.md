@@ -27,6 +27,8 @@ with your account, subscriptions and history, and turns your phone into a remote
 ## Features
 
 - YouTube home page, subscriptions, history and search in the car (search uses the car keyboard).
+- Touch gestures on the car screen: double tap to skip 10 s, tap the progress bar to jump, drag sideways to seek
+  (see [On the car screen](#on-the-car-screen)).
 - No account needed; sign in once on the phone (optional) and the car uses the same session.
 - Phone remote: tap a video on the phone and it plays in the car; play/pause, next, seek, 10 s back/forward and
   settings from the phone bar.
@@ -86,6 +88,21 @@ The screenshot shows KingInstaller in Portuguese: "Selecione o APK para instalar
 2. Connect the phone to the car and open **YT Auto** from the Android Auto launcher.
 
 Updates: install the new APK with KingInstaller the same way. Your sign-in and settings are kept.
+
+### On the car screen
+
+Tap the page as on a phone. A tap also brings up the car's buttons for a few seconds: back, home menu, play/pause
+and search at the top, video aspect and settings on the side. While a video plays, the car screen has no buttons of
+its own for seeking; use these gestures:
+
+- **Double tap** the right half of the video to skip 10 s forward, the left half to go 10 s back. Double tap again
+  to keep adding 10 s.
+- **Tap the progress bar** (tap the video first to show YouTube's controls) to jump to that point.
+- **Drag sideways** across the video to seek: the screen's width is the whole video. The target time shows while you
+  drag, and the video jumps there when you let go.
+- **Drag up or down** to scroll the page.
+
+The steering wheel buttons (play/pause, next, previous) and the Android Auto media card also control the video.
 
 ### The car shows "Open YT Auto in the car to play"
 

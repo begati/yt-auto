@@ -27,6 +27,8 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
 ## Recursos
 
 - Página inicial, inscrições, histórico e pesquisa do YouTube no carro (a pesquisa usa o teclado do carro).
+- Gestos na tela do carro: toque duplo para pular 10 s, toque na barra de progresso para ir ao ponto, arraste para
+  o lado para avançar ou voltar (veja [Na tela do carro](#na-tela-do-carro)).
 - Não precisa de conta; faça login uma vez no celular (opcional) e o carro usa a mesma sessão.
 - Controle pelo celular: toque num vídeo no celular e ele toca no carro; tocar/pausar, próximo, barra de
   progresso, voltar/avançar 10 s e configurações pela barra do celular.
@@ -85,6 +87,22 @@ ou gerenciador de arquivos).
 2. Conecte o celular ao carro e abra o **YT Auto** pelo menu do Android Auto.
 
 Atualizações: instale o APK novo pelo KingInstaller do mesmo jeito. Login e configurações são mantidos.
+
+### Na tela do carro
+
+Toque na página como no celular. Um toque também mostra os botões do carro por alguns segundos: voltar, menu de
+páginas, tocar/pausar e busca no topo, proporção do vídeo e configurações na lateral. Com um vídeo tocando, a tela do
+carro não tem botões próprios para avançar ou voltar; use estes gestos:
+
+- **Toque duas vezes** na metade direita do vídeo para avançar 10 s, na metade esquerda para voltar 10 s. Repita o
+  toque duplo para somar mais 10 s.
+- **Toque na barra de progresso** (toque antes no vídeo para mostrar os controles do YouTube) para ir direto àquele
+  ponto.
+- **Arraste para o lado** sobre o vídeo para avançar ou voltar: a largura da tela é o vídeo inteiro. O tempo de
+  destino aparece enquanto você arrasta, e o vídeo pula para lá quando você solta.
+- **Arraste para cima ou para baixo** para rolar a página.
+
+Os botões do volante (tocar/pausar, próximo, anterior) e o card de mídia do Android Auto também controlam o vídeo.
 
 ### O carro mostra "Abra o YT Auto no carro para tocar"
 
