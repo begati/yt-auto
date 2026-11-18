@@ -190,7 +190,7 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 | NAV-07 | P1 Car navigation (AC 7) | Tasks | Implementing |
 | CSET-01 | P2 Car settings (AC 1) | Tasks | Implementing |
 | CSET-02 | P2 Car settings (AC 2) | Tasks | Implementing |
-| CSET-03 | P2 Car settings (AC 3) | Tasks | Pending |
+| CSET-03 | P2 Car settings (AC 3) | Tasks | Implementing |
 | PSET-01 | P2 Phone settings (AC 1) | Tasks | Implementing |
 | PSET-02 | P2 Phone settings (AC 2) | Tasks | Implementing |
 | PSET-03 | P2 Phone settings (AC 3) | Tasks | Implementing |

@@ -191,8 +191,8 @@ T12 → T13
 
 **Done when**:
 
-- [ ] Test `CSET-01` in `UiPolishTest.kt` passes
-- [ ] Gate check passes: `./gradlew testDebugUnitTest`
+- [x] Test `CSET-01` in `UiPolishTest.kt` passes
+- [x] Gate check passes: `./gradlew testDebugUnitTest`
 
 **Tests**: unit
 **Gate**: quick

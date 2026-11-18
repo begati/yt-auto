@@ -45,4 +45,16 @@ class UiPolishTest {
         setChoice(prefs, HOME_PAGE, "https://m.youtube.com/feed/history")
         assertEquals("https://m.youtube.com/feed/history", startUrl(prefs, ""))
     }
+
+    @Test
+    fun `CSET-01 car settings are quality speed captions`() {
+        assertEquals(
+            listOf(
+                "quality" to R.drawable.ic_high_quality, // Qualidade do vídeo
+                "speed" to R.drawable.ic_speed, // Velocidade
+                "captions" to R.drawable.ic_closed_caption, // Legendas
+            ),
+            CAR_SETTINGS,
+        )
+    }
 }

@@ -267,6 +267,13 @@ internal val FLAGS = listOf(
     Flag("captions", R.string.flag_captions, default = false),
 )
 
+// Car settings (setting key, icon), in order: only what a driver changes while watching; the rest is on the phone.
+internal val CAR_SETTINGS = listOf(
+    QUALITY.key to R.drawable.ic_high_quality,
+    SPEED.key to R.drawable.ic_speed,
+    "captions" to R.drawable.ic_closed_caption,
+)
+
 // Label of option [key] of [c], in the device's language.
 private fun Context.label(c: Choice, key: String) = getString(c.options.getValue(key))
 
@@ -1485,32 +1492,34 @@ private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
     )
 }
 
-/** Car settings, same values as the phone's Settings menu. [onChanged] re-applies them to the live page. */
+/** Car settings (CAR_SETTINGS), same values as the phone's Settings menu. [onChanged] re-applies them to the live page. */
 class SettingsScreen(ctx: CarContext, private val onChanged: () -> Unit) : Screen(ctx) {
     override fun onGetTemplate(): ListTemplate {
         val list = ItemList.Builder()
-        CHOICES.forEach { c ->
-            list.addItem(
-                Row.Builder().setTitle(carContext.getString(c.title)).addText(carContext.label(c, choice(carContext, c))).setBrowsable(true)
+        fun icon(id: Int) = CarIcon.Builder(IconCompat.createWithResource(carContext, id)).build()
+        CAR_SETTINGS.forEach { (key, img) ->
+            val c = CHOICES.find { it.key == key }
+            val row = Row.Builder().setImage(icon(img))
+            if (c != null) {
+                row.setTitle(carContext.getString(c.title)).addText(carContext.label(c, choice(carContext, c))).setBrowsable(true)
                     .setOnClickListener {
                         screenManager.push(ChoiceScreen(carContext, c) {
                             invalidate()
                             onChanged()
                         })
                     }
-                    .build()
-            )
-        }
-        FLAGS.forEach { f ->
-            list.addItem(
-                Row.Builder().setTitle(carContext.getString(f.title))
+            } else {
+                val f = FLAGS.first { it.key == key }
+                row.setTitle(carContext.getString(f.title))
                     .setToggle(Toggle.Builder { on ->
                         setFlag(carContext, f.key, on)
                         onChanged()
                     }.setChecked(flag(carContext, f.key)).build())
-                    .build()
-            )
+            }
+            list.addItem(row.build())
         }
+        // Not tappable: points to the phone's full settings.
+        list.addItem(Row.Builder().setTitle(carContext.getString(R.string.more_on_phone)).setImage(icon(R.drawable.ic_smartphone)).build())
         return ListTemplate.Builder()
             .setTitle(carContext.getString(R.string.settings))
             .setHeaderAction(Action.BACK)
