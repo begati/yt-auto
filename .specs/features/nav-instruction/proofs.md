@@ -1,6 +1,6 @@
 # nav-instruction proofs
 
-**HEAD**: afcac9a
+**HEAD**: 3f4492c
 **Tree**: clean
 **Shell**: /bin/sh
 **Result**: 21 pass, 0 fail
@@ -48,5 +48,5 @@ VideoFillTest > ASPECT-07 default on a fresh install is cover (fill the screen) 
 VideoFillTest > ASPECT-05 the saved aspect applies PASSED
 
 BUILD SUCCESSFUL in 1s
-22 actionable tasks: 4 executed, 18 up-to-date
+22 actionable tasks: 1 executed, 21 up-to-date
 ```
