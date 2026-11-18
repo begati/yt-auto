@@ -1720,7 +1720,7 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
             notice -> context.getString(R.string.phone_notice)
             else -> m?.getString(MediaMetadata.METADATA_KEY_TITLE)
         }
-        title.maxLines = if (notice || pending) 2 else 1
+        title.maxLines = if (pending) 4 else if (notice) 2 else 1 // pending: the steps to show the car screen
         channel.text = if (pending || notice) "" else m?.getString(MediaMetadata.METADATA_KEY_ARTIST)
         art.setImageBitmap(if (pending || notice) null else m?.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART))
         // Only a message: nothing to play, pause or seek yet.

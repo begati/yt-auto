@@ -29,7 +29,7 @@
     <string name="settings">Impostazioni</string>
     <string name="category_video">Video</string>
     <string name="category_navigation">Navigazione</string>
-    <string name="open_car_to_play">Apri YT Auto in auto per riprodurre. Non è nell\'elenco delle app dell\'auto? Attiva Origini sconosciute nelle impostazioni sviluppatore di Android Auto</string>
+    <string name="open_car_to_play">Apri YT Auto dall\'elenco app dell\'auto. Non c\'è? Sul telefono: Android Auto &gt; ⋮ &gt; Impostazioni sviluppatore &gt; attiva Origini sconosciute e riavvia il telefono.</string>
     <string name="open_car_to_control">Apri YT Auto in auto per controllare</string>
     <string name="phone_notice">I video vengono riprodotti solo in auto. Apri YT Auto su Android Auto.</string>
     <string name="video_saved">Video salvato: verrà riprodotto quando apri YT Auto in auto</string>

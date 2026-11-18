@@ -29,7 +29,7 @@
     <string name="settings">Configurações</string>
     <string name="category_video">Vídeo</string>
     <string name="category_navigation">Navegação</string>
-    <string name="open_car_to_play">Abra o YT Auto no carro para tocar. Não aparece na lista de apps do carro? Ative Fontes desconhecidas nas configurações de desenvolvedor do Android Auto</string>
+    <string name="open_car_to_play">Abra o YT Auto pela lista de apps do carro. Não está lá? No celular: Android Auto &gt; ⋮ &gt; Configurações do desenvolvedor &gt; ligue Fontes desconhecidas e reinicie o celular.</string>
     <string name="open_car_to_control">Abra o YT Auto no carro para controlar</string>
     <string name="phone_notice">Os vídeos tocam só no carro. Abra o YT Auto no Android Auto.</string>
     <string name="video_saved">Vídeo guardado: ele toca quando você abrir o YT Auto no carro</string>

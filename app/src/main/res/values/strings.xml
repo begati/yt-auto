@@ -29,7 +29,7 @@
     <string name="settings">Settings</string>
     <string name="category_video">Video</string>
     <string name="category_navigation">Browsing</string>
-    <string name="open_car_to_play">Open YT Auto in the car to play. Not in the car\'s app list? Turn on Unknown sources in Android Auto\'s developer settings</string>
+    <string name="open_car_to_play">Open YT Auto from the car\'s app list. Not there? On the phone: Android Auto &gt; ⋮ &gt; Developer settings &gt; turn on Unknown sources, then restart the phone.</string>
     <string name="open_car_to_control">Open YT Auto in the car to control</string>
     <string name="phone_notice">Videos play only in the car. Open YT Auto on Android Auto.</string>
     <string name="video_saved">Video saved: it plays when you open YT Auto in the car</string>
