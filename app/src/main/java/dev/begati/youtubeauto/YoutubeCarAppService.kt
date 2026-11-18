@@ -81,6 +81,10 @@ private const val FEED_ADS = "html.yta-noads ad-slot-renderer,html.yta-noads ytm
 private const val YT_NAV = "ytm-mobile-topbar-renderer,ytm-pivot-bar-renderer"
 private const val YT_NAV_GAPS = "ytm-app{padding-top:0!important}ytm-feed-filter-chip-bar-renderer{top:0!important}"
 // Google sign-in links ("Fazer login" rows and buttons, like buttons while signed out): sign-in happens on the phone.
+// Feed and search titles cap their height in px for the default font size; the car's text zoom (130% by default) makes two lines
+// taller than that and cuts the second one. The 2-line clamp still applies.
+private const val TITLE_FIT = ".ytLockupMetadataViewModelTitle,.ytLockupMetadataViewModelHeadingReset,.media-item-headline,.media-item-metadata" +
+    "{max-height:none!important;height:auto!important}"
 private const val SIGN_IN_LINKS = "a[href*=\"accounts.google.com\"],ytm-button-renderer:has(>a[href*=\"accounts.google.com\"])"
 
 // Sets the saved quality on the current video; stamps the time so the resulting change event isn't saved as a pick.
@@ -145,7 +149,7 @@ private const val PAGE_JS =
         "const s=document.createElement('style');" +
         "s.textContent='${PLAYLIST_PANEL}{display:none!important}" +
         "${FEED_ADS}{display:none!important}" +
-        "${YT_NAV},${SIGN_IN_LINKS}{display:none!important}${YT_NAV_GAPS}" +
+        "${YT_NAV},${SIGN_IN_LINKS}{display:none!important}${YT_NAV_GAPS}${TITLE_FIT}" +
         "html.yta-watch ${PLAYER_CONTAINER}{position:fixed!important;inset:0!important;" +
         "width:100vw!important;height:100vh!important;z-index:99999!important;background:#000!important}" +
         // Wrappers between the container and the video (#player keeps an aspect-ratio padding, the video
