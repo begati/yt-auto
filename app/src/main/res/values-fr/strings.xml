@@ -46,6 +46,7 @@
     <string name="rewind_10">Reculer de 10 s</string>
     <string name="forward_10">Avancer de 10 s</string>
     <string name="seek_seconds">%d s</string>
+    <string name="gesture_hint">Astuce : touchez deux fois la vidéo pour sauter 10 s, ou faites glisser sur le côté pour avancer</string>
     <string name="watch_later">À regarder plus tard</string>
     <string name="liked">Vidéos J\'aime</string>
     <string name="playlists">Playlists</string>

@@ -106,3 +106,27 @@ class VideoControlsTest {
         assertFalse(dragSeeks(true, 0L, 12f, 0f))
     }
 }
+
+/** HINT-01..03 (spec gesture-hint). */
+class GestureHintTest {
+    @Test
+    fun `HINT-01 the first video on watch asks for the hint`() {
+        assertTrue(takeGestureHint(MemoryPrefs(), onWatch = true))
+    }
+
+    @Test
+    fun `HINT-02 the hint shows only once`() {
+        val prefs = MemoryPrefs()
+        assertTrue(takeGestureHint(prefs, onWatch = true))
+        assertFalse(takeGestureHint(prefs, onWatch = true))
+        // Stored, not held in memory: a restarted app reads the same prefs.
+        assertEquals(true, prefs.map["gestureHintShown"])
+    }
+
+    @Test
+    fun `HINT-03 a video off watch neither shows nor uses up the hint`() {
+        val prefs = MemoryPrefs()
+        assertFalse(takeGestureHint(prefs, onWatch = false))
+        assertTrue(takeGestureHint(prefs, onWatch = true))
+    }
+}

@@ -46,6 +46,7 @@
     <string name="rewind_10">Назад на 10 с</string>
     <string name="forward_10">Вперёд на 10 с</string>
     <string name="seek_seconds">%d с</string>
+    <string name="gesture_hint">Совет: коснитесь видео дважды, чтобы перемотать на 10 с, или проведите в сторону для перемотки</string>
     <string name="watch_later">Смотреть позже</string>
     <string name="liked">Понравившиеся</string>
     <string name="playlists">Плейлисты</string>

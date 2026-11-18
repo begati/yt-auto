@@ -46,6 +46,7 @@
     <string name="rewind_10">Indietro 10 s</string>
     <string name="forward_10">Avanti 10 s</string>
     <string name="seek_seconds">%d s</string>
+    <string name="gesture_hint">Suggerimento: tocca due volte il video per saltare 10 s, o trascina di lato per avanzare</string>
     <string name="watch_later">Guarda più tardi</string>
     <string name="liked">Video piaciuti</string>
     <string name="playlists">Playlist</string>

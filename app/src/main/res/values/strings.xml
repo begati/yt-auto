@@ -46,6 +46,7 @@
     <string name="rewind_10">Back 10 s</string>
     <string name="forward_10">Forward 10 s</string>
     <string name="seek_seconds">%d s</string>
+    <string name="gesture_hint">Tip: double tap the video to skip 10 s, or drag sideways to seek</string>
     <string name="watch_later">Watch later</string>
     <string name="liked">Liked videos</string>
     <string name="playlists">Playlists</string>
