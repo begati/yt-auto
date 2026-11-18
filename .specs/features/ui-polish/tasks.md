@@ -154,8 +154,8 @@ T12 → T13
 
 **Done when**:
 
-- [ ] Tests `NAV-03` and `NAV-07` in `UiPolishTest.kt` pass
-- [ ] Gate check passes: `./gradlew testDebugUnitTest`
+- [x] Tests `NAV-03` and `NAV-07` in `UiPolishTest.kt` pass
+- [x] Gate check passes: `./gradlew testDebugUnitTest`
 
 **Tests**: unit
 **Gate**: quick

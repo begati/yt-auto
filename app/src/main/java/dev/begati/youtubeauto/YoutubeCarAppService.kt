@@ -292,6 +292,18 @@ internal fun aspectIcon(aspect: String) = when (aspect) {
     else -> R.drawable.ic_open_in_full
 }
 
+// Car home menu (url, title string id, icon): the pages YouTube's hidden tab bar led to. m.youtube.com has no
+// playlists feed of its own; the library page lists them.
+internal val HOME_MENU = listOf(
+    Triple("https://m.youtube.com", R.string.home_home, R.drawable.ic_home),
+    Triple("https://m.youtube.com/feed/subscriptions", R.string.subscriptions, R.drawable.ic_subscriptions),
+    Triple("https://m.youtube.com/feed/history", R.string.history, R.drawable.ic_history),
+    Triple("https://m.youtube.com/feed/library", R.string.playlists, R.drawable.ic_video_library),
+)
+
+// Page the car screen opens on: the last one shown in this process, else the chosen home page.
+internal fun startUrl(prefs: SharedPreferences, lastPage: String) = lastPage.ifEmpty { choice(prefs, HOME_PAGE) }
+
 // Home button label (string id): the chosen home page's name (Home / Subscriptions / History).
 internal fun homeLabel(prefs: SharedPreferences) = HOME_PAGE.options.getValue(choice(prefs, HOME_PAGE))
 
@@ -760,7 +772,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         ctx.getCarService(AppManager::class.java).setSurfaceCallback(this)
         pendingUrl?.let { pageUrl = it }
         pendingUrl = null
-        if (pageUrl.isEmpty()) pageUrl = choice(ctx, HOME_PAGE)
+        pageUrl = startUrl(prefs(ctx), pageUrl)
         setPlaying(false)
         listenSpeed()
         lifecycle.addObserver(object : DefaultLifecycleObserver {
@@ -932,8 +944,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             ActionStrip.Builder()
                 .addAction(Action.Builder().setIcon(icon(R.drawable.ic_arrow_back)).setOnClickListener { exitFullscreen?.onCustomViewHidden() ?: webView?.goBack() }.build())
                 .addAction(Action.Builder().setIcon(icon(R.drawable.ic_home)).setOnClickListener {
-                    pageUrl = choice(carContext, HOME_PAGE)
-                    webView?.loadUrl(pageUrl)
+                    screenManager.push(HomeMenuScreen(carContext) { url ->
+                        pageUrl = url
+                        webView?.loadUrl(url)
+                    })
                 }.build())
                 .apply {
                     toggleShown = playToggleShown(pageUrl, playing)
@@ -1518,6 +1532,29 @@ private class ChoiceScreen(ctx: CarContext, private val c: Choice, private val o
         }
         return ListTemplate.Builder()
             .setTitle(carContext.getString(c.title))
+            .setHeaderAction(Action.BACK)
+            .setSingleList(list.build())
+            .build()
+    }
+}
+
+/** Car home menu (HOME_MENU): picking a page hands its URL to [onPick] and closes the list. */
+class HomeMenuScreen(ctx: CarContext, private val onPick: (String) -> Unit) : Screen(ctx) {
+    override fun onGetTemplate(): ListTemplate {
+        val list = ItemList.Builder()
+        HOME_MENU.forEach { (url, title, icon) ->
+            list.addItem(
+                Row.Builder().setTitle(carContext.getString(title))
+                    .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, icon)).build())
+                    .setOnClickListener {
+                        onPick(url)
+                        screenManager.pop()
+                    }
+                    .build()
+            )
+        }
+        return ListTemplate.Builder()
+            .setTitle(carContext.getString(R.string.home_title))
             .setHeaderAction(Action.BACK)
             .setSingleList(list.build())
             .build()

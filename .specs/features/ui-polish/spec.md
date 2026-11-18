@@ -184,10 +184,10 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 | NAV-01 | P1 Car navigation (AC 1, edge 3) | Tasks | Implementing |
 | NAV-02 | P1 Car navigation (AC 2) | Tasks | Implementing |
 | NAV-03 | P1 Car navigation (AC 3) | Tasks | Implementing |
-| NAV-04 | P1 Car navigation (AC 4, edge 4) | Tasks | Pending |
+| NAV-04 | P1 Car navigation (AC 4, edge 4) | Tasks | Implementing |
 | NAV-05 | P1 Car navigation (AC 5) | Tasks | Implementing |
 | NAV-06 | P1 Car navigation (AC 6) | Tasks | Implementing |
-| NAV-07 | P1 Car navigation (AC 7) | Tasks | Pending |
+| NAV-07 | P1 Car navigation (AC 7) | Tasks | Implementing |
 | CSET-01 | P2 Car settings (AC 1) | Tasks | Implementing |
 | CSET-02 | P2 Car settings (AC 2) | Tasks | Implementing |
 | CSET-03 | P2 Car settings (AC 3) | Tasks | Pending |

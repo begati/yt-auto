@@ -22,4 +22,27 @@ class UiPolishTest {
         assertEquals(R.drawable.ic_fit_screen, aspectIcon(nextAspect(prefs)))
         assertEquals(R.drawable.ic_fit_screen, aspectIcon(choice(prefs, ASPECT)))
     }
+
+    @Test
+    fun `NAV-03 home menu lists the four pages with icons`() {
+        assertEquals(
+            listOf(
+                Triple("https://m.youtube.com", R.string.home_home, R.drawable.ic_home), // Início
+                Triple("https://m.youtube.com/feed/subscriptions", R.string.subscriptions, R.drawable.ic_subscriptions),
+                Triple("https://m.youtube.com/feed/history", R.string.history, R.drawable.ic_history),
+                Triple("https://m.youtube.com/feed/library", R.string.playlists, R.drawable.ic_video_library),
+            ),
+            HOME_MENU,
+        )
+    }
+
+    @Test
+    fun `NAV-07 start page is the chosen home page`() {
+        val prefs = MemoryPrefs()
+        assertEquals("https://m.youtube.com", startUrl(prefs, ""))
+        setChoice(prefs, HOME_PAGE, "https://m.youtube.com/feed/subscriptions")
+        assertEquals("https://m.youtube.com/feed/subscriptions", startUrl(prefs, ""))
+        setChoice(prefs, HOME_PAGE, "https://m.youtube.com/feed/history")
+        assertEquals("https://m.youtube.com/feed/history", startUrl(prefs, ""))
+    }
 }
