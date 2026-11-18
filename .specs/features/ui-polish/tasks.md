@@ -401,5 +401,5 @@ Proof: walk - DHU screenshots of both overlays at the DHU density: artwork 160x9
 ## Handoff
 
 **Settled mid-build:** batch sub-agents - user: "aprovado, pode usar sub-agentes"
-**Dispatched:** batch 1 (phases 1-2, T1-T6) at `HEAD` after the spec commit
+**Dispatched:** batch 1 (phases 1-2, T1-T6) at `86fedf5`, returned (ed5cb0e); batch 2 (phases 3-5, T7-T13) at `ed5cb0e`
 **Walked:** not yet. C7 needs the user to type their Google sign-in on the phone.
