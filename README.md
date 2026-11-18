@@ -24,6 +24,10 @@ with your account, subscriptions and history, and turns your phone into a remote
 |---|---|
 | ![YT Auto on the phone](docs/phone-home.jpg) | ![Settings on the phone](docs/phone-settings.jpg) |
 
+| Next Waze turn over the video |
+|---|
+| ![Waze turn instruction drawn over a video on Android Auto](docs/car-turn.png) |
+
 ## Features
 
 - YouTube home page, subscriptions, history and search in the car (search uses the car keyboard).
@@ -40,9 +44,14 @@ with your account, subscriptions and history, and turns your phone into a remote
 - Skips sponsor segments with [SponsorBlock](https://sponsor.ajay.app) (only a 4-character hash prefix of the
   video id is sent).
 - Optional audio-only mode while the car is moving (uses the phone's GPS speed; off by default).
+- Turn-by-turn over the video: while Waze or Google Maps navigates, the next turn (icon, distance and instruction)
+  shows at the top left of the car screen. Android Auto hides their turn card while YT Auto is open, so the app reads
+  it from their notification. On by default; the first time, allow notification access when the phone asks (Settings >
+  On-screen navigation). Turn it off in the phone or car settings.
 - Tells you when a new version is out on GitHub.
 - Blocks YouTube ads (videos start without the ad wait) and hides promoted items in the feed.
-- Settings: video quality, speed, aspect (fit / fill / stretch), captions, fullscreen on open, home page, text size.
+- Settings: video quality, speed, aspect (fit / fill / stretch), captions, fullscreen on open, home page, text size,
+  on-screen navigation.
 - Resumes the video where it stopped when the car reconnects.
 - Languages: English, Português (Brasil), Español, Français, Italiano, Русский and العربية. The app follows the
   phone's language and falls back to English.

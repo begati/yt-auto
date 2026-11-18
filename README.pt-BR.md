@@ -24,6 +24,10 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
 |---|---|
 | ![YT Auto no celular](docs/phone-home.jpg) | ![Configurações no celular](docs/phone-settings.jpg) |
 
+| Próxima curva do Waze por cima do vídeo |
+|---|
+| ![Instrução do Waze desenhada por cima de um vídeo no Android Auto](docs/car-turn.png) |
+
 ## Recursos
 
 - Página inicial, inscrições, histórico e pesquisa do YouTube no carro (a pesquisa usa o teclado do carro).
@@ -41,10 +45,14 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
 - Pula patrocínios com o [SponsorBlock](https://sponsor.ajay.app) (só um prefixo de 4 caracteres do hash do id do
   vídeo é enviado).
 - Modo só áudio opcional com o carro em movimento (usa a velocidade do GPS do celular; desligado por padrão).
+- Curva a curva por cima do vídeo: com o Waze ou o Google Maps navegando, a próxima curva (ícone, distância e
+  instrução) aparece no canto superior esquerdo da tela do carro. O Android Auto esconde o card deles com o YT Auto
+  aberto, então o app lê a instrução da notificação. Ligado por padrão; na primeira vez, permita o acesso às
+  notificações (Configurações > Navegação na tela). Desligue nas configurações do celular ou do carro.
 - Avisa quando sai versão nova no GitHub.
 - Bloqueia os anúncios do YouTube (o vídeo começa sem a espera do anúncio) e esconde os itens promovidos do feed.
 - Configurações: qualidade, velocidade, proporção (ajustar / preencher / esticar), legendas, tela cheia ao abrir,
-  página inicial, tamanho do texto.
+  página inicial, tamanho do texto, navegação na tela.
 - Retoma o vídeo de onde parou quando o carro reconecta.
 - Idiomas: English, Português (Brasil), Español, Français, Italiano, Русский e العربية. O app segue o idioma do
   celular e usa inglês quando o idioma não é suportado.
