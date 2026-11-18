@@ -48,14 +48,20 @@ class NavInstructionTest {
     }
 
     @Test
-    fun `TURN-04 nothing shows while the switch is off which is the default`() {
+    fun `TURN-04 nothing shows while the switch is off`() {
         val prefs = MemoryPrefs()
         val feed = NavFeed().apply { post("waze", NavInstruction("10 m", "Siga")) }
+        setFlag(prefs, "navOverlay", false)
         assertNull(navToShow(prefs, feed))
         setFlag(prefs, "navOverlay", true)
         assertEquals(NavInstruction("10 m", "Siga"), navToShow(prefs, feed))
-        setFlag(prefs, "navOverlay", false)
-        assertNull(navToShow(prefs, feed))
+    }
+
+    @Test
+    fun `TURN-12 the switch is on by default`() {
+        val prefs = MemoryPrefs() // fresh install: nothing stored
+        assertEquals(true, flag(prefs, "navOverlay"))
+        assertEquals(NavInstruction("10 m", "Siga"), navToShow(prefs, NavFeed().apply { post("waze", NavInstruction("10 m", "Siga")) }))
     }
 
     @Test

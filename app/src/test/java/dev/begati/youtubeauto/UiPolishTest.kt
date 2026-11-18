@@ -49,12 +49,13 @@ class UiPolishTest {
     }
 
     @Test
-    fun `CSET-01 car settings are quality speed captions`() {
+    fun `CSET-01 car settings are quality speed captions navigation`() {
         assertEquals(
             listOf(
                 "quality" to R.drawable.ic_high_quality, // Qualidade do vídeo
                 "speed" to R.drawable.ic_speed, // Velocidade
                 "captions" to R.drawable.ic_closed_caption, // Legendas
+                "navOverlay" to R.drawable.ic_navigation, // Navegação na tela
             ),
             CAR_SETTINGS,
         )
@@ -121,7 +122,7 @@ class UiPolishTest {
         assertEquals(
             mapOf(
                 "skipAds" to true, "sponsorBlock" to true, "audioWhileMoving" to false,
-                "fullscreen" to true, "background" to true, "captions" to false, "navOverlay" to false,
+                "fullscreen" to true, "background" to true, "captions" to false, "navOverlay" to true,
             ),
             FLAGS.associate { it.key to it.default },
         )

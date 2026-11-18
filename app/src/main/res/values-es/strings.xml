@@ -75,6 +75,7 @@
     <string name="summary_background">Sigue sonando con Maps u otra app delante</string>
     <string name="summary_captions">Muestra subtítulos cuando el vídeo los tiene</string>
     <string name="summary_nav_overlay">Muestra el próximo giro de Waze o Google Maps en la pantalla del coche</string>
+    <string name="nav_access_needed">Permite el acceso a las notificaciones en el teléfono: Ajustes de YT Auto &gt; Navegación en pantalla</string>
     <string name="offline_hint">Revisa el internet del teléfono</string>
     <string name="previous">Anterior</string>
     <string name="next">Siguiente</string>

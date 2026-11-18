@@ -75,6 +75,7 @@
     <string name="summary_background">Continua tocando com o Maps ou outro app na frente</string>
     <string name="summary_captions">Mostra legendas quando o vídeo tem</string>
     <string name="summary_nav_overlay">Mostra a próxima curva do Waze ou do Google Maps na tela do carro</string>
+    <string name="nav_access_needed">Permita o acesso às notificações no celular: Configurações do YT Auto &gt; Navegação na tela</string>
     <string name="offline_hint">Verifique a internet do celular</string>
     <string name="previous">Anterior</string>
     <string name="next">Próximo</string>

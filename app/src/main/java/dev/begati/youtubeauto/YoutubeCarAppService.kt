@@ -282,7 +282,7 @@ internal val FLAGS = listOf(
     Flag("fullscreen", R.string.flag_fullscreen),
     Flag("background", R.string.flag_background),
     Flag("captions", R.string.flag_captions, default = false),
-    Flag("navOverlay", R.string.flag_nav_overlay, default = false), // needs notification access, asked when turned on
+    Flag("navOverlay", R.string.flag_nav_overlay), // needs notification access, asked on the phone (see Prefs)
 )
 
 // Car settings (setting key, icon), in order: only what a driver changes while watching; the rest is on the phone.
@@ -290,6 +290,7 @@ internal val CAR_SETTINGS = listOf(
     QUALITY.key to R.drawable.ic_high_quality,
     SPEED.key to R.drawable.ic_speed,
     "captions" to R.drawable.ic_closed_caption,
+    "navOverlay" to R.drawable.ic_navigation,
 )
 
 // Phone settings layout: group title -> setting keys, in order. Keys are those of CHOICES and FLAGS, unchanged.
@@ -1922,6 +1923,9 @@ class SettingsScreen(ctx: CarContext, private val onChanged: () -> Unit) : Scree
                 row.setTitle(carContext.getString(f.title))
                     .setToggle(Toggle.Builder { on ->
                         setFlag(carContext, f.key, on)
+                        // The car cannot open the phone's access screen: point there.
+                        if (f.key == "navOverlay" && on && !carContext.navAccess())
+                            CarToast.makeText(carContext, R.string.nav_access_needed, CarToast.LENGTH_LONG).show()
                         onChanged()
                     }.setChecked(flag(carContext, f.key)).build())
             }
@@ -2390,13 +2394,15 @@ class SettingsActivity : Activity() {
                     if (on == true) ctx.requestLocation()
                     true
                 }
-                // On-screen navigation reads Waze's and Maps' notifications: turning it on without access opens the grant.
-                if (f.key == "navOverlay") setOnPreferenceChangeListener { _, on ->
-                    if (on == true && !ctx.navAccess()) ctx.startActivity(Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                // On-screen navigation reads Waze's and Maps' notifications (on by default): without access, a change
+                // opens the grant, and the summary says it is needed (see onResume).
+                if (f.key == "navOverlay") setOnPreferenceChangeListener { _, _ ->
+                    if (!ctx.navAccess()) ctx.startActivity(Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
                     true
                 }
             }
             // Icons are white; tint them to the theme's icon color so they show in light mode too.
+
             val tint = ctx.obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal)).run {
                 getColorStateList(0).also { recycle() }
             }
@@ -2412,6 +2418,14 @@ class SettingsActivity : Activity() {
                     }
                 }
             }
+        }
+
+        // Back from Android's access screen: the summary says whether on-screen navigation can work.
+        override fun onResume() {
+            super.onResume()
+            val p = findPreference("navOverlay") ?: return
+            val ctx = activity
+            p.setSummary(if (flag(ctx, "navOverlay") && !ctx.navAccess()) R.string.nav_access_needed else R.string.summary_nav_overlay)
         }
     }
 }
