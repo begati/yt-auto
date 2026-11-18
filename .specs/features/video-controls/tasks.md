@@ -114,8 +114,8 @@ T1 → T2 → T3 → T4
 
 **Done when**:
 
-- [ ] Walk no DHU (arrasto com o mouse na janela do DHU): indicador com destino e diferença; ao soltar, `currentTime` no destino; arrasto vertical no Início rola a lista
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk no DHU (arrasto com o mouse na janela do DHU): indicador com destino e diferença; ao soltar, `currentTime` no destino; arrasto vertical no Início rola a lista
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build
@@ -180,6 +180,6 @@ Proof: run unit | CTRL-17 a drag off watch or without a duration scrolls the pag
 
 ## Handoff
 
-**Settled mid-build:** none
+**Settled mid-build:** user, after dragging on the DHU (horizontal both ways, vertical on Início): "funcionou muito bem"; Do Not Disturb turned on by adb during the walk with the user's go-ahead ("Pode ligar (Recomendado)")
 **Dispatched:** none
 **Walked:** none

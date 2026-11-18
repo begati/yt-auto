@@ -815,6 +815,22 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var skipIcon: android.widget.ImageView? = null
     private var skipText: android.widget.TextView? = null
     private var skipTotal = 0
+    // Drag on a video (see onScroll): the seek indicator, and the gesture in progress (null between gestures).
+    private var dragView: View? = null
+    private var dragTime: android.widget.TextView? = null
+    private var dragDiff: android.widget.TextView? = null
+    private var dragFill: View? = null
+    private var dragSeeking: Boolean? = null
+    private var dragId: String? = null
+    private var dragStartMs = 0L
+    private var dragFingerX = 0f
+    private var dragTargetMs = 0L
+    // The host never says the finger lifted: 300 ms without a scroll ends the gesture.
+    private val endDrag = Runnable {
+        if (dragSeeking == true && dragId == videoIdFromUrl(pageUrl)) js(jsSeekTo(dragTargetMs / 1000.0))
+        dragSeeking = null
+        dragView?.visibility = View.GONE
+    }
     private var skipAt = 0L
     private val ui = android.os.Handler(android.os.Looper.getMainLooper())
     private val hideSkip = Runnable {
@@ -1189,7 +1205,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             webView = wv
             root = frame
             frame.addView(wv)
-            frame.addView(skipBubble(context).also { skipView = it }) // over the page, under the offline screen and the audio cover
+            // Gesture feedback: over the page, under the offline screen and the audio cover.
+            frame.addView(skipBubble(context).also { skipView = it })
+            frame.addView(dragIndicator(context).also { dragView = it })
             frame.addView(offline)
             frame.addView(audioCover(context).also { cover = it })
             updateCover()
@@ -1217,6 +1235,12 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         coverArt = null
         coverTitle = null
         ui.removeCallbacks(hideSkip)
+        ui.removeCallbacks(endDrag)
+        dragSeeking = null
+        dragView = null
+        dragTime = null
+        dragDiff = null
+        dragFill = null
         skipView = null
         skipMoon = null
         skipLabel = null
@@ -1382,8 +1406,63 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         )
     }
 
+    // Centered panel while a drag seeks: target / duration, the signed jump and a track at the target.
+    private fun dragIndicator(ctx: Context) = FrameLayout(ctx).apply {
+        fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
+        visibility = View.GONE
+        addView(android.widget.LinearLayout(ctx).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            gravity = android.view.Gravity.CENTER_HORIZONTAL
+            setPadding(dp(28), dp(16), dp(28), dp(20))
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = dp(20).toFloat()
+                setColor(0xCC000000.toInt())
+            }
+            addView(android.widget.TextView(ctx).also { dragTime = it }.apply {
+                setTextColor(android.graphics.Color.WHITE)
+                textSize = 28f
+                typeface = android.graphics.Typeface.DEFAULT_BOLD
+                fontFeatureSettings = "tnum" // digits keep their width while they change
+            }, android.widget.LinearLayout.LayoutParams(-2, -2))
+            addView(android.widget.TextView(ctx).also { dragDiff = it }.apply {
+                setTextColor(0xB3FFFFFF.toInt())
+                textSize = 18f
+                fontFeatureSettings = "tnum"
+                setPadding(0, dp(2), 0, dp(12))
+            }, android.widget.LinearLayout.LayoutParams(-2, -2))
+            addView(FrameLayout(ctx).apply {
+                setBackgroundColor(0x4DFFFFFF)
+                addView(View(ctx).also { dragFill = it }.apply { setBackgroundColor(android.graphics.Color.WHITE) }, FrameLayout.LayoutParams(0, -1))
+            }, android.widget.LinearLayout.LayoutParams(dp(240), dp(4)))
+        }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.CENTER))
+    }
+
+    // A drag on a video that starts sideways seeks, the WebView's width being the whole video; any other drag scrolls
+    // the page. The seek happens once, when the drag ends (endDrag), not on every scroll.
     override fun onScroll(distanceX: Float, distanceY: Float) {
-        webView?.scrollBy(distanceX.toInt(), distanceY.toInt())
+        ui.removeCallbacks(endDrag)
+        ui.postDelayed(endDrag, 300)
+        // distanceX is how far the content would scroll: positive when the finger moves left.
+        if (dragSeeking == null) {
+            dragSeeking = dragSeeks(onWatch, durationMs, -distanceX, distanceY)
+            dragId = videoIdFromUrl(pageUrl)
+            dragStartMs = positionMs.coerceAtLeast(0)
+            dragFingerX = 0f
+        }
+        if (dragSeeking != true) {
+            webView?.scrollBy(distanceX.toInt(), distanceY.toInt())
+            return
+        }
+        val (w, h) = displaySize ?: return
+        val (l, _, r) = webViewBounds(w, h, area)
+        dragFingerX -= distanceX
+        dragTargetMs = dragTargetMs(dragStartMs, dragFingerX, (r - l).toFloat(), durationMs)
+        val (time, diff) = dragLabel(dragTargetMs, durationMs, dragStartMs)
+        dragTime?.text = time
+        dragDiff?.text = diff
+        val track = (dragFill?.parent as? View)?.width ?: 0
+        dragFill?.layoutParams = dragFill?.layoutParams?.apply { width = (track * dragTargetMs / durationMs).toInt() }
+        dragView?.visibility = View.VISIBLE
     }
 
     // Called only on hosts with Car API level >= 5. On a video, a tap on YouTube's visible progress bar seeks there
