@@ -90,6 +90,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: C14 / NAV-06 (car-template)
 - last seen: 2026-11-18T00:34:07Z
 
+### L-014 - A gesture's starting value (time, position) is read from the page when the gesture starts, not from a polled copy; a pure formula test does not cover where its input comes from.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `car-gestures` · harmful: 0
+- features: video-controls
+- evidence: CTRL-14/CTRL-18 (car-gestures)
+- last seen: 2026-11-18T15:11:02Z
+
+### L-015 - A walk proof that names screenshots and a measured value needs those captured (screenshot loop during the user's gesture), not the user's verdict.
+- signal: `weak_test` · recurrence: 1 feature(s) · scope: `walk` · harmful: 0
+- features: video-controls
+- evidence: C15 (walk)
+- last seen: 2026-11-18T15:11:03Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

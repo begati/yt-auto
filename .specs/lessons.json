@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 14,
+  "next_id": 16,
   "lessons": [
     {
       "id": "L-001",
@@ -240,6 +240,42 @@
       ],
       "created": "2026-11-18T00:34:07Z",
       "last_seen": "2026-11-18T00:34:07Z"
+    },
+    {
+      "id": "L-014",
+      "key": "ac_gap::a gesture s starting value time position is read from the page when the gesture starts not from a polled copy a pure formula test does not cover where its input comes from",
+      "text": "A gesture's starting value (time, position) is read from the page when the gesture starts, not from a polled copy; a pure formula test does not cover where its input comes from.",
+      "signal": "ac_gap",
+      "scope": "car-gestures",
+      "status": "candidate",
+      "features": [
+        "video-controls"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "CTRL-14/CTRL-18 (car-gestures)"
+      ],
+      "created": "2026-11-18T15:11:02Z",
+      "last_seen": "2026-11-18T15:11:02Z"
+    },
+    {
+      "id": "L-015",
+      "key": "weak_test::a walk proof that names screenshots and a measured value needs those captured screenshot loop during the user s gesture not the user s verdict",
+      "text": "A walk proof that names screenshots and a measured value needs those captured (screenshot loop during the user's gesture), not the user's verdict.",
+      "signal": "weak_test",
+      "scope": "walk",
+      "status": "candidate",
+      "features": [
+        "video-controls"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "C15 (walk)"
+      ],
+      "created": "2026-11-18T15:11:03Z",
+      "last_seen": "2026-11-18T15:11:03Z"
     }
   ]
 }
