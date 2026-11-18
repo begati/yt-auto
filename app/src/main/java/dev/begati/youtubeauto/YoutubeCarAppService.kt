@@ -1448,14 +1448,20 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             dragId = videoIdFromUrl(pageUrl)
             dragStartMs = positionMs.coerceAtLeast(0)
             dragFingerX = 0f
+            // positionMs lags up to 500 ms: start from the page's own time as soon as it answers.
+            if (dragSeeking == true) geometry { g -> if (dragSeeking == true && g.durationMs > 0) { dragStartMs = g.positionMs; showDrag() } }
         }
         if (dragSeeking != true) {
             webView?.scrollBy(distanceX.toInt(), distanceY.toInt())
             return
         }
+        dragFingerX -= distanceX
+        showDrag()
+    }
+
+    private fun showDrag() {
         val (w, h) = displaySize ?: return
         val (l, _, r) = webViewBounds(w, h, area)
-        dragFingerX -= distanceX
         dragTargetMs = dragTargetMs(dragStartMs, dragFingerX, (r - l).toFloat(), durationMs)
         val (time, diff) = dragLabel(dragTargetMs, durationMs, dragStartMs)
         dragTime?.text = time

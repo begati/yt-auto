@@ -99,6 +99,7 @@ posição onde começou. Os demais controles do YouTube (pausar, anterior, próx
 15. WHEN passam 300 ms sem `onScroll` no gesto horizontal THEN the app SHALL pular o vídeo para o destino e esconder o indicador
 16. WHEN um arrasto começa mais vertical que horizontal THEN the app SHALL rolar a página como hoje
 17. IF a página não é `/watch` ou a duração não é conhecida THEN the app SHALL rolar a página como hoje
+18. WHEN um arrasto horizontal começa THEN the app SHALL medir o deslocamento a partir do `currentTime` lido da página nesse momento, não da posição relatada a cada 500 ms (achado do Verifier)
 
 **Independent Test**: no DHU, arrastar da esquerda para a direita metade da largura: o indicador mostra +50% da duração e, ao soltar, `currentTime` vai para lá.
 
@@ -132,8 +133,9 @@ posição onde começou. Os demais controles do YouTube (pausar, anterior, próx
 | CTRL-15 | P1: Arrasto (AC 15) | Tasks | Pending |
 | CTRL-16 | P1: Arrasto (AC 16) | Tasks | Pending |
 | CTRL-17 | P1: Arrasto (AC 17) | Tasks | Pending |
+| CTRL-18 | P1: Arrasto (AC 18) | Verification | Pending |
 
-**Coverage:** 17 total, 0 mapped to tasks, 17 unmapped ⚠️ (tasks come after approval)
+**Coverage:** 18 total, 0 mapped to tasks, 17 unmapped ⚠️ (tasks come after approval)
 
 ---
 
