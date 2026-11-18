@@ -22,6 +22,7 @@
     <string name="flag_fullscreen">Fullscreen when opening a video</string>
     <string name="flag_background">Keep playing with another app on screen</string>
     <string name="flag_captions">Captions</string>
+    <string name="flag_nav_overlay">On-screen navigation</string>
     <string name="back">Back</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
@@ -73,6 +74,7 @@
     <string name="summary_fullscreen">Opens the video filling the car screen</string>
     <string name="summary_background">Keeps playing with Maps or another app in front</string>
     <string name="summary_captions">Shows captions when the video has them</string>
+    <string name="summary_nav_overlay">Shows the next Waze or Google Maps turn over the car screen</string>
     <string name="offline_hint">Check the phone\'s internet</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>

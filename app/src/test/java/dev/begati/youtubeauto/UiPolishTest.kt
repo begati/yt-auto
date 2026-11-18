@@ -69,7 +69,7 @@ class UiPolishTest {
                 // Anúncios: Bloquear anúncios, Pular patrocínios
                 R.string.group_ads to listOf("skipAds", "sponsorBlock"),
                 // No carro: Só áudio, Tocar com outro app na tela, Página inicial, Tamanho do texto
-                R.string.group_car to listOf("audioWhileMoving", "background", "home", "textZoom"),
+                R.string.group_car to listOf("audioWhileMoving", "background", "navOverlay", "home", "textZoom"),
             ),
             PHONE_GROUPS,
         )
@@ -82,7 +82,7 @@ class UiPolishTest {
             "captions" to R.drawable.ic_closed_caption, "fullscreen" to R.drawable.ic_fullscreen, "skipAds" to R.drawable.ic_block,
             "sponsorBlock" to R.drawable.ic_fast_forward, "audioWhileMoving" to R.drawable.ic_headphones,
             "background" to R.drawable.ic_picture_in_picture_alt, "home" to R.drawable.ic_home,
-            "textZoom" to R.drawable.ic_format_size,
+            "textZoom" to R.drawable.ic_format_size, "navOverlay" to R.drawable.ic_navigation,
         )
         PHONE_GROUPS.flatMap { it.second }.forEach { key -> assertEquals(key, expected[key], SETTING_ICONS[key]) }
         assertEquals(expected.keys, PHONE_GROUPS.flatMap { it.second }.toSet())
@@ -97,6 +97,7 @@ class UiPolishTest {
             "fullscreen" to R.string.summary_fullscreen, // Abre o vídeo ocupando a tela do carro
             "background" to R.string.summary_background, // Continua tocando com o Maps ou outro app na frente
             "captions" to R.string.summary_captions, // Mostra legendas quando o vídeo tem
+            "navOverlay" to R.string.summary_nav_overlay, // Mostra a próxima curva do Waze ou do Google Maps na tela do carro
         )
         assertEquals(expected.keys, FLAGS.map { it.key }.toSet())
         FLAGS.forEach { f -> assertEquals(f.key, expected[f.key], SWITCH_SUMMARIES[f.key]) }
@@ -120,7 +121,7 @@ class UiPolishTest {
         assertEquals(
             mapOf(
                 "skipAds" to true, "sponsorBlock" to true, "audioWhileMoving" to false,
-                "fullscreen" to true, "background" to true, "captions" to false,
+                "fullscreen" to true, "background" to true, "captions" to false, "navOverlay" to false,
             ),
             FLAGS.associate { it.key to it.default },
         )

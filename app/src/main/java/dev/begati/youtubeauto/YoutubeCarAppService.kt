@@ -282,6 +282,7 @@ internal val FLAGS = listOf(
     Flag("fullscreen", R.string.flag_fullscreen),
     Flag("background", R.string.flag_background),
     Flag("captions", R.string.flag_captions, default = false),
+    Flag("navOverlay", R.string.flag_nav_overlay, default = false), // needs notification access, asked when turned on
 )
 
 // Car settings (setting key, icon), in order: only what a driver changes while watching; the rest is on the phone.
@@ -295,7 +296,7 @@ internal val CAR_SETTINGS = listOf(
 internal val PHONE_GROUPS = listOf(
     R.string.group_playback to listOf("quality", "speed", "aspect", "captions", "fullscreen"),
     R.string.group_ads to listOf("skipAds", "sponsorBlock"),
-    R.string.group_car to listOf("audioWhileMoving", "background", "home", "textZoom"),
+    R.string.group_car to listOf("audioWhileMoving", "background", "navOverlay", "home", "textZoom"),
 )
 // Phone settings row icon per setting key.
 internal val SETTING_ICONS = mapOf(
@@ -303,12 +304,14 @@ internal val SETTING_ICONS = mapOf(
     "captions" to R.drawable.ic_closed_caption, "fullscreen" to R.drawable.ic_fullscreen, "skipAds" to R.drawable.ic_block,
     "sponsorBlock" to R.drawable.ic_fast_forward, "audioWhileMoving" to R.drawable.ic_headphones,
     "background" to R.drawable.ic_picture_in_picture_alt, "home" to R.drawable.ic_home, "textZoom" to R.drawable.ic_format_size,
+    "navOverlay" to R.drawable.ic_navigation,
 )
 // Summary shown under each phone switch: what it does, in the driver's words.
 internal val SWITCH_SUMMARIES = mapOf(
     "skipAds" to R.string.summary_skip_ads, "sponsorBlock" to R.string.summary_sponsor_block,
     "audioWhileMoving" to R.string.summary_audio_while_moving, "fullscreen" to R.string.summary_fullscreen,
     "background" to R.string.summary_background, "captions" to R.string.summary_captions,
+    "navOverlay" to R.string.summary_nav_overlay,
 )
 
 // Label of option [key] of [c], in the device's language.
@@ -1935,6 +1938,61 @@ internal fun takeGestureHint(prefs: SharedPreferences, onWatch: Boolean, visible
     if (!onWatch || !visible || prefs.getBoolean("gestureHintShown", false)) return false
     prefs.edit().putBoolean("gestureHintShown", true).apply()
     return true
+}
+
+// Turn-by-turn from Waze or Google Maps: Android Auto hides their turn card while this (navigation-category) app is in
+// front, so the next turn is read from their ongoing navigation notification and drawn over the car screen.
+internal val NAV_APPS = setOf("com.waze", "com.google.android.apps.maps")
+
+// [icon] is the notification's large icon (Maps' turn arrow); Waze has none, so the words pick one (maneuverOf).
+internal data class NavInstruction(val distance: String, val maneuver: String, val icon: android.graphics.drawable.Icon? = null)
+
+internal fun navInstruction(pkg: String, category: String?, title: CharSequence?, text: CharSequence?): NavInstruction? {
+    if (pkg !in NAV_APPS || category != "navigation") return null
+    val d = title?.toString()?.trim().orEmpty()
+    val m = text?.toString()?.trim().orEmpty()
+    return if (d.isEmpty() && m.isEmpty()) null else NavInstruction(d, m)
+}
+
+// Navigation notifications still posted, by key; the last posted one shows (Waze and Maps both navigating).
+internal class NavFeed {
+    private val posted = LinkedHashMap<String, NavInstruction>()
+    fun post(key: String, i: NavInstruction) {
+        posted.remove(key) // re-insert: an update makes it the latest
+        posted[key] = i
+    }
+    fun remove(key: String) = posted.remove(key)
+    val current get() = posted.values.lastOrNull()
+}
+
+internal fun navToShow(prefs: SharedPreferences, feed: NavFeed) = if (flag(prefs, "navOverlay")) feed.current else null
+
+internal enum class Maneuver { ARRIVE, ROUNDABOUT, U_TURN, KEEP_LEFT, KEEP_RIGHT, LEFT, RIGHT, STRAIGHT }
+
+// Words per maneuver in the app's 7 languages (the text is in Waze's or Maps' language). Checked in this order:
+// a roundabout text also says "exit", a keep/exit text also says the side.
+// ponytail: keyword guess; Maps' own arrow wins when the notification has one, unknown wording falls back to straight
+private val NAV_WORDS = listOf(
+    Maneuver.ARRIVE to Regex("chegou|chegada|\\barriv|destination|llegad|destinazione|прибыл|пункт назначения|وصلت|وجهتك"),
+    Maneuver.ROUNDABOUT to Regex("rotat[óo]ria|rotunda|roundabout|traffic circle|rotonda|glorieta|rond-point|круг|دوار"),
+    Maneuver.U_TURN to Regex("retorno|meia.volta|u.turn|cambio de sentido|vuelta en u|demi-tour|inversione|inverti|развор|للخلف"),
+)
+private val KEEP_WORDS = Regex("mantenha|sa[íi]da|\\bsaia\\b|\\bkeep\\b|\\bexit\\b|ramp|mant[eé]n|salida|restez|serrez|sortie|tieni|uscita|держит|съезд|ابق|مخرج")
+private val LEFT_WORDS = Regex("esquerda|\\bleft\\b|izquierda|gauche|sinistra|налево|левее|влево|يسار")
+private val RIGHT_WORDS = Regex("direita|\\bright\\b|derecha|droite|destra|направо|правее|вправо|يمين")
+
+internal fun maneuverOf(text: String): Maneuver {
+    val t = text.lowercase()
+    NAV_WORDS.firstOrNull { it.second.containsMatchIn(t) }?.let { return it.first }
+    // Two sides in one text ("left, then right"): the first is the turn coming up.
+    val left = LEFT_WORDS.find(t)?.range?.first ?: Int.MAX_VALUE
+    val right = RIGHT_WORDS.find(t)?.range?.first ?: Int.MAX_VALUE
+    if (left == right) return Maneuver.STRAIGHT
+    val keep = KEEP_WORDS.containsMatchIn(t)
+    return when {
+        left < right -> if (keep) Maneuver.KEEP_LEFT else Maneuver.LEFT
+        else -> if (keep) Maneuver.KEEP_RIGHT else Maneuver.RIGHT
+    }
 }
 
 internal fun bannerClosed(prefs: SharedPreferences) = prefs.getBoolean("bannerClosed", false)

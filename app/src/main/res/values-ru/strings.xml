@@ -22,6 +22,7 @@
     <string name="flag_fullscreen">Полноэкранный режим при открытии видео</string>
     <string name="flag_background">Воспроизводить при другом приложении на экране</string>
     <string name="flag_captions">Субтитры</string>
+    <string name="flag_nav_overlay">Навигация на экране</string>
     <string name="back">Назад</string>
     <string name="play">Воспроизвести</string>
     <string name="pause">Пауза</string>
@@ -73,6 +74,7 @@
     <string name="summary_fullscreen">Открывает видео на весь экран машины</string>
     <string name="summary_background">Продолжает играть, когда впереди Карты или другое приложение</string>
     <string name="summary_captions">Показывает субтитры, если они есть у видео</string>
+    <string name="summary_nav_overlay">Показывает следующий поворот Waze или Google Maps на экране автомобиля</string>
     <string name="offline_hint">Проверьте интернет на телефоне</string>
     <string name="previous">Предыдущее</string>
     <string name="next">Следующее</string>

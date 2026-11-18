@@ -22,6 +22,7 @@
     <string name="flag_fullscreen">Plein écran à l\'ouverture d\'une vidéo</string>
     <string name="flag_background">Continuer la lecture avec une autre app à l\'écran</string>
     <string name="flag_captions">Sous-titres</string>
+    <string name="flag_nav_overlay">Navigation à l\'écran</string>
     <string name="back">Retour</string>
     <string name="play">Lire</string>
     <string name="pause">Pause</string>
@@ -73,6 +74,7 @@
     <string name="summary_fullscreen">Ouvre la vidéo en plein écran de la voiture</string>
     <string name="summary_background">Continue la lecture avec Maps ou une autre app devant</string>
     <string name="summary_captions">Affiche les sous-titres quand la vidéo en a</string>
+    <string name="summary_nav_overlay">Affiche la prochaine manœuvre de Waze ou Google Maps sur l\'écran de la voiture</string>
     <string name="offline_hint">Vérifiez l\'internet du téléphone</string>
     <string name="previous">Précédent</string>
     <string name="next">Suivant</string>

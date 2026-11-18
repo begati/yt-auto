@@ -22,6 +22,7 @@
     <string name="flag_fullscreen">Tela cheia ao abrir vídeo</string>
     <string name="flag_background">Tocar com outro app na tela</string>
     <string name="flag_captions">Legendas</string>
+    <string name="flag_nav_overlay">Navegação na tela</string>
     <string name="back">Voltar</string>
     <string name="play">Tocar</string>
     <string name="pause">Pausar</string>
@@ -73,6 +74,7 @@
     <string name="summary_fullscreen">Abre o vídeo ocupando a tela do carro</string>
     <string name="summary_background">Continua tocando com o Maps ou outro app na frente</string>
     <string name="summary_captions">Mostra legendas quando o vídeo tem</string>
+    <string name="summary_nav_overlay">Mostra a próxima curva do Waze ou do Google Maps na tela do carro</string>
     <string name="offline_hint">Verifique a internet do celular</string>
     <string name="previous">Anterior</string>
     <string name="next">Próximo</string>

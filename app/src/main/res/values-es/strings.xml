@@ -22,6 +22,7 @@
     <string name="flag_fullscreen">Pantalla completa al abrir un video</string>
     <string name="flag_background">Seguir reproduciendo con otra app en pantalla</string>
     <string name="flag_captions">Subtítulos</string>
+    <string name="flag_nav_overlay">Navegación en pantalla</string>
     <string name="back">Atrás</string>
     <string name="play">Reproducir</string>
     <string name="pause">Pausar</string>
@@ -73,6 +74,7 @@
     <string name="summary_fullscreen">Abre el vídeo ocupando la pantalla del coche</string>
     <string name="summary_background">Sigue sonando con Maps u otra app delante</string>
     <string name="summary_captions">Muestra subtítulos cuando el vídeo los tiene</string>
+    <string name="summary_nav_overlay">Muestra el próximo giro de Waze o Google Maps en la pantalla del coche</string>
     <string name="offline_hint">Revisa el internet del teléfono</string>
     <string name="previous">Anterior</string>
     <string name="next">Siguiente</string>

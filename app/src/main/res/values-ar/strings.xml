@@ -22,6 +22,7 @@
     <string name="flag_fullscreen">ملء الشاشة عند فتح فيديو</string>
     <string name="flag_background">مواصلة التشغيل مع تطبيق آخر على الشاشة</string>
     <string name="flag_captions">الترجمة</string>
+    <string name="flag_nav_overlay">التنقل على الشاشة</string>
     <string name="back">رجوع</string>
     <string name="play">تشغيل</string>
     <string name="pause">إيقاف مؤقت</string>
@@ -73,6 +74,7 @@
     <string name="summary_fullscreen">يفتح الفيديو بملء شاشة السيارة</string>
     <string name="summary_background">يواصل التشغيل مع الخرائط أو تطبيق آخر في المقدمة</string>
     <string name="summary_captions">يعرض الترجمة عندما تتوفر في الفيديو</string>
+    <string name="summary_nav_overlay">يعرض المنعطف التالي من Waze أو خرائط Google على شاشة السيارة</string>
     <string name="offline_hint">تحقق من إنترنت الهاتف</string>
     <string name="previous">السابق</string>
     <string name="next">التالي</string>
