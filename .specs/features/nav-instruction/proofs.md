@@ -1,9 +1,9 @@
 # nav-instruction proofs
 
-**HEAD**: ca7cddd
+**HEAD**: afcac9a
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 18 pass, 0 fail
+**Result**: 21 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -13,11 +13,14 @@
 | C4 | `run unit / TURN-04 nothing shows while the switch is off PASSED` | pass |
 | C13 | `run unit / TURN-12 the switch is on by default PASSED` | pass |
 | C14 | `run unit / CSET-01 car settings are quality speed captions navigation PASSED` | pass |
-| C15 | `walk - acesso revogado: ligar a chave no DHU mostra o toast; o resumo da chave no celular mostra o aviso` | pass (Walked) |
+| C15 | `walk - acesso revogado: ligar a chave no DHU mostra o toast` | pass (Walked) |
+| C18 | `run unit / TURN-15 the phone switch reads on only with notification access PASSED` | pass |
+| C19 | `walk - DHU com card: desligar a chave no carro esconde o card na hora; religar o mostra; o mesmo pela chave do` | pass (Walked) |
+| C20 | `walk - DHU: screenshot do card do Waze com o selo do Waze e do Maps com o selo do Maps` | pass (Walked) |
 | C16 | `walk - README.md e README.pt-BR.md com a linha em Features e o print docs/car-turn.png` | pass (Walked) |
 | C5 | `walk - celular: ligar "Navegação na tela" abre a tela de acesso a notificações do Android` | pass (Walked) |
 | C6 | `walk - DHU com rota no Google Maps: screenshot do overlay com a seta do Maps` | pass (Walked) |
-| C7 | `walk - DHU: screenshot do overlay sobre a capa "só áudio"; toque no overlay chega à página` | pass (Walked) |
+| C7 | `walk - DHU: card sobre a tela preta com a rede desligada; toque em "Podcasts" debaixo do card abre o chip. Cap` | pass (Walked) |
 | C8 | `run unit / all languages have the same strings as English PASSED` | pass |
 | C9 | `run unit / TURN-09 the last posted instruction wins PASSED` | pass |
 | C10 | `run unit / TURN-10 the maneuver words pick the icon PASSED` | pass |
@@ -45,5 +48,5 @@ VideoFillTest > ASPECT-07 default on a fresh install is cover (fill the screen) 
 VideoFillTest > ASPECT-05 the saved aspect applies PASSED
 
 BUILD SUCCESSFUL in 1s
-22 actionable tasks: 1 executed, 21 up-to-date
+22 actionable tasks: 4 executed, 18 up-to-date
 ```
