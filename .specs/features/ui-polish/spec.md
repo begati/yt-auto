@@ -196,8 +196,8 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 | PSET-03 | P2 Phone settings (AC 3) | Tasks | Implementing |
 | PSET-04 | P2 Phone settings (AC 4) | Tasks | Implementing |
 | REMOTE-01 | P2 Remote bar (AC 1) | Tasks | Implementing |
-| REMOTE-02 | P2 Remote bar (AC 2) | Tasks | Pending |
-| REMOTE-03 | P2 Remote bar (AC 3) | Tasks | Pending |
+| REMOTE-02 | P2 Remote bar (AC 2) | Tasks | Implementing |
+| REMOTE-03 | P2 Remote bar (AC 3) | Tasks | Implementing |
 | REMOTE-04 | P2 Remote bar (AC 4) | Tasks | Implementing |
 | OVL-01 | P3 Car overlays (AC 1) | Tasks | Implementing |
 | OVL-02 | P3 Car overlays (AC 2) | Tasks | Implementing |

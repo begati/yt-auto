@@ -263,8 +263,8 @@ T12 → T13
 
 **Done when**:
 
-- [ ] Phone with the car playing: new icons, ripple on tap, `uiautomator dump` shows each label and bounds of at least 48 dp
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Phone with the car playing: new icons, ripple on tap, `uiautomator dump` shows each label and bounds of at least 48 dp
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
 
 **Tests**: none
 **Gate**: build

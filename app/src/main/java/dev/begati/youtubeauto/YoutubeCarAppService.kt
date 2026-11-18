@@ -1327,16 +1327,16 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
     private val art = android.widget.ImageView(ctx).apply { scaleType = android.widget.ImageView.ScaleType.CENTER_CROP }
     private val title = text(16f)
     private val channel = text(13f).apply { alpha = 0.7f }
-    private val playPause = button(android.R.drawable.ic_media_play) {
+    private val playPause = button(R.drawable.ic_play_arrow, R.string.play) {
         if (car.playbackState?.state == PlaybackState.STATE_PLAYING) car.transportControls.pause() else car.transportControls.play()
     }
     private val position = text(12f)
     private val duration = text(12f)
     private val controls = android.widget.LinearLayout(ctx).apply {
-        addView(button(android.R.drawable.ic_media_previous) { car.transportControls.skipToPrevious() })
+        addView(button(R.drawable.ic_skip_previous, R.string.previous) { car.transportControls.skipToPrevious() })
         addView(playPause)
-        addView(button(android.R.drawable.ic_media_next) { car.transportControls.skipToNext() })
-        addView(button(R.drawable.ic_settings) { showMenu(this) })
+        addView(button(R.drawable.ic_skip_next, R.string.next) { car.transportControls.skipToNext() })
+        addView(button(R.drawable.ic_tune, R.string.playback_options) { showMenu(this) })
     }
     private var dragging = false
     private val seek = android.widget.SeekBar(ctx).apply {
@@ -1352,8 +1352,8 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         })
     }
     // -10 s and +10 s sit at the ends of the time row: the top row has no room left on narrow phones.
-    private val rewind = button(R.drawable.ic_rewind) { car.transportControls.sendCustomAction(REWIND, null) }
-    private val forward = button(R.drawable.ic_forward) { car.transportControls.sendCustomAction(FORWARD, null) }
+    private val rewind = button(R.drawable.ic_replay_10, R.string.rewind_10) { car.transportControls.sendCustomAction(REWIND, null) }
+    private val forward = button(R.drawable.ic_forward_10, R.string.forward_10) { car.transportControls.sendCustomAction(FORWARD, null) }
     private val timeRow = android.widget.LinearLayout(ctx).apply {
         gravity = android.view.Gravity.CENTER_VERTICAL
         addView(rewind)
@@ -1430,9 +1430,15 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         ellipsize = android.text.TextUtils.TruncateAt.END
     }
 
-    private fun button(icon: Int, onClick: () -> Unit) = android.widget.ImageButton(context).apply {
+    // 48 dp touch target, system ripple, and a spoken [label].
+    private fun button(icon: Int, label: Int, onClick: () -> Unit) = android.widget.ImageButton(context).apply {
         setImageResource(icon)
-        setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        contentDescription = context.getString(label)
+        setBackgroundResource(context.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackgroundBorderless)).run {
+            getResourceId(0, 0).also { recycle() }
+        })
+        minimumWidth = dp(48)
+        minimumHeight = dp(48)
         imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
         setOnClickListener { onClick() }
     }
@@ -1459,9 +1465,9 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
         art.visibility = message
         controls.visibility = message
         timeRow.visibility = message
-        playPause.setImageResource(
-            if (s?.state == PlaybackState.STATE_PLAYING) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
-        )
+        val isPlaying = s?.state == PlaybackState.STATE_PLAYING
+        playPause.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow)
+        playPause.contentDescription = context.getString(if (isPlaying) R.string.pause else R.string.play)
         val d = (m?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: 0L) / 1000
         seek.max = d.toInt()
         // No duration yet (new video, ad, live): a touch would seek the car to 0.
