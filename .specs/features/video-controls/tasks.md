@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: inline (sem design.md: mesmo padrão das features anteriores - regras em funções `internal` puras testadas na JVM, Views nativas no `FrameLayout` do carro, geometria do player lida da página por `evaluateJavascript`)
-**Status**: In Progress
+**Status**: Done
 **Approved**: 2026-11-18 - user: "sim"
 **Build**: `./gradlew assembleDebug`
 **Run unit**: `./gradlew testDebugUnitTest --rerun`
@@ -184,5 +184,5 @@ Proof: walk - DHU: DevTools `currentTime` fixado, arrasto logo em seguida: o "+"
 ## Handoff
 
 **Settled mid-build:** user, after dragging on the DHU (horizontal both ways, vertical on Início): "funcionou muito bem"; Do Not Disturb turned on by adb during the walk with the user's go-ahead ("Pode ligar (Recomendado)")
-**Dispatched:** Verifier at HEAD cfc2d26 (diff 22a3b2b..cfc2d26); no screens sub-agent (no capture binds)
+**Dispatched:** Verifier at HEAD cfc2d26 (diff 22a3b2b..cfc2d26), returned FAIL with 2 findings, both closed in b6bc333; no screens sub-agent (no capture binds)
 **Walked:** 2026-11-18, orchestrator, HEAD ea202a9, DHU 800x480 (car surface 800x400, density 160) + phone 0091479724 over USB, debug build installed with data kept, signed in, Do Not Disturb on. Reach: Início, tap a feed title, the video opens on `/watch` (fullscreen on). Double tap = DHU `tap x y` twice in one write. C1/C2: right double tap 14.3 -> 24 s (screenshot 0:24, bubble right with fast_forward and "10 s"; a SponsorBlock skip followed, toast "Patrocínio pulado"); left double tap 98.4 -> 88.8 s. C5: two right double taps ~0.35 s apart: bubble "20 s". C3: `currentTime=3`, left double tap -> 0.57 (0:00 on screen); `currentTime=duration-4`, right double tap -> 1151.541 = duration, ended. C4: left bubble with rewind arrow and "10 s" on the left half. C6: screenshot 1.2 s after the double tap has no bubble. C9: controls shown by a tap, tap at x=400 on the bar (30..770) -> 544.53 of 1089.06 s; x=200 -> 250.19 s. C10: a tap at the bar's place with controls hidden only shows the controls (time unchanged); taps on Início open videos as before. C15/C16: the user dragged with the mouse on the DHU (horizontal both ways on a video, vertical on Início): "funcionou muito bem"; DevTools afterwards `currentTime` 502 s on `/watch` (was 7 s before the drags). Round 2 (after the Verifier, drag start read from the page): video paused at 1:00 by DevTools, the user dragged four times while the DHU took a screenshot every 0.5 s. C15: the panel reads "4:01 / 22:45 +3:01", then "8:26 / 22:45 +7:26"; the next frame has no panel and the player loading; a later drag ends at "10:22 / 22:45 -3:52" and the next frame's player shows 10:22. C18: each drag starts from the page's time - the first from 1:00 (paused), the second right after the first seek from 8:27 ("13:49 +5:22"), the fourth from 10:23 ("5:11 -5:12").
