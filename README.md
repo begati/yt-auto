@@ -87,6 +87,17 @@ The screenshot shows KingInstaller in Portuguese: "Selecione o APK para instalar
 
 Updates: install the new APK with KingInstaller the same way. Your sign-in and settings are kept.
 
+### The car shows "Open YT Auto in the car to play"
+
+That screen is YT Auto's media player, not the video screen. Android Auto hides the video screen of apps that
+weren't installed from the Play Store, which is what KingInstaller works around. Where that doesn't work (for
+example on GrapheneOS), turn on **Unknown sources** in Android Auto:
+
+1. Open Android Auto's settings on the phone (on GrapheneOS: **Settings** > **Apps** > **Android Auto**) and tap
+   **Version** 10 times to unlock the developer settings.
+2. In Android Auto, open the **⋮** menu > **Developer settings** and turn on **Unknown sources**.
+3. Restart the phone and reconnect it to the car. YT Auto's video screen now shows up in the launcher.
+
 ## Building from source
 
 Requires JDK 17 and the Android SDK.

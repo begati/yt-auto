@@ -86,6 +86,17 @@ ou gerenciador de arquivos).
 
 Atualizações: instale o APK novo pelo KingInstaller do mesmo jeito. Login e configurações são mantidos.
 
+### O carro mostra "Abra o YT Auto no carro para tocar"
+
+Essa tela é o player de mídia do YT Auto, não a tela de vídeo. O Android Auto esconde a tela de vídeo de apps que
+não vieram da Play Store, e é isso que o KingInstaller contorna. Onde isso não funciona (por exemplo no GrapheneOS),
+ative **Fontes desconhecidas** no Android Auto:
+
+1. Abra as configurações do Android Auto no celular (no GrapheneOS: **Configurações** > **Apps** > **Android Auto**)
+   e toque 10 vezes em **Versão** para liberar as configurações de desenvolvedor.
+2. No Android Auto, abra o menu **⋮** > **Configurações do desenvolvedor** e ative **Fontes desconhecidas**.
+3. Reinicie o celular e conecte de novo ao carro. A tela de vídeo do YT Auto passa a aparecer no menu.
+
 ## Compilando o código
 
 Requer JDK 17 e o Android SDK.
