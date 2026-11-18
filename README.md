@@ -16,11 +16,11 @@ with your account, subscriptions and history, and turns your phone into a remote
 > responsibility** for fines, accidents, damage or any other consequence of using this app.
 > See also the [license](LICENSE) ("THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND").
 
-| Home page in the car | Video playing in the car |
+| Search in the car | Video playing in the car |
 |---|---|
-| ![YouTube home page on Android Auto](docs/car-home.png) | ![Video playing on Android Auto](docs/car-video.png) |
+| ![YouTube search on Android Auto, with the icon action strip](docs/car-search.png) | ![Video playing on Android Auto](docs/car-video.png) |
 
-| Phone app (sign-in + remote control) | Phone settings |
+| Phone app (YouTube + remote control) | Phone settings |
 |---|---|
 | ![YT Auto on the phone](docs/phone-home.jpg) | ![Settings on the phone](docs/phone-settings.jpg) |
 
