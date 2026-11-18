@@ -108,6 +108,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: HINT-04 (car-screen)
 - last seen: 2026-11-18T15:25:56Z
 
+### L-017 - A regex the JVM tests accept can crash on Android's ICU (the (?U) flag did at class load): install and open the app after any regex change, green unit tests prove nothing about Android syntax.
+- signal: `gate_fail` · recurrence: 1 feature(s) · scope: `regex` · harmful: 0
+- features: nav-instruction
+- evidence: 84bb4b5 / C10 (regex)
+- last seen: 2026-11-18T21:58:45Z
+
+### L-018 - A setting that gates something already on the car screen must re-apply it when the setting changes, in the car and on the phone; a pure 'off shows nothing' test cannot see a stale view.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `car-screen` · harmful: 0
+- features: nav-instruction
+- evidence: F1 / C19 (car-screen)
+- last seen: 2026-11-18T21:58:45Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

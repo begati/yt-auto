@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 17,
+  "next_id": 19,
   "lessons": [
     {
       "id": "L-001",
@@ -294,6 +294,42 @@
       ],
       "created": "2026-11-18T15:25:56Z",
       "last_seen": "2026-11-18T15:25:56Z"
+    },
+    {
+      "id": "L-017",
+      "key": "gate_fail::a regex the jvm tests accept can crash on android s icu the u flag did at class load install and open the app after any regex change green unit tests prove nothing about android syntax",
+      "text": "A regex the JVM tests accept can crash on Android's ICU (the (?U) flag did at class load): install and open the app after any regex change, green unit tests prove nothing about Android syntax.",
+      "signal": "gate_fail",
+      "scope": "regex",
+      "status": "candidate",
+      "features": [
+        "nav-instruction"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "84bb4b5 / C10 (regex)"
+      ],
+      "created": "2026-11-18T21:58:45Z",
+      "last_seen": "2026-11-18T21:58:45Z"
+    },
+    {
+      "id": "L-018",
+      "key": "ac_gap::a setting that gates something already on the car screen must re apply it when the setting changes in the car and on the phone a pure off shows nothing test cannot see a stale view",
+      "text": "A setting that gates something already on the car screen must re-apply it when the setting changes, in the car and on the phone; a pure 'off shows nothing' test cannot see a stale view.",
+      "signal": "ac_gap",
+      "scope": "car-screen",
+      "status": "candidate",
+      "features": [
+        "nav-instruction"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "F1 / C19 (car-screen)"
+      ],
+      "created": "2026-11-18T21:58:45Z",
+      "last_seen": "2026-11-18T21:58:45Z"
     }
   ]
 }
