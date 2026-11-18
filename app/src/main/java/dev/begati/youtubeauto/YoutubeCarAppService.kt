@@ -845,6 +845,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var navView: View? = null
     private var navCard: View? = null
     private var navIcon: android.widget.ImageView? = null
+    private var navBadge: android.widget.ImageView? = null
     private var navDistance: android.widget.TextView? = null
     private var navText: android.widget.TextView? = null
     private var shownTurn: String? = null
@@ -1272,6 +1273,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         navView = null
         navCard = null
         navIcon = null
+        navBadge = null
         navDistance = null
         navText = null
         shownTurn = null
@@ -1454,7 +1456,22 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 setColor(0xE0000000.toInt())
             }
             elevation = dp(4).toFloat()
-            addView(android.widget.ImageView(ctx).also { navIcon = it }, android.widget.LinearLayout.LayoutParams(dp(52), dp(52)).apply {
+            addView(FrameLayout(ctx).apply {
+                addView(android.widget.ImageView(ctx).also { navIcon = it }, FrameLayout.LayoutParams(dp(52), dp(52)))
+                // Source badge: 18 dp app icon in a 2 dp ring of the card's color, so it reads apart from the arrow.
+                addView(android.widget.ImageView(ctx).also { navBadge = it }.apply {
+                    visibility = View.GONE
+                    setPadding(dp(2), dp(2), dp(2), dp(2))
+                    background = android.graphics.drawable.GradientDrawable().apply {
+                        shape = android.graphics.drawable.GradientDrawable.OVAL
+                        setColor(0xFF000000.toInt())
+                    }
+                }, FrameLayout.LayoutParams(dp(22), dp(22), android.view.Gravity.BOTTOM or android.view.Gravity.END).apply {
+                    rightMargin = -dp(4)
+                    bottomMargin = -dp(4)
+                })
+                clipChildren = false
+            }, android.widget.LinearLayout.LayoutParams(dp(52), dp(52)).apply {
                 marginEnd = dp(14)
             })
             addView(android.widget.LinearLayout(ctx).apply {
@@ -1499,6 +1516,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         // Maps' arrow is a one-color glyph tinted black (seen on the phone): white, like the app's own icons.
         navIcon?.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
         if (icon != null) navIcon?.setImageIcon(icon) else navIcon?.setImageResource(maneuverIcon(maneuverOf(turn.maneuver)))
+        // Who sends the route: the app's own launcher icon, small, on the maneuver icon's corner.
+        val badge = runCatching { carContext.packageManager.getApplicationIcon(turn.app) }.getOrNull()
+        navBadge?.setImageDrawable(badge)
+        navBadge?.visibility = if (badge == null) View.GONE else View.VISIBLE
         val ease = android.view.animation.DecelerateInterpolator(2f)
         if (view.visibility == View.VISIBLE) {
             view.animate().cancel() // a hide still fading out (a quick remove + post) would end GONE
@@ -2053,7 +2074,8 @@ internal fun takeGestureHint(prefs: SharedPreferences, onWatch: Boolean, visible
 internal val NAV_APPS = setOf("com.waze", "com.google.android.apps.maps")
 
 // [icon] is the notification's large icon (Maps' turn arrow); Waze has none, so the words pick one (maneuverOf).
-internal data class NavInstruction(val distance: String, val maneuver: String, val icon: android.graphics.drawable.Icon? = null)
+// [app] is the package that posted it, shown as a badge on the maneuver icon.
+internal data class NavInstruction(val distance: String, val maneuver: String, val icon: android.graphics.drawable.Icon? = null, val app: String = "")
 
 internal fun navInstruction(pkg: String, category: String?, title: CharSequence?, text: CharSequence?): NavInstruction? {
     if (pkg !in NAV_APPS || category != "navigation") return null
@@ -2102,7 +2124,7 @@ class NavListener : android.service.notification.NotificationListenerService() {
             n.extras.getCharSequence(android.app.Notification.EXTRA_TITLE), n.extras.getCharSequence(android.app.Notification.EXTRA_TEXT),
         )
         // An update that is no longer an instruction ends it, like a removal.
-        if (i == null) navFeed.remove(sbn.key) ?: return else navFeed.post(sbn.key, i.copy(icon = n.getLargeIcon()))
+        if (i == null) navFeed.remove(sbn.key) ?: return else navFeed.post(sbn.key, i.copy(icon = n.getLargeIcon(), app = sbn.packageName))
         onNavChanged?.invoke()
     }
 

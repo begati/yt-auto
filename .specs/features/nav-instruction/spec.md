@@ -32,7 +32,7 @@ instrução numa notificação no celular. Pedido do usuário: "faz isso" (desen
 | Em quais telas | Em toda tela do app no carro (feed, busca, vídeo), enquanto houver navegação | Navegação importa em qualquer tela | y - user: "Sempre que o app está na tela (Recomendado)" |
 | Ativação | Chave "Navegação na tela" no grupo Carro das configurações do celular; mexer nela sem acesso abre a tela de acesso a notificações do Android | Mesmo padrão do "só áudio" que pede GPS | y - user: "Chave nas Configurações (Recomendado)" |
 | Padrão e chave no carro | Chave ligada por padrão, também nas configurações do carro (`CAR_SETTINGS`) | Pedido no meio do build | y - user: "botar opção pra ligar e desativar isso no app também, e como padrão, ligado" |
-| Ligada sem acesso | No celular, o resumo da chave vira `summary_nav_access` e o toque abre a tela de acesso sem mudar a chave (no walk, desligar e abrir a tela fazia quem concedia o acesso voltar com a chave desligada); no carro, ligar a chave sem acesso mostra um `CarToast` com o mesmo aviso (o carro não abre telas do celular) | Padrão ligado não basta: o acesso só se concede no celular | n - default do agente |
+| Ligada sem acesso | No celular, a chave aparece desligada enquanto falta o acesso (ligada e sem acesso não faz nada); ligar abre a tela de acesso e mantém ligada; desligar sempre funciona (Verifier F7: a versão anterior não deixava desligar sem conceder); no carro, ligar a chave sem acesso mostra um `CarToast` com o mesmo aviso (o carro não abre telas do celular) | Padrão ligado não basta: o acesso só se concede no celular | n - default do agente |
 | README | Recurso citado em Features, com print do card no carro, e como conceder o acesso | Pedido | y - user: "faz uns prints do curva a curva também, acho que vale citar isso no readme como recurso" |
 | Apps lidos | Waze (`com.waze`) e Google Maps (`com.google.android.apps.maps`) | Pedido | y - user: "Waze e Google Maps" |
 | Qual notificação | Do pacote acima com `category=navigation`; distância = `android.title`, manobra = `android.text` | Formato visto no Waze (canal "Waze Navigation Instructions"); o do Maps não foi conferido e é verificado no walk | n - default do agente |
@@ -64,7 +64,7 @@ instrução numa notificação no celular. Pedido do usuário: "faz isso" (desen
 2. WHEN essa notificação é removida (fim da navegação) THEN the app SHALL esconder a instrução
 3. IF a notificação vem de outro pacote, não tem `category=navigation`, ou tem título e texto vazios THEN the app SHALL ignorá-la
 4. WHILE a chave "Navegação na tela" está desligada the app SHALL não mostrar instrução nenhuma
-5. WHEN o usuário muda a chave "Navegação na tela" no celular e o app não tem acesso a notificações THEN the app SHALL abrir a tela de acesso a notificações do Android
+5. WHEN o usuário liga a chave "Navegação na tela" no celular e o app não tem acesso a notificações THEN the app SHALL abrir a tela de acesso a notificações do Android
 6. WHERE a notificação traz `largeIcon` the app SHALL mostrar esse ícone ao lado do texto
 7. The instrução SHALL ficar visível também por cima da capa "só áudio" e da tela offline, e SHALL não receber toques
 8. WHEN o celular está em qualquer um dos 7 idiomas do app THEN the app SHALL mostrar o título e o resumo da chave nesse idioma
@@ -73,7 +73,9 @@ instrução numa notificação no celular. Pedido do usuário: "faz isso" (desen
 11. The chave "Navegação na tela" SHALL vir ligada numa instalação nova
 12. WHEN o motorista usa a chave "Navegação na tela" nas configurações do carro THEN the app SHALL ligar ou desligar a mesma chave do celular
 13. IF o motorista liga a chave no carro e o app não tem acesso a notificações THEN the app SHALL mostrar um `CarToast` com o texto `nav_access_needed`
-14. WHILE a chave está ligada e o app não tem acesso a notificações the app SHALL mostrar `summary_nav_access` ("Sem acesso às notificações: toque para permitir") como resumo da chave no celular, e um toque na chave SHALL abrir a tela de acesso sem mudar a chave
+14. WHILE o app não tem acesso a notificações the app SHALL mostrar a chave do celular desligada, e WHEN o usuário a desliga THEN the app SHALL desligá-la sem pedir acesso
+15. WHEN a chave muda no carro ou no celular com a tela do app aberta THEN the app SHALL mostrar ou esconder a instrução na hora, sem esperar outra notificação (Verifier F1)
+16. WHEN a instrução aparece THEN the app SHALL mostrar o ícone do app que mandou a rota (Waze ou Google Maps), 18 dp, como selo no canto inferior do ícone da manobra
 
 **Independent Test**: no DHU, com a chave ligada e o acesso concedido, iniciar uma rota no Waze e abrir um vídeo no app mostra a instrução no canto superior esquerdo; encerrar a rota a esconde.
 
@@ -106,8 +108,10 @@ instrução numa notificação no celular. Pedido do usuário: "faz isso" (desen
 | TURN-14 | P1 (AC 13) | Execute | Pending |
 | TURN-15 | P1 (AC 14) | Execute | Pending |
 | TURN-16 | README | Execute | Pending |
+| TURN-17 | P1 (AC 15), Verifier F1 | Execute | Pending |
+| TURN-18 | P1 (AC 16), selo de origem | Execute | Pending |
 
-**Coverage:** 16 total, 0 mapped to tasks, 16 unmapped ⚠️
+**Coverage:** 18 total, 0 mapped to tasks, 16 unmapped ⚠️
 
 ---
 
@@ -154,8 +158,17 @@ Proof: run unit | TURN-12 the switch is on by default PASSED
 **C14** - Chave na lista do carro (TURN-13, AC 12)
 Proof: run unit | CSET-01 car settings are quality speed captions navigation PASSED
 
-**C15** - Carro sem acesso: toast `nav_access_needed`; celular sem acesso: resumo `summary_nav_access`, toque abre o acesso sem mudar a chave (TURN-14, TURN-15, AC 13, AC 14)
-Proof: walk - acesso revogado: ligar a chave no DHU mostra o toast; o resumo da chave no celular mostra o aviso
+**C15** - Carro sem acesso: toast `nav_access_needed` (TURN-14, AC 13)
+Proof: walk - acesso revogado: ligar a chave no DHU mostra o toast
+
+**C18** - Celular sem acesso: chave aparece desligada (TURN-15, AC 14)
+Proof: run unit | TURN-15 the phone switch reads on only with notification access PASSED
+
+**C19** - Mudar a chave com o card na tela o esconde ou mostra na hora (TURN-17, AC 15)
+Proof: walk - DHU com card: desligar a chave no carro esconde o card na hora; religar o mostra; o mesmo pela chave do celular
+
+**C20** - Selo do app de origem no ícone da manobra (TURN-18, AC 16)
+Proof: walk - DHU: screenshot do card do Waze com o selo do Waze e do Maps com o selo do Maps
 
 **C16** - README cita o recurso com print e o acesso (TURN-16)
 Proof: walk - README.md e README.pt-BR.md com a linha em Features e o print `docs/car-turn.png`
@@ -166,8 +179,8 @@ Proof: walk - celular: ligar "Navegação na tela" abre a tela de acesso a notif
 **C6** - `largeIcon` da notificação aparece ao lado do texto (TURN-06, AC 6)
 Proof: walk - DHU com rota no Google Maps: screenshot do overlay com a seta do Maps
 
-**C7** - Instrução por cima da capa "só áudio" e da tela offline, sem receber toques (TURN-07, AC 7)
-Proof: walk - DHU: screenshot do overlay sobre a capa "só áudio"; toque no overlay chega à página
+**C7** - Instrução por cima da tela offline, sem receber toques; por cima da capa "só áudio" pela ordem das camadas (TURN-07, AC 7)
+Proof: walk - DHU: card sobre a tela preta com a rede desligada; toque em "Podcasts" debaixo do card abre o chip. Capa "só áudio" não alcançada (pede GPS em movimento): o card é o último filho do frame, sem elevação nos irmãos (Verifier F6)
 
 **C8** - Título e resumo da chave nos 7 idiomas (TURN-08, AC 8)
 Proof: run unit | all languages have the same strings as English PASSED
@@ -191,6 +204,6 @@ Proof: walk - DHU com rota no Waze: screenshot do overlay sobre o vídeo; encerr
 
 ## Handoff
 
-**Settled mid-build:** user: "faz uns prints do curva a curva também, acho que vale citar isso no readme como recurso... botar opção pra ligar e desativar isso no app também, e como padrão, ligado." (AC 11 a 14, TURN-16)
+**Settled mid-build:** user: "faz uns prints do curva a curva também, acho que vale citar isso no readme como recurso... botar opção pra ligar e desativar isso no app também, e como padrão, ligado." (AC 11 a 14, TURN-16); user: "será que vale um ícone discreto ou texto indicando quem tá mandando a rota? se é waze ou google maps, use impeccable" + escolha "Selo no ícone (Recomendado)": ícone do app de origem, 18 dp, no canto inferior do ícone da manobra (TURN-18)
 **Dispatched:** Verifier at HEAD ca7cddd (diff dd7b62c..ca7cddd); no screens sub-agent (no capture)
-**Walked:** 2026-11-18, orchestrator, DHU 800x480 + phone 0091479724, debug build over the previous install. Reach: Android Auto connected, route started on the car (Waze "Dirija agora" > Paróquia da Glória, or Maps by `google.navigation:` intent), then the app from the rail. C11: Waze card "10 m · Siga pela rota destacada" with the straight arrow over the feed, the split view and a playing video (`docs/car-turn.png`); ending the route in Waze hid it. C6: Maps card with Maps' own arrow drawn white, text "Siga em direção à R. Roberto Stiegert" (found TURN-11 here: Maps puts it in the title); `force-stop` of Maps hid it. C7: a tap on "Podcasts" under the card opened that chip (touches pass through); the card stayed over the black screen with the network off. Not reached: the audio-only cover (needs GPS speed); the card is the last child of the frame, above the cover. C5/C15: phone switch tap without access opens Android's access screen and keeps the switch on; summary "Sem acesso às notificações: toque para permitir"; granting there brings the card back in the car at once. Car switch on without access shows the toast "Permita o acesso às notificações no celular: Configurações do YT Auto > Navegação na tela". C17: `cmd notification disallow_listener` with the card up hid it (found here; fixed in 7f972cd). Waze posts the notification only with Android Auto connected and Waze not in front, and not at all while it says "Sem sinal GPS" until it is restarted.
+**Walked:** 2026-11-18, orchestrator, DHU 800x480 + phone 0091479724, debug build over the previous install. Reach: Android Auto connected, route started on the car (Waze "Dirija agora" > Paróquia da Glória, or Maps by `google.navigation:` intent), then the app from the rail. C11: Waze card "10 m · Siga pela rota destacada" with the straight arrow over the feed, the split view and a playing video (`docs/car-turn.png`); ending the route in Waze hid it. C6: Maps card with Maps' own arrow drawn white, text "Siga em direção à R. Roberto Stiegert" (found TURN-11 here: Maps puts it in the title); `force-stop` of Maps hid it. C7: a tap on "Podcasts" under the card opened that chip (touches pass through); the card stayed over the black screen with the network off. Not reached: the audio-only cover (needs GPS speed); the card is the last child of the frame, above the cover. C5/C15: phone switch tap without access opens Android's access screen and keeps the switch on; summary "Sem acesso às notificações: toque para permitir"; granting there brings the card back in the car at once. Car switch on without access shows the toast "Permita o acesso às notificações no celular: Configurações do YT Auto > Navegação na tela". C17: `cmd notification disallow_listener` with the card up hid it (found here; fixed in 7f972cd). Round 2 (after the Verifier, build with the source badge): C20 Maps card with the Maps pin badge on the arrow's corner, Waze card "10 m · Siga pela rota destacada" with the Waze badge (new `docs/car-turn.png`); C19 car switch off hid the Maps card at once, phone switch back on showed it again at once. Found here: the (?U) regex flag from the F3 fix crashes the app on Android's ICU at class load (fixed in 84bb4b5). Waze posts the notification only with Android Auto connected and Waze not in front, and not at all while it says "Sem sinal GPS" until it is restarted.
