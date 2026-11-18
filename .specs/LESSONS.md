@@ -78,6 +78,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: C1 / SIGNIN-01 (webview)
 - last seen: 2026-11-17T23:34:16Z
 
+### L-012 - A screen criterion that names contents (icon, text, buttons) needs a walk or a data test of those contents; a visibility-rule unit test alone does not prove it.
+- signal: `weak_test` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: ui-polish
+- evidence: C4 / SIGN-04 (ui)
+- last seen: 2026-11-18T00:34:07Z
+
+### L-013 - When a car template must redraw after an action, cite the walk that sees the redraw; a unit test of the next state misses a missing invalidate().
+- signal: `weak_test` · recurrence: 1 feature(s) · scope: `car-template` · harmful: 0
+- features: ui-polish
+- evidence: C14 / NAV-06 (car-template)
+- last seen: 2026-11-18T00:34:07Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

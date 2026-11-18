@@ -1,9 +1,9 @@
 # ui-polish proofs
 
-**HEAD**: 317006d
+**HEAD**: 38aadf5
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 30 pass, 0 fail
+**Result**: 32 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -36,6 +36,8 @@
 | C27 | `walk - DHU, phone network cut with svc wifi disable and svc data disable: screenshot` | pass (Walked) |
 | C28 | `walk - DHU, audio-only on and moving simulated, a page with no artwork: screenshot` | pass (Walked) |
 | C29 | `walk - DHU screenshots of both overlays at the DHU density: artwork 160x90 dp, paddings as in code` | pass (Walked) |
+| C30 | `walk - phone signed out: screenshot of the banner above YouTube with icon, text, Entrar and X` | pass (Walked) |
+| C31 | `walk - DHU: three taps on the aspect action show open_in_full, fit_screen, crop; pref back to cover` | pass (Walked) |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output

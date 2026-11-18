@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 12,
+  "next_id": 14,
   "lessons": [
     {
       "id": "L-001",
@@ -204,6 +204,42 @@
       ],
       "created": "2026-11-17T23:34:16Z",
       "last_seen": "2026-11-17T23:34:16Z"
+    },
+    {
+      "id": "L-012",
+      "key": "weak_test::a screen criterion that names contents icon text buttons needs a walk or a data test of those contents a visibility rule unit test alone does not prove it",
+      "text": "A screen criterion that names contents (icon, text, buttons) needs a walk or a data test of those contents; a visibility-rule unit test alone does not prove it.",
+      "signal": "weak_test",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "ui-polish"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "C4 / SIGN-04 (ui)"
+      ],
+      "created": "2026-11-18T00:34:07Z",
+      "last_seen": "2026-11-18T00:34:07Z"
+    },
+    {
+      "id": "L-013",
+      "key": "weak_test::when a car template must redraw after an action cite the walk that sees the redraw a unit test of the next state misses a missing invalidate",
+      "text": "When a car template must redraw after an action, cite the walk that sees the redraw; a unit test of the next state misses a missing invalidate().",
+      "signal": "weak_test",
+      "scope": "car-template",
+      "status": "candidate",
+      "features": [
+        "ui-polish"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "C14 / NAV-06 (car-template)"
+      ],
+      "created": "2026-11-18T00:34:07Z",
+      "last_seen": "2026-11-18T00:34:07Z"
     }
   ]
 }
