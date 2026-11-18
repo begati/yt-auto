@@ -95,8 +95,8 @@ T1 → T2 → T3 → T4
 
 **Done when**:
 
-- [ ] Walk no DHU: controles visíveis, toque no meio da barra leva `currentTime` a ~50% da duração; toque fora da barra continua mostrando/escondendo os controles
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk no DHU: controles visíveis, toque no meio da barra leva `currentTime` a ~50% da duração; toque fora da barra continua mostrando/escondendo os controles
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build

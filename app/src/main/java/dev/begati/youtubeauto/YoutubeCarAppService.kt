@@ -216,6 +216,8 @@ private const val JS_RESTART = "(v=>v&&(v.currentTime=0))(document.querySelector
 // Moves the main video [seconds] back (negative) or forward, within the video.
 private fun jsSeekBy(seconds: Int) =
     "(v=>v&&(v.currentTime=Math.max(0,Math.min(v.duration||1e9,v.currentTime+($seconds)))))(document.querySelector('${MAIN_VIDEO}'))"
+// Puts the main video at [seconds].
+private fun jsSeekTo(seconds: Double) = "(v=>v&&(v.currentTime=$seconds))(document.querySelector('${MAIN_VIDEO}'))"
 // Player's own "next": the playlist's next item, or the autoplay pick outside a playlist.
 private const val JS_NEXT = "document.getElementById('${PLAYER_ID}')?.nextVideo?.()"
 // Player and progress bar rects in page px (the bar only while YouTube's controls show it), and the main video's time.
@@ -840,7 +842,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             override fun onPause() { js(JS_PAUSE) }
             override fun onSkipToNext() { js(JS_NEXT) }
             override fun onSkipToPrevious() { js(JS_RESTART) }
-            override fun onSeekTo(pos: Long) { js("(v=>v&&(v.currentTime=${pos / 1000.0}))(document.querySelector('${MAIN_VIDEO}'))") }
+            override fun onSeekTo(pos: Long) { js(jsSeekTo(pos / 1000.0)) }
             override fun onCustomAction(action: String, extras: Bundle?) {
                 when (action) {
                     REWIND -> js(jsSeekBy(-10))
@@ -997,7 +999,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         }
         val seg = segmentAt(sbSegments, seconds) ?: return
         if (!sbSkipped.add(seg)) return
-        js("(v=>v&&(v.currentTime=${seg.second}))(document.querySelector('${MAIN_VIDEO}'))")
+        js(jsSeekTo(seg.second))
         CarToast.makeText(carContext, R.string.sponsor_skipped, CarToast.LENGTH_SHORT).show()
     }
 
@@ -1328,7 +1330,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         val (l, t) = webViewBounds(w, h, area)
         val d = wv.resources.displayMetrics.density
         wv.evaluateJavascript(JS_GEOMETRY) { json ->
-            val o = runCatching { JSONObject(json) }.getOrNull() ?: return@evaluateJavascript
+            // Unreadable page: no player, no bar, no duration, so the gesture falls back to what it did before.
+            val o = runCatching { JSONObject(json) }.getOrNull() ?: JSONObject()
             fun rect(k: String) = o.optJSONArray(k)?.let { a -> List(4) { (a.getDouble(it) * d).toFloat() + if (it % 2 == 0) l else t } }
             then(Geometry(rect("p"), rect("b"), (o.optDouble("d", 0.0) * 1000).toLong(), (o.optDouble("t", 0.0) * 1000).toLong()))
         }
@@ -1383,8 +1386,17 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         webView?.scrollBy(distanceX.toInt(), distanceY.toInt())
     }
 
-    // Called only on hosts with Car API level >= 5.
+    // Called only on hosts with Car API level >= 5. On a video, a tap on YouTube's visible progress bar seeks there
+    // (the player ignores a tap with no movement); any other tap goes to the page.
     override fun onClick(x: Float, y: Float) {
+        if (!onWatch) return tap(x, y)
+        geometry { g ->
+            val ms = barTapMs(x, y, g.bar, g.durationMs)
+            if (ms == null) tap(x, y) else js(jsSeekTo(ms / 1000.0))
+        }
+    }
+
+    private fun tap(x: Float, y: Float) {
         val target = root ?: return
         val t = SystemClock.uptimeMillis()
         for (action in intArrayOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
