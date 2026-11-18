@@ -2067,6 +2067,7 @@ internal class NavFeed {
         posted[key] = i
     }
     fun remove(key: String) = posted.remove(key)
+    fun clear() = posted.clear()
     val current get() = posted.values.lastOrNull()
 }
 
@@ -2095,6 +2096,12 @@ class NavListener : android.service.notification.NotificationListenerService() {
 
     override fun onNotificationRemoved(sbn: android.service.notification.StatusBarNotification) {
         if (navFeed.remove(sbn.key) != null) onNavChanged?.invoke()
+    }
+
+    // Access revoked (or the listener unbound): no more updates, so nothing stale stays on screen.
+    override fun onListenerDisconnected() {
+        navFeed.clear()
+        onNavChanged?.invoke()
     }
 }
 
@@ -2394,11 +2401,12 @@ class SettingsActivity : Activity() {
                     if (on == true) ctx.requestLocation()
                     true
                 }
-                // On-screen navigation reads Waze's and Maps' notifications (on by default): without access, a change
-                // opens the grant, and the summary says it is needed (see onResume).
+                // On-screen navigation reads Waze's and Maps' notifications (on by default): without access, a tap opens
+                // the grant and keeps the switch as it is, and the summary says so (see onResume).
                 if (f.key == "navOverlay") setOnPreferenceChangeListener { _, _ ->
-                    if (!ctx.navAccess()) ctx.startActivity(Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-                    true
+                    if (ctx.navAccess()) return@setOnPreferenceChangeListener true
+                    ctx.startActivity(Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                    false
                 }
             }
             // Icons are white; tint them to the theme's icon color so they show in light mode too.
@@ -2425,7 +2433,7 @@ class SettingsActivity : Activity() {
             super.onResume()
             val p = findPreference("navOverlay") ?: return
             val ctx = activity
-            p.setSummary(if (flag(ctx, "navOverlay") && !ctx.navAccess()) R.string.nav_access_needed else R.string.summary_nav_overlay)
+            p.setSummary(if (flag(ctx, "navOverlay") && !ctx.navAccess()) R.string.summary_nav_access else R.string.summary_nav_overlay)
         }
     }
 }

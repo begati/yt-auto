@@ -32,7 +32,7 @@ instrução numa notificação no celular. Pedido do usuário: "faz isso" (desen
 | Em quais telas | Em toda tela do app no carro (feed, busca, vídeo), enquanto houver navegação | Navegação importa em qualquer tela | y - user: "Sempre que o app está na tela (Recomendado)" |
 | Ativação | Chave "Navegação na tela" no grupo Carro das configurações do celular; mexer nela sem acesso abre a tela de acesso a notificações do Android | Mesmo padrão do "só áudio" que pede GPS | y - user: "Chave nas Configurações (Recomendado)" |
 | Padrão e chave no carro | Chave ligada por padrão, também nas configurações do carro (`CAR_SETTINGS`) | Pedido no meio do build | y - user: "botar opção pra ligar e desativar isso no app também, e como padrão, ligado" |
-| Ligada sem acesso | No celular, o resumo da chave vira o aviso `nav_access_needed`; no carro, ligar a chave sem acesso mostra um `CarToast` com o mesmo aviso (o carro não abre telas do celular) | Padrão ligado não basta: o acesso só se concede no celular | n - default do agente |
+| Ligada sem acesso | No celular, o resumo da chave vira `summary_nav_access` e o toque abre a tela de acesso sem mudar a chave (no walk, desligar e abrir a tela fazia quem concedia o acesso voltar com a chave desligada); no carro, ligar a chave sem acesso mostra um `CarToast` com o mesmo aviso (o carro não abre telas do celular) | Padrão ligado não basta: o acesso só se concede no celular | n - default do agente |
 | README | Recurso citado em Features, com print do card no carro, e como conceder o acesso | Pedido | y - user: "faz uns prints do curva a curva também, acho que vale citar isso no readme como recurso" |
 | Apps lidos | Waze (`com.waze`) e Google Maps (`com.google.android.apps.maps`) | Pedido | y - user: "Waze e Google Maps" |
 | Qual notificação | Do pacote acima com `category=navigation`; distância = `android.title`, manobra = `android.text` | Formato visto no Waze (canal "Waze Navigation Instructions"); o do Maps não foi conferido e é verificado no walk | n - default do agente |
@@ -73,7 +73,7 @@ instrução numa notificação no celular. Pedido do usuário: "faz isso" (desen
 11. The chave "Navegação na tela" SHALL vir ligada numa instalação nova
 12. WHEN o motorista usa a chave "Navegação na tela" nas configurações do carro THEN the app SHALL ligar ou desligar a mesma chave do celular
 13. IF o motorista liga a chave no carro e o app não tem acesso a notificações THEN the app SHALL mostrar um `CarToast` com o texto `nav_access_needed`
-14. WHILE a chave está ligada e o app não tem acesso a notificações the app SHALL mostrar `nav_access_needed` como resumo da chave no celular
+14. WHILE a chave está ligada e o app não tem acesso a notificações the app SHALL mostrar `summary_nav_access` ("Sem acesso às notificações: toque para permitir") como resumo da chave no celular, e um toque na chave SHALL abrir a tela de acesso sem mudar a chave
 
 **Independent Test**: no DHU, com a chave ligada e o acesso concedido, iniciar uma rota no Waze e abrir um vídeo no app mostra a instrução no canto superior esquerdo; encerrar a rota a esconde.
 
@@ -154,7 +154,7 @@ Proof: run unit | TURN-12 the switch is on by default PASSED
 **C14** - Chave na lista do carro (TURN-13, AC 12)
 Proof: run unit | CSET-01 car settings are quality speed captions navigation PASSED
 
-**C15** - Carro sem acesso: toast `nav_access_needed`; celular sem acesso: resumo `nav_access_needed` (TURN-14, TURN-15, AC 13, AC 14)
+**C15** - Carro sem acesso: toast `nav_access_needed`; celular sem acesso: resumo `summary_nav_access`, toque abre o acesso sem mudar a chave (TURN-14, TURN-15, AC 13, AC 14)
 Proof: walk - acesso revogado: ligar a chave no DHU mostra o toast; o resumo da chave no celular mostra o aviso
 
 **C16** - README cita o recurso com print e o acesso (TURN-16)
@@ -180,6 +180,9 @@ Proof: run unit | TURN-10 the maneuver words pick the icon PASSED
 
 **C12** - Título que não é distância vira a manobra, sem distância (TURN-11, AC 10)
 Proof: run unit | TURN-11 a title that is not a distance is the maneuver PASSED
+
+**C17** - Acesso revogado com a chave ligada esconde a instrução (edge case, achado no walk)
+Proof: walk - DHU com card na tela: `cmd notification disallow_listener` faz o card sumir
 
 **C11** - Overlay aparece no carro com distância, manobra e ícone e some ao encerrar a rota (TURN-01, TURN-02)
 Proof: walk - DHU com rota no Waze: screenshot do overlay sobre o vídeo; encerrar a rota o esconde

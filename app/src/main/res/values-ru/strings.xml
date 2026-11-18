@@ -76,6 +76,7 @@
     <string name="summary_captions">Показывает субтитры, если они есть у видео</string>
     <string name="summary_nav_overlay">Показывает следующий поворот Waze или Google Maps на экране автомобиля</string>
     <string name="nav_access_needed">Разрешите доступ к уведомлениям на телефоне: Настройки YT Auto &gt; Навигация на экране</string>
+    <string name="summary_nav_access">Нет доступа к уведомлениям: нажмите, чтобы разрешить</string>
     <string name="offline_hint">Проверьте интернет на телефоне</string>
     <string name="previous">Предыдущее</string>
     <string name="next">Следующее</string>
