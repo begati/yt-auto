@@ -201,7 +201,7 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 | REMOTE-04 | P2 Remote bar (AC 4) | Tasks | Implementing |
 | OVL-01 | P3 Car overlays (AC 1) | Tasks | Implementing |
 | OVL-02 | P3 Car overlays (AC 2) | Tasks | Implementing |
-| OVL-03 | P3 Car overlays (AC 3) | Tasks | Pending |
+| OVL-03 | P3 Car overlays (AC 3) | Tasks | Implementing |
 
 **Coverage:** 29 total, 0 mapped to tasks, 29 unmapped ⚠️ (Tasks phase next)
 

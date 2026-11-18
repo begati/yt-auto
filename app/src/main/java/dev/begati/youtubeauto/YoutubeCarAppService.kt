@@ -1499,8 +1499,12 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
 // ponytail: thresholds picked, not measured; retune if the cover lags at a stop or blinks in stop-and-go
 internal fun movingAfter(was: Boolean, mps: Float) = if (was) mps >= 0.5f else mps > 2f
 
-/** Black loading screen with a spinner and "Sem conexão. Tentando de novo…", hidden until a page fails. */
+/**
+ * Black loading screen: wifi_off icon, spinner, "Sem conexão. Tentando de novo…" and "Verifique a internet do celular",
+ * hidden until a page fails. Sizes in dp of [ctx]'s display (the car's virtual display on the car).
+ */
 private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
+    val dp = ctx.resources.displayMetrics.density
     setBackgroundColor(android.graphics.Color.BLACK)
     visibility = View.GONE
     isClickable = true // taps don't reach the error page underneath
@@ -1508,6 +1512,11 @@ private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
         android.widget.LinearLayout(ctx).apply {
             orientation = android.widget.LinearLayout.VERTICAL
             gravity = android.view.Gravity.CENTER_HORIZONTAL
+            addView(android.widget.ImageView(ctx).apply {
+                setImageResource(R.drawable.ic_wifi_off)
+                imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+                setPadding(0, 0, 0, (16 * dp).toInt())
+            }, android.widget.LinearLayout.LayoutParams((48 * dp).toInt(), (64 * dp).toInt()))
             addView(android.widget.ProgressBar(ctx, null, android.R.attr.progressBarStyleLarge).apply {
                 isIndeterminate = true
                 indeterminateTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
@@ -1516,8 +1525,16 @@ private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
                 setText(R.string.offline_retrying)
                 setTextColor(android.graphics.Color.WHITE)
                 textSize = 20f
-                setPadding(0, 24, 0, 0)
-            })
+                gravity = android.view.Gravity.CENTER
+                setPadding(0, (24 * dp).toInt(), 0, 0)
+            }, android.widget.LinearLayout.LayoutParams(-2, -2))
+            addView(android.widget.TextView(ctx).apply {
+                setText(R.string.offline_hint)
+                setTextColor(0xB3FFFFFF.toInt())
+                textSize = 16f
+                gravity = android.view.Gravity.CENTER
+                setPadding(0, (8 * dp).toInt(), 0, 0)
+            }, android.widget.LinearLayout.LayoutParams(-2, -2))
         },
         FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, android.view.Gravity.CENTER),
     )

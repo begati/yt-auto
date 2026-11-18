@@ -281,8 +281,8 @@ T12 → T13
 
 **Done when**:
 
-- [ ] DHU with the phone network off: icon and both lines
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] DHU with the phone network off: icon and both lines
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
 
 **Tests**: none
 **Gate**: build
