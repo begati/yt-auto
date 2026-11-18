@@ -101,5 +101,5 @@ Proof: walk - DHU com a marca apagada: screenshot do toast ao abrir um vídeo; s
 ## Handoff
 
 **Settled mid-build:** none
-**Dispatched:** none
+**Dispatched:** Verifier at HEAD aba2790 (diff e5041bd..aba2790); no screens sub-agent (no capture)
 **Walked:** 2026-11-18, orchestrator, DHU 800x480 + phone 0091479724, debug build installed over the previous one with data kept (`gestureHintShown` absent from `shared_prefs/settings.xml` before). Reach: Início, tap a feed title. C4: the first video on `/watch` shows the car toast "Dica: toque duas vezes no vídeo para pular 10 s, ou arraste para o lado para avançar" (two lines, whole text) for ~3 s, then it goes; prefs now hold `gestureHintShown=true`. `history.back()` to Início, tap another video: it plays on `/watch` (`paused` false) and no toast shows in screenshots over 8 s.
