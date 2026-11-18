@@ -76,7 +76,6 @@
     <string name="summary_captions">Mostra i sottotitoli quando il video li ha</string>
     <string name="summary_nav_overlay">Mostra la prossima svolta di Waze o Google Maps sullo schermo dell\'auto</string>
     <string name="nav_access_needed">Consenti l\'accesso alle notifiche sul telefono: Impostazioni di YT Auto &gt; Navigazione sullo schermo</string>
-    <string name="summary_nav_access">Nessun accesso alle notifiche: tocca per consentirlo</string>
     <string name="offline_hint">Controlla internet sul telefono</string>
     <string name="previous">Precedente</string>
     <string name="next">Successivo</string>

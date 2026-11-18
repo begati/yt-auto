@@ -47,8 +47,8 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
 - Modo só áudio opcional com o carro em movimento (usa a velocidade do GPS do celular; desligado por padrão).
 - Curva a curva por cima do vídeo: com o Waze ou o Google Maps navegando, a próxima curva (ícone, distância e
   instrução) aparece no canto superior esquerdo da tela do carro. O Android Auto esconde o card deles com o YT Auto
-  aberto, então o app lê a instrução da notificação. Ligado por padrão; na primeira vez, permita o acesso às
-  notificações (Configurações > Navegação na tela). Desligue nas configurações do celular ou do carro.
+  aberto, então o app lê a instrução da notificação. Ligado por padrão; precisa do acesso às notificações uma vez:
+  nas configurações do celular, ligue Navegação na tela e permita. Desligue nas configurações do celular ou do carro.
 - Avisa quando sai versão nova no GitHub.
 - Bloqueia os anúncios do YouTube (o vídeo começa sem a espera do anúncio) e esconde os itens promovidos do feed.
 - Configurações: qualidade, velocidade, proporção (ajustar / preencher / esticar), legendas, tela cheia ao abrir,

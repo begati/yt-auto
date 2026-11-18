@@ -76,7 +76,6 @@
     <string name="summary_captions">يعرض الترجمة عندما تتوفر في الفيديو</string>
     <string name="summary_nav_overlay">يعرض المنعطف التالي من Waze أو خرائط Google على شاشة السيارة</string>
     <string name="nav_access_needed">اسمح بالوصول إلى الإشعارات على الهاتف: إعدادات YT Auto &gt; التنقل على الشاشة</string>
-    <string name="summary_nav_access">لا يوجد وصول إلى الإشعارات: انقر للسماح به</string>
     <string name="offline_hint">تحقق من إنترنت الهاتف</string>
     <string name="previous">السابق</string>
     <string name="next">التالي</string>

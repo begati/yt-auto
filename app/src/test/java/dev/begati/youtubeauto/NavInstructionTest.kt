@@ -26,8 +26,12 @@ class NavInstructionTest {
         // Distances in other scripts and with decimals stay distances.
         assertEquals(NavInstruction("1,2 km", "Vire"), navInstruction("com.waze", "navigation", "1,2 km", "Vire"))
         assertEquals(NavInstruction("٢٠٠ م", "انعطف"), navInstruction("com.waze", "navigation", "٢٠٠ م", "انعطف"))
-        // Starts with a digit but too long to be a distance: a maneuver (13 characters).
-        assertEquals(NavInstruction("", "3ª saída à dir"), navInstruction("com.waze", "navigation", "3ª saída à dir", null))
+        // A digit first: 12 characters is still a distance, 13 is a maneuver.
+        assertEquals(NavInstruction("123456789012", ""), navInstruction("com.waze", "navigation", "123456789012", null))
+        assertEquals(NavInstruction("", "1234567890123"), navInstruction("com.waze", "navigation", "1234567890123", null))
+        // Fractions and units elsewhere.
+        assertEquals(NavInstruction("½ mi", "Turn left"), navInstruction("com.waze", "navigation", "½ mi", "Turn left"))
+        assertEquals(NavInstruction("800 ft", "Turn left"), navInstruction("com.waze", "navigation", "800 ft", "Turn left"))
     }
 
     @Test
@@ -55,6 +59,14 @@ class NavInstructionTest {
         assertNull(navToShow(prefs, feed))
         setFlag(prefs, "navOverlay", true)
         assertEquals(NavInstruction("10 m", "Siga"), navToShow(prefs, feed))
+    }
+
+    @Test
+    fun `TURN-15 the phone switch reads on only with notification access`() {
+        assertEquals(true, navSwitchShown(stored = true, access = true))
+        assertEquals(false, navSwitchShown(stored = true, access = false))
+        assertEquals(false, navSwitchShown(stored = false, access = true))
+        assertEquals(false, navSwitchShown(stored = false, access = false))
     }
 
     @Test
@@ -105,6 +117,33 @@ class NavInstructionTest {
             // Two directions: the first one is the turn coming up.
             "Vire à esquerda e depois à direita" to Maneuver.LEFT,
             "Turn right, then left" to Maneuver.RIGHT,
+            // A passing word or a street name does not pick the icon (Verifier F3).
+            "When you turn left" to Maneuver.LEFT,
+            "Turn left toward destination" to Maneuver.LEFT,
+            "Vire à direita na Rua do Retorno" to Maneuver.RIGHT,
+            "Объезд вокруг квартала направо" to Maneuver.RIGHT,
+            // Keep, roundabout, U-turn and arrival in each language (Verifier F4).
+            "Mantente a la izquierda" to Maneuver.KEEP_LEFT,
+            "En la rotonda, toma la segunda salida" to Maneuver.ROUNDABOUT,
+            "Cambio de sentido" to Maneuver.U_TURN,
+            "Has llegado a tu destino" to Maneuver.ARRIVE,
+            "Restez à droite" to Maneuver.KEEP_RIGHT,
+            "Au rond-point, prenez la 1re sortie" to Maneuver.ROUNDABOUT,
+            "Faites demi-tour" to Maneuver.U_TURN,
+            "Vous êtes arrivé" to Maneuver.ARRIVE,
+            "Tieni la sinistra" to Maneuver.KEEP_LEFT,
+            "Alla rotonda prendi la seconda uscita" to Maneuver.ROUNDABOUT,
+            "Fai inversione a U" to Maneuver.U_TURN,
+            "Sei arrivato" to Maneuver.ARRIVE,
+            "Держитесь левой стороны" to Maneuver.KEEP_LEFT,
+            "Съезд справа" to Maneuver.KEEP_RIGHT,
+            "На круговом движении второй съезд" to Maneuver.ROUNDABOUT,
+            "Развернитесь" to Maneuver.U_TURN,
+            "Вы прибыли" to Maneuver.ARRIVE,
+            "الزم اليسار" to Maneuver.KEEP_LEFT,
+            "في الدوار، اسلك المخرج الثاني" to Maneuver.ROUNDABOUT,
+            "استدر للخلف" to Maneuver.U_TURN,
+            "لقد وصلت" to Maneuver.ARRIVE,
         )
         for ((text, want) in cases) assertEquals(text, want, maneuverOf(text))
     }

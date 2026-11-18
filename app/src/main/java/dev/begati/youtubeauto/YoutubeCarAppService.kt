@@ -849,6 +849,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var navText: android.widget.TextView? = null
     private var shownTurn: String? = null
     private val navChanged = { showNav() }
+    // The phone switch changes while the car screen is up: apply it at once. Held here, prefs keep it weakly.
+    private val navPref = SharedPreferences.OnSharedPreferenceChangeListener { _, key -> if (key == "navOverlay") showNav() }
     private val hideSkip = Runnable {
         skipView?.animate()?.alpha(0f)?.setDuration(200)?.withEndAction { skipView?.visibility = View.GONE }
     }
@@ -1114,6 +1116,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                                 applyPlayback()
                                 listenSpeed() // the audio flag may have just been turned on
                                 updateCover()
+                                showNav() // on-screen navigation may have just been turned on or off
                                 invalidate()
                             })
                         }
@@ -1231,6 +1234,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             frame.addView(audioCover(context).also { cover = it })
             frame.addView(navOverlay(context).also { navView = it }) // over the audio cover too: driving is when it matters
             onNavChanged = navChanged
+            prefs(carContext).registerOnSharedPreferenceChangeListener(navPref)
             showNav()
             updateCover()
             fitToArea()
@@ -1264,6 +1268,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         dragDiff = null
         dragFill = null
         if (onNavChanged === navChanged) onNavChanged = null
+        prefs(carContext).unregisterOnSharedPreferenceChangeListener(navPref)
         navView = null
         navCard = null
         navIcon = null
@@ -1495,6 +1500,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         navIcon?.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
         if (icon != null) navIcon?.setImageIcon(icon) else navIcon?.setImageResource(maneuverIcon(maneuverOf(turn.maneuver)))
         val ease = android.view.animation.DecelerateInterpolator(2f)
+        if (view.visibility == View.VISIBLE) {
+            view.animate().cancel() // a hide still fading out (a quick remove + post) would end GONE
+            view.alpha = 1f
+        }
         if (view.visibility != View.VISIBLE) {
             view.animate().cancel()
             view.alpha = 0f
@@ -2056,8 +2065,8 @@ internal fun navInstruction(pkg: String, category: String?, title: CharSequence?
     return NavInstruction(d, m)
 }
 
-// "10 m", "1,2 km", "0.5 mi", "٢٠٠ م": a digit first, at most 12 characters.
-private val NAV_DISTANCE = Regex("""\p{Nd}.{0,11}""")
+// "10 m", "1,2 km", "0.5 mi", "½ mi", "٢٠٠ م": a digit or a fraction first, at most 12 characters.
+private val NAV_DISTANCE = Regex("""[\p{Nd}¼½¾].{0,11}""")
 
 // Navigation notifications still posted, by key; the last posted one shows (Waze and Maps both navigating).
 internal class NavFeed {
@@ -2070,6 +2079,9 @@ internal class NavFeed {
     fun clear() = posted.clear()
     val current get() = posted.values.lastOrNull()
 }
+
+// Phone switch state on screen: stored on and access granted (stored on without access does nothing).
+internal fun navSwitchShown(stored: Boolean, access: Boolean) = stored && access
 
 internal fun navToShow(prefs: SharedPreferences, feed: NavFeed) = if (flag(prefs, "navOverlay")) feed.current else null
 
@@ -2113,14 +2125,17 @@ internal enum class Maneuver { ARRIVE, ROUNDABOUT, U_TURN, KEEP_LEFT, KEEP_RIGHT
 // Words per maneuver in the app's 7 languages (the text is in Waze's or Maps' language). Checked in this order:
 // a roundabout text also says "exit", a keep/exit text also says the side.
 // ponytail: keyword guess; Maps' own arrow wins when the notification has one, unknown wording falls back to straight
+// Whole words only ((?U): \b also between Cyrillic and Arabic letters), so a street name or a passing word does not
+// pick the icon ("Rua do Retorno", "When you turn left", "вокруг квартала").
+private fun words(p: String) = Regex("(?U)$p")
 private val NAV_WORDS = listOf(
-    Maneuver.ARRIVE to Regex("chegou|chegada|\\barriv|destination|llegad|destinazione|прибыл|пункт назначения|وصلت|وجهتك"),
-    Maneuver.ROUNDABOUT to Regex("rotat[óo]ria|rotunda|roundabout|traffic circle|rotonda|glorieta|rond-point|круг|دوار"),
-    Maneuver.U_TURN to Regex("retorno|meia.volta|u.turn|cambio de sentido|vuelta en u|demi-tour|inversione|inverti|развор|للخلف"),
+    Maneuver.ARRIVE to words("\\bchegou\\b|chegada ao destino|\\barriv|\\bllegado\\b|\\bllegada\\b|\\barrivat|\\barrivé|прибыли|прибытие|وصلت"),
+    Maneuver.ROUNDABOUT to words("rotat[óo]ria|\\brotunda|roundabout|traffic circle|\\brotonda|glorieta|rond-point|кругов|по кругу|кольц|دوار"),
+    Maneuver.U_TURN to words("fa[çc]a o retorno|\\bretorne\\b|meia.volta|\\bu.?turn\\b|cambio de sentido|vuelta en u|demi-tour|inversione|\\binverti|развернит|разворот|للخلف|استدر"),
 )
-private val KEEP_WORDS = Regex("mantenha|sa[íi]da|\\bsaia\\b|\\bkeep\\b|\\bexit\\b|ramp|mant[eé]n|salida|restez|serrez|sortie|tieni|uscita|держит|съезд|ابق|مخرج")
-private val LEFT_WORDS = Regex("esquerda|\\bleft\\b|izquierda|gauche|sinistra|налево|левее|влево|يسار")
-private val RIGHT_WORDS = Regex("direita|\\bright\\b|derecha|droite|destra|направо|правее|вправо|يمين")
+private val KEEP_WORDS = words("mantenha|sa[íi]da|\\bsaia\\b|\\bkeep\\b|\\bexit\\b|\\bramp|mant[eé]n|salida|restez|serrez|sortie|tieni|uscita|держит|съезд|ابق|الزم|مخرج")
+private val LEFT_WORDS = words("esquerda|\\bleft\\b|izquierda|gauche|sinistra|налево|левее|влево|слева|левой|يسار")
+private val RIGHT_WORDS = words("direita|\\bright\\b|derecha|droite|destra|направо|правее|вправо|справа|правой|يمين")
 
 internal fun maneuverOf(text: String): Maneuver {
     val t = text.lowercase()
@@ -2401,12 +2416,11 @@ class SettingsActivity : Activity() {
                     if (on == true) ctx.requestLocation()
                     true
                 }
-                // On-screen navigation reads Waze's and Maps' notifications (on by default): without access, a tap opens
-                // the grant and keeps the switch as it is, and the summary says so (see onResume).
-                if (f.key == "navOverlay") setOnPreferenceChangeListener { _, _ ->
-                    if (ctx.navAccess()) return@setOnPreferenceChangeListener true
-                    ctx.startActivity(Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-                    false
+                // On-screen navigation reads Waze's and Maps' notifications (on by default). Turning it on without access
+                // keeps it on and opens the grant; turning it off always works (see onResume for the switch's state).
+                if (f.key == "navOverlay") setOnPreferenceChangeListener { _, on ->
+                    if (on == true && !ctx.navAccess()) ctx.startActivity(Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                    true
                 }
             }
             // Icons are white; tint them to the theme's icon color so they show in light mode too.
@@ -2428,12 +2442,12 @@ class SettingsActivity : Activity() {
             }
         }
 
-        // Back from Android's access screen: the summary says whether on-screen navigation can work.
+        // The switch shows whether on-screen navigation works: on by default, but without notification access it reads
+        // off, and turning it on asks for the access. Back from Android's access screen, access granted keeps it on.
         override fun onResume() {
             super.onResume()
-            val p = findPreference("navOverlay") ?: return
-            val ctx = activity
-            p.setSummary(if (flag(ctx, "navOverlay") && !ctx.navAccess()) R.string.summary_nav_access else R.string.summary_nav_overlay)
+            val p = findPreference("navOverlay") as? android.preference.SwitchPreference ?: return
+            p.isChecked = navSwitchShown(flag(activity, "navOverlay"), activity.navAccess())
         }
     }
 }
