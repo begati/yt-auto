@@ -16,6 +16,21 @@ class NavInstructionTest {
     }
 
     @Test
+    fun `TURN-11 a title that is not a distance is the maneuver`() {
+        // Google Maps before the first turn (seen on the phone): the instruction comes in the title, no text.
+        assertEquals(
+            NavInstruction("", "Siga em direção à R. Roberto Stiegert"),
+            navInstruction("com.google.android.apps.maps", "navigation", "Siga em direção à R. Roberto Stiegert", null),
+        )
+        assertEquals(NavInstruction("", "Rua Halfeld, Centro"), navInstruction("com.google.android.apps.maps", "navigation", "Rua Halfeld", "Centro"))
+        // Distances in other scripts and with decimals stay distances.
+        assertEquals(NavInstruction("1,2 km", "Vire"), navInstruction("com.waze", "navigation", "1,2 km", "Vire"))
+        assertEquals(NavInstruction("٢٠٠ م", "انعطف"), navInstruction("com.waze", "navigation", "٢٠٠ م", "انعطف"))
+        // Starts with a digit but too long to be a distance: a maneuver (13 characters).
+        assertEquals(NavInstruction("", "3ª saída à dir"), navInstruction("com.waze", "navigation", "3ª saída à dir", null))
+    }
+
+    @Test
     fun `TURN-02 removing the notification hides the instruction`() {
         val feed = NavFeed()
         feed.post("waze", NavInstruction("10 m", "Siga"))

@@ -1441,21 +1441,21 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         addView(android.widget.LinearLayout(ctx).also { navCard = it }.apply {
             orientation = android.widget.LinearLayout.HORIZONTAL
             gravity = android.view.Gravity.CENTER_VERTICAL
-            setPadding(dp(12), dp(10), dp(16), dp(12))
+            setPadding(dp(14), dp(12), dp(20), dp(14))
             // More opaque than the drag panel: it stays up over bright video for the whole drive.
             background = android.graphics.drawable.GradientDrawable().apply {
                 cornerRadius = dp(16).toFloat()
                 setColor(0xE0000000.toInt())
             }
             elevation = dp(4).toFloat()
-            addView(android.widget.ImageView(ctx).also { navIcon = it }, android.widget.LinearLayout.LayoutParams(dp(44), dp(44)).apply {
-                marginEnd = dp(12)
+            addView(android.widget.ImageView(ctx).also { navIcon = it }, android.widget.LinearLayout.LayoutParams(dp(52), dp(52)).apply {
+                marginEnd = dp(14)
             })
             addView(android.widget.LinearLayout(ctx).apply {
                 orientation = android.widget.LinearLayout.VERTICAL
                 addView(android.widget.TextView(ctx).also { navDistance = it }.apply {
                     setTextColor(android.graphics.Color.WHITE)
-                    textSize = 26f
+                    textSize = 32f
                     typeface = android.graphics.Typeface.DEFAULT_BOLD
                     fontFeatureSettings = "tnum" // the distance counts down without the card twitching
                     includeFontPadding = false
@@ -1463,10 +1463,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 })
                 addView(android.widget.TextView(ctx).also { navText = it }.apply {
                     setTextColor(0xDEFFFFFF.toInt())
-                    textSize = 16f
+                    textSize = 18f
                     maxLines = 2
                     ellipsize = android.text.TextUtils.TruncateAt.END
-                    maxWidth = dp(220)
+                    maxWidth = dp(260)
                     setPadding(0, dp(2), 0, 0)
                 })
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
@@ -1490,13 +1490,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         navText?.text = turn.maneuver
         navText?.visibility = if (turn.maneuver.isEmpty()) View.GONE else View.VISIBLE
         val icon = turn.icon
-        if (icon != null) {
-            navIcon?.imageTintList = null // Maps' arrow keeps its own colors
-            navIcon?.setImageIcon(icon)
-        } else {
-            navIcon?.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
-            navIcon?.setImageResource(maneuverIcon(maneuverOf(turn.maneuver)))
-        }
+        // Maps' arrow is a one-color glyph tinted black (seen on the phone): white, like the app's own icons.
+        navIcon?.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+        if (icon != null) navIcon?.setImageIcon(icon) else navIcon?.setImageResource(maneuverIcon(maneuverOf(turn.maneuver)))
         val ease = android.view.animation.DecelerateInterpolator(2f)
         if (view.visibility != View.VISIBLE) {
             view.animate().cancel()
@@ -2050,8 +2046,14 @@ internal fun navInstruction(pkg: String, category: String?, title: CharSequence?
     if (pkg !in NAV_APPS || category != "navigation") return null
     val d = title?.toString()?.trim().orEmpty()
     val m = text?.toString()?.trim().orEmpty()
-    return if (d.isEmpty() && m.isEmpty()) null else NavInstruction(d, m)
+    if (d.isEmpty() && m.isEmpty()) return null
+    // Maps puts the instruction in the title before the first turn ("Siga em direção à ..."): not a distance.
+    if (d.isNotEmpty() && !NAV_DISTANCE.matches(d)) return NavInstruction("", listOf(d, m).filter { it.isNotEmpty() }.joinToString(", "))
+    return NavInstruction(d, m)
 }
+
+// "10 m", "1,2 km", "0.5 mi", "٢٠٠ م": a digit first, at most 12 characters.
+private val NAV_DISTANCE = Regex("""\p{Nd}.{0,11}""")
 
 // Navigation notifications still posted, by key; the last posted one shows (Waze and Maps both navigating).
 internal class NavFeed {
