@@ -2125,9 +2125,11 @@ internal enum class Maneuver { ARRIVE, ROUNDABOUT, U_TURN, KEEP_LEFT, KEEP_RIGHT
 // Words per maneuver in the app's 7 languages (the text is in Waze's or Maps' language). Checked in this order:
 // a roundabout text also says "exit", a keep/exit text also says the side.
 // ponytail: keyword guess; Maps' own arrow wins when the notification has one, unknown wording falls back to straight
-// Whole words only ((?U): \b also between Cyrillic and Arabic letters), so a street name or a passing word does not
-// pick the icon ("Rua do Retorno", "When you turn left", "вокруг квартала").
-private fun words(p: String) = Regex("(?U)$p")
+// Whole words only, so a street name or a passing word does not pick the icon ("Rua do Retorno", "When you turn left",
+// "вокруг квартала"). \b is spelled out with letter classes: Android's ICU rejects the (?U) flag the JVM needs for a
+// Unicode \b, and a bad pattern here crashes the whole app at class load.
+private val WORD_EDGE = "(?:(?<![\\p{L}\\p{N}])(?=[\\p{L}\\p{N}])|(?<=[\\p{L}\\p{N}])(?![\\p{L}\\p{N}]))"
+private fun words(p: String) = Regex(p.replace("\\b", WORD_EDGE))
 private val NAV_WORDS = listOf(
     Maneuver.ARRIVE to words("\\bchegou\\b|chegada ao destino|\\barriv|\\bllegado\\b|\\bllegada\\b|\\barrivat|\\barrivé|прибыли|прибытие|وصلت"),
     Maneuver.ROUNDABOUT to words("rotat[óo]ria|\\brotunda|roundabout|traffic circle|\\brotonda|glorieta|rond-point|кругов|по кругу|кольц|دوار"),
