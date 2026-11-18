@@ -173,35 +173,35 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| SIGN-01 | P1 Guided sign-in (AC 1) | Tasks | Implementing |
-| SIGN-02 | P1 Guided sign-in (AC 2) | Tasks | Implementing |
-| SIGN-03 | P1 Guided sign-in (AC 3) | Tasks | Implementing |
-| SIGN-04 | P1 Guided sign-in (AC 4) | Tasks | Implementing |
-| SIGN-05 | P1 Guided sign-in (AC 5) | Tasks | Implementing |
-| SIGN-06 | P1 Guided sign-in (AC 6, edge 1) | Tasks | Implementing |
-| SIGN-07 | P1 Guided sign-in (AC 7, edge 2) | Tasks | Implementing |
-| SIGN-08 | P1 Guided sign-in (AC 8) | Tasks | Implementing |
-| NAV-01 | P1 Car navigation (AC 1, edge 3) | Tasks | Implementing |
-| NAV-02 | P1 Car navigation (AC 2) | Tasks | Implementing |
-| NAV-03 | P1 Car navigation (AC 3) | Tasks | Implementing |
-| NAV-04 | P1 Car navigation (AC 4, edge 4) | Tasks | Implementing |
-| NAV-05 | P1 Car navigation (AC 5) | Tasks | Implementing |
-| NAV-06 | P1 Car navigation (AC 6) | Tasks | Implementing |
-| NAV-07 | P1 Car navigation (AC 7) | Tasks | Implementing |
-| CSET-01 | P2 Car settings (AC 1) | Tasks | Implementing |
-| CSET-02 | P2 Car settings (AC 2) | Tasks | Implementing |
-| CSET-03 | P2 Car settings (AC 3) | Tasks | Implementing |
-| PSET-01 | P2 Phone settings (AC 1) | Tasks | Implementing |
-| PSET-02 | P2 Phone settings (AC 2) | Tasks | Implementing |
-| PSET-03 | P2 Phone settings (AC 3) | Tasks | Implementing |
-| PSET-04 | P2 Phone settings (AC 4) | Tasks | Implementing |
-| REMOTE-01 | P2 Remote bar (AC 1) | Tasks | Implementing |
-| REMOTE-02 | P2 Remote bar (AC 2) | Tasks | Implementing |
-| REMOTE-03 | P2 Remote bar (AC 3) | Tasks | Implementing |
-| REMOTE-04 | P2 Remote bar (AC 4) | Tasks | Implementing |
-| OVL-01 | P3 Car overlays (AC 1) | Tasks | Implementing |
-| OVL-02 | P3 Car overlays (AC 2) | Tasks | Implementing |
-| OVL-03 | P3 Car overlays (AC 3) | Tasks | Implementing |
+| SIGN-01 | P1 Guided sign-in (AC 1) | Execute | Implementing |
+| SIGN-02 | P1 Guided sign-in (AC 2) | Execute | Implementing |
+| SIGN-03 | P1 Guided sign-in (AC 3) | Execute | Implementing |
+| SIGN-04 | P1 Guided sign-in (AC 4) | Execute | Implementing |
+| SIGN-05 | P1 Guided sign-in (AC 5) | Execute | Implementing |
+| SIGN-06 | P1 Guided sign-in (AC 6, edge 1) | Execute | Implementing |
+| SIGN-07 | P1 Guided sign-in (AC 7, edge 2) | Execute | Implementing |
+| SIGN-08 | P1 Guided sign-in (AC 8) | Execute | Implementing |
+| NAV-01 | P1 Car navigation (AC 1, edge 3) | Execute | Implementing |
+| NAV-02 | P1 Car navigation (AC 2) | Execute | Implementing |
+| NAV-03 | P1 Car navigation (AC 3) | Execute | Implementing |
+| NAV-04 | P1 Car navigation (AC 4, edge 4) | Execute | Implementing |
+| NAV-05 | P1 Car navigation (AC 5) | Execute | Implementing |
+| NAV-06 | P1 Car navigation (AC 6) | Execute | Implementing |
+| NAV-07 | P1 Car navigation (AC 7) | Execute | Implementing |
+| CSET-01 | P2 Car settings (AC 1) | Execute | Implementing |
+| CSET-02 | P2 Car settings (AC 2) | Execute | Implementing |
+| CSET-03 | P2 Car settings (AC 3) | Execute | Implementing |
+| PSET-01 | P2 Phone settings (AC 1) | Execute | Implementing |
+| PSET-02 | P2 Phone settings (AC 2) | Execute | Implementing |
+| PSET-03 | P2 Phone settings (AC 3) | Execute | Implementing |
+| PSET-04 | P2 Phone settings (AC 4) | Execute | Implementing |
+| REMOTE-01 | P2 Remote bar (AC 1) | Execute | Implementing |
+| REMOTE-02 | P2 Remote bar (AC 2) | Execute | Implementing |
+| REMOTE-03 | P2 Remote bar (AC 3) | Execute | Implementing |
+| REMOTE-04 | P2 Remote bar (AC 4) | Execute | Implementing |
+| OVL-01 | P3 Car overlays (AC 1) | Execute | Implementing |
+| OVL-02 | P3 Car overlays (AC 2) | Execute | Implementing |
+| OVL-03 | P3 Car overlays (AC 3) | Execute | Implementing |
 
 **Coverage:** 29 total, 0 mapped to tasks, 29 unmapped ⚠️ (Tasks phase next)
 
