@@ -1207,7 +1207,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 orientation = android.widget.LinearLayout.VERTICAL
                 gravity = android.view.Gravity.CENTER_HORIZONTAL
                 setPadding(dp(32), 0, dp(32), 0)
-                addView(android.widget.ImageView(ctx).also { coverArt = it }, android.widget.LinearLayout.LayoutParams(dp(160), dp(90)))
+                addView(android.widget.ImageView(ctx).also { coverArt = it }, android.widget.LinearLayout.LayoutParams(dp(320), dp(180)))
                 addView(android.widget.TextView(ctx).also { coverTitle = it }.apply {
                     setTextColor(android.graphics.Color.WHITE)
                     textSize = 22f
