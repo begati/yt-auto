@@ -218,6 +218,13 @@ private fun jsSeekBy(seconds: Int) =
     "(v=>v&&(v.currentTime=Math.max(0,Math.min(v.duration||1e9,v.currentTime+($seconds)))))(document.querySelector('${MAIN_VIDEO}'))"
 // Player's own "next": the playlist's next item, or the autoplay pick outside a playlist.
 private const val JS_NEXT = "document.getElementById('${PLAYER_ID}')?.nextVideo?.()"
+// Player and progress bar rects in page px (the bar only while YouTube's controls show it), and the main video's time.
+private const val PROGRESS_BAR = ".ytPlayerProgressBarDragContainer"
+private const val JS_GEOMETRY =
+    "(()=>{const r=e=>{if(!e)return null;const b=e.getBoundingClientRect();return[b.left,b.top,b.right,b.bottom]};" +
+        "const v=document.querySelector('${MAIN_VIDEO}'),b=document.querySelector('${PROGRESS_BAR}');" +
+        "return{p:r(document.getElementById('${PLAYER_ID}')),b:b&&getComputedStyle(b).visibility==='visible'?r(b):null," +
+        "d:v&&isFinite(v.duration)?v.duration:0,t:v?v.currentTime:0}})()"
 
 // Player quality names (YouTube's) -> label string ids. "medium" (360p) is the bandwidth-saving default.
 internal val QUALITIES = linkedMapOf(
@@ -799,6 +806,18 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var cover: View? = null
     private var coverArt: android.widget.ImageView? = null
     private var coverTitle: android.widget.TextView? = null
+    // Double-tap bubble (see skipBubble): its pieces, and the total it shows since the first of a run of double taps.
+    private var skipView: FrameLayout? = null
+    private var skipMoon: View? = null
+    private var skipLabel: android.widget.LinearLayout? = null
+    private var skipIcon: android.widget.ImageView? = null
+    private var skipText: android.widget.TextView? = null
+    private var skipTotal = 0
+    private var skipAt = 0L
+    private val ui = android.os.Handler(android.os.Looper.getMainLooper())
+    private val hideSkip = Runnable {
+        skipView?.animate()?.alpha(0f)?.setDuration(200)?.withEndAction { skipView?.visibility = View.GONE }
+    }
     private var moving = false
     private var lastFix: android.location.Location? = null
     private val speedListener = android.location.LocationListener { l ->
@@ -1168,6 +1187,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             webView = wv
             root = frame
             frame.addView(wv)
+            frame.addView(skipBubble(context).also { skipView = it }) // over the page, under the offline screen and the audio cover
             frame.addView(offline)
             frame.addView(audioCover(context).also { cover = it })
             updateCover()
@@ -1194,6 +1214,12 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         cover = null
         coverArt = null
         coverTitle = null
+        ui.removeCallbacks(hideSkip)
+        skipView = null
+        skipMoon = null
+        skipLabel = null
+        skipIcon = null
+        skipText = null
         exitFullscreen = null
         presentation = null
         display = null
@@ -1228,6 +1254,96 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 leftMargin = l
                 topMargin = t
             }
+        }
+    }
+
+    // Half-moon on the tapped side with an arrow and the seconds skipped, like YouTube's own double-tap feedback.
+    // Sized per show from the WebView's area (see showSkip); never takes touches.
+    private fun skipBubble(ctx: Context) = FrameLayout(ctx).apply {
+        fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
+        visibility = View.GONE
+        addView(View(ctx).also { skipMoon = it }.apply {
+            background = android.graphics.drawable.GradientDrawable().apply {
+                shape = android.graphics.drawable.GradientDrawable.OVAL
+                setColor(0x80000000.toInt())
+            }
+        })
+        addView(android.widget.LinearLayout(ctx).also { skipLabel = it }.apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            gravity = android.view.Gravity.CENTER
+            addView(android.widget.ImageView(ctx).also { skipIcon = it }.apply {
+                imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+            }, android.widget.LinearLayout.LayoutParams(dp(40), dp(40)))
+            addView(android.widget.TextView(ctx).also { skipText = it }.apply {
+                setTextColor(android.graphics.Color.WHITE)
+                textSize = 18f
+                typeface = android.graphics.Typeface.DEFAULT_BOLD
+                setShadowLayer(4f, 0f, 1f, 0x80000000.toInt())
+                setPadding(0, dp(4), 0, 0)
+            }, android.widget.LinearLayout.LayoutParams(-2, -2))
+        })
+    }
+
+    private fun showSkip(skip: Int) {
+        val view = skipView ?: return
+        val (w, h) = displaySize ?: return
+        val (l, t, r, b) = webViewBounds(w, h, area)
+        val now = SystemClock.uptimeMillis()
+        val added = skipTotal != 0 && addSkip(skipTotal, skipAt, skip, now) != skip
+        skipTotal = addSkip(skipTotal, skipAt, skip, now)
+        skipAt = now
+        // Physical side, also in right-to-left languages: it is where the finger was.
+        val side = if (skipTotal < 0) android.view.Gravity.LEFT else android.view.Gravity.RIGHT
+        val aw = r - l
+        val ah = b - t
+        val out = (aw * 0.12f).toInt() // part of the moon off the edge, so its curve faces the middle
+        skipMoon?.layoutParams = FrameLayout.LayoutParams((aw * 0.42f).toInt(), (ah * 1.6f).toInt(), side or android.view.Gravity.CENTER_VERTICAL).apply {
+            if (side == android.view.Gravity.LEFT) leftMargin = -out else rightMargin = -out
+        }
+        skipLabel?.layoutParams = FrameLayout.LayoutParams((aw * 0.42f).toInt() - out, -2, side or android.view.Gravity.CENTER_VERTICAL)
+        skipIcon?.setImageResource(if (skipTotal < 0) R.drawable.ic_rewind else R.drawable.ic_fast_forward)
+        skipText?.text = carContext.getString(R.string.seek_seconds, kotlin.math.abs(skipTotal))
+        ui.removeCallbacks(hideSkip)
+        view.animate().cancel()
+        if (view.visibility != View.VISIBLE) {
+            view.alpha = 0f
+            view.visibility = View.VISIBLE
+        }
+        view.animate().alpha(1f).setDuration(120).setInterpolator(android.view.animation.DecelerateInterpolator()).start()
+        // Each added 10 s nudges the count, so the change reads at a glance.
+        if (added) skipLabel?.run {
+            scaleX = 1.15f
+            scaleY = 1.15f
+            animate().scaleX(1f).scaleY(1f).setDuration(160).setInterpolator(android.view.animation.DecelerateInterpolator()).start()
+        }
+        ui.postDelayed(hideSkip, 600)
+    }
+
+    // Player and progress bar in surface px, the main video's duration and time; read from the page when a gesture lands.
+    private class Geometry(val player: List<Float>?, val bar: List<Float>?, val durationMs: Long, val positionMs: Long)
+
+    private fun geometry(then: (Geometry) -> Unit) {
+        val wv = webView ?: return
+        val (w, h) = displaySize ?: return
+        val (l, t) = webViewBounds(w, h, area)
+        val d = wv.resources.displayMetrics.density
+        wv.evaluateJavascript(JS_GEOMETRY) { json ->
+            val o = runCatching { JSONObject(json) }.getOrNull() ?: return@evaluateJavascript
+            fun rect(k: String) = o.optJSONArray(k)?.let { a -> List(4) { (a.getDouble(it) * d).toFloat() + if (it % 2 == 0) l else t } }
+            then(Geometry(rect("p"), rect("b"), (o.optDouble("d", 0.0) * 1000).toLong(), (o.optDouble("t", 0.0) * 1000).toLong()))
+        }
+    }
+
+    private val onWatch get() = videoIdFromUrl(pageUrl) != null
+
+    // Double tap (the host's onScale with factor 2): 10 s back on the player's left half, forward on its right half.
+    override fun onScale(focusX: Float, focusY: Float, scaleFactor: Float) {
+        if (scaleFactor != 2f || !onWatch) return // a pinch, or no video: nothing to read
+        geometry { g ->
+            val skip = doubleTapSkip(onWatch, scaleFactor, focusX, focusY, g.player)
+            if (skip == 0) return@geometry
+            js(jsSeekBy(skip))
+            showSkip(skip)
         }
     }
 

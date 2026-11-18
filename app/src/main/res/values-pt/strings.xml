@@ -45,6 +45,7 @@
     <string name="audio_only_moving">Só áudio enquanto dirige. O vídeo volta quando o carro parar.</string>
     <string name="rewind_10">Voltar 10 s</string>
     <string name="forward_10">Avançar 10 s</string>
+    <string name="seek_seconds">%d s</string>
     <string name="watch_later">Assistir mais tarde</string>
     <string name="liked">Vídeos curtidos</string>
     <string name="playlists">Playlists</string>

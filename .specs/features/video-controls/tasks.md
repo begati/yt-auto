@@ -76,8 +76,8 @@ T1 → T2 → T3 → T4
 
 **Done when**:
 
-- [ ] Walk no DHU: dois toques à direita sobem `currentTime` ~10 s e mostram a bolha à direita; à esquerda, o contrário; dois duplos toques seguidos mostram "20 s"
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk no DHU: dois toques à direita sobem `currentTime` ~10 s e mostram a bolha à direita; à esquerda, o contrário; dois duplos toques seguidos mostram "20 s"
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build

@@ -45,6 +45,7 @@
     <string name="audio_only_moving">Solo audio mientras conduces. El vídeo vuelve cuando el coche se detenga.</string>
     <string name="rewind_10">Retroceder 10 s</string>
     <string name="forward_10">Avanzar 10 s</string>
+    <string name="seek_seconds">%d s</string>
     <string name="watch_later">Ver más tarde</string>
     <string name="liked">Videos que me gustan</string>
     <string name="playlists">Listas de reproducción</string>

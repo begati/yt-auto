@@ -45,6 +45,7 @@
     <string name="audio_only_moving">Только звук во время движения. Видео вернётся, когда машина остановится.</string>
     <string name="rewind_10">Назад на 10 с</string>
     <string name="forward_10">Вперёд на 10 с</string>
+    <string name="seek_seconds">%d с</string>
     <string name="watch_later">Смотреть позже</string>
     <string name="liked">Понравившиеся</string>
     <string name="playlists">Плейлисты</string>
