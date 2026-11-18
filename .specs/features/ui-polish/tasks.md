@@ -245,8 +245,8 @@ T12 → T13
 
 **Done when**:
 
-- [ ] Phone: remote bar gone on the Google form, back on YouTube
-- [ ] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
+- [x] Phone: remote bar gone on the Google form, back on YouTube
+- [x] Gate check passes: `./gradlew assembleDebug testDebugUnitTest`
 
 **Tests**: none
 **Gate**: build

@@ -1675,13 +1675,19 @@ class LoginActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val offline = offlineView(this)
+        val barBox = FrameLayout(this) // the remote bar sets its own visibility; this hides it on Google's sign-in
         val retrying = object : OfflineRetry(this, offline) {
             override fun onLoaded(view: WebView) {
                 view.evaluateJavascript(PHONE_JS, null)
                 checkSignIn()
             }
+
+            // Every main-frame navigation, page loads and in-page ones alike.
+            override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
+                barBox.visibility = if (isCarSignIn(url)) View.GONE else View.VISIBLE
+            }
         }.also { client = it }
-        bar = RemoteBar(this, car)
+        bar = RemoteBar(this, car).also { barBox.addView(it) }
         val page = FrameLayout(this).apply {
             addView(WebView(context).also { web = it }.apply {
                 settings.javaScriptEnabled = true
@@ -1715,7 +1721,7 @@ class LoginActivity : Activity() {
             orientation = android.widget.LinearLayout.VERTICAL
             addView(signInBanner().also { banner = it })
             addView(page, android.widget.LinearLayout.LayoutParams(-1, 0, 1f))
-            addView(bar)
+            addView(barBox)
         })
         checkSignIn()
         if (savedInstanceState == null) {
