@@ -49,6 +49,7 @@ botão nem rótulo. Quem não lê o README não descobre que existem. Pedido do 
 1. WHEN um vídeo de uma página `/watch` começa a tocar no carro e a dica nunca foi mostrada THEN the app SHALL mostrar um `CarToast` longo com o texto `gesture_hint` no idioma do celular
 2. WHEN a dica é mostrada THEN the app SHALL salvar que ela foi mostrada, e SHALL não mostrá-la de novo, nem depois de reiniciar o app
 3. IF o vídeo toca fora de `/watch` (prévia no feed, miniplayer) THEN the app SHALL não mostrar a dica nem marcá-la como mostrada
+4. IF o vídeo toca sem estar na tela do carro (outro app em primeiro plano com "tocar com outro app na tela", ou a capa de só áudio por cima) THEN the app SHALL não mostrar a dica nem marcá-la como mostrada (achado do Verifier)
 
 **Independent Test**: com a marca apagada, abrir um vídeo no DHU mostra a dica; abrir outro vídeo não mostra.
 
@@ -61,8 +62,9 @@ botão nem rótulo. Quem não lê o README não descobre que existem. Pedido do 
 | HINT-01 | P1: Dica (AC 1) | Execute | Pending |
 | HINT-02 | P1: Dica (AC 2) | Execute | Pending |
 | HINT-03 | P1: Dica (AC 3) | Execute | Pending |
+| HINT-04 | P1: Dica (AC 4) | Verification | Pending |
 
-**Coverage:** 3 total, 0 mapped, 3 unmapped ⚠️ (Tasks skipped: one step, checks below)
+**Coverage:** 4 total, 0 mapped, 3 unmapped ⚠️ (Tasks skipped: one step, checks below)
 
 ---
 
@@ -93,6 +95,9 @@ Proof: run unit | HINT-02 the hint shows only once PASSED
 **C3** - Vídeo fora de `/watch` não mostra nem gasta a dica (HINT-03, AC 3)
 Proof: run unit | HINT-03 a video off watch neither shows nor uses up the hint PASSED
 
+**C5** - Vídeo fora da tela do carro não mostra nem gasta a dica (HINT-04, AC 4)
+Proof: run unit | HINT-04 a video not on screen neither shows nor uses up the hint PASSED
+
 **C4** - O toast aparece no carro com o texto no idioma do celular (HINT-01, AC 1)
 Proof: walk - DHU com a marca apagada: screenshot do toast ao abrir um vídeo; segundo vídeo sem toast
 
@@ -102,4 +107,4 @@ Proof: walk - DHU com a marca apagada: screenshot do toast ao abrir um vídeo; s
 
 **Settled mid-build:** none
 **Dispatched:** Verifier at HEAD aba2790 (diff e5041bd..aba2790); no screens sub-agent (no capture)
-**Walked:** 2026-11-18, orchestrator, DHU 800x480 + phone 0091479724, debug build installed over the previous one with data kept (`gestureHintShown` absent from `shared_prefs/settings.xml` before). Reach: Início, tap a feed title. C4: the first video on `/watch` shows the car toast "Dica: toque duas vezes no vídeo para pular 10 s, ou arraste para o lado para avançar" (two lines, whole text) for ~3 s, then it goes; prefs now hold `gestureHintShown=true`. `history.back()` to Início, tap another video: it plays on `/watch` (`paused` false) and no toast shows in screenshots over 8 s.
+**Walked:** 2026-11-18, orchestrator, DHU 800x480 + phone 0091479724, debug build installed over the previous one with data kept (`gestureHintShown` absent from `shared_prefs/settings.xml` before). Reach: Início, tap a feed title. C4: the first video on `/watch` shows the car toast "Dica: toque duas vezes no vídeo para pular 10 s, ou arraste para o lado para avançar" (two lines, whole text) for ~3 s, then it goes; prefs now hold `gestureHintShown=true`. `history.back()` to Início, tap another video: it plays on `/watch` (`paused` false) and no toast shows in screenshots over 8 s. Round 2 (after the Verifier, hint only while the video is on screen): the mark deleted with `run-as sed`, app restarted; opening a video shows the same toast again and stores the mark.

@@ -953,7 +953,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
 
     private fun setPlaying(p: Boolean) {
-        if (p && takeGestureHint(prefs(carContext), onWatch))
+        val visible = display?.surface != null && cover?.visibility != View.VISIBLE
+        if (p && takeGestureHint(prefs(carContext), onWatch, visible))
             CarToast.makeText(carContext, R.string.gesture_hint, CarToast.LENGTH_LONG).show()
         playing = p
         published = SystemClock.elapsedRealtime()
@@ -1928,9 +1929,10 @@ internal fun isNewer(tag: String, current: String): Boolean {
 
 // Phone sign-in banner: shown while signed out, unless closed since the last sign-in state change.
 internal fun bannerShown(signedIn: Boolean, closedWhileSignedOut: Boolean) = !signedIn && !closedWhileSignedOut
-// The car's gestures have no buttons: the first video played on a watch page tells about them, once per install.
-internal fun takeGestureHint(prefs: SharedPreferences, onWatch: Boolean): Boolean {
-    if (!onWatch || prefs.getBoolean("gestureHintShown", false)) return false
+// The car's gestures have no buttons: the first video played on a watch page tells about them, once per install,
+// while the video is on screen (not behind another app or the audio-only cover).
+internal fun takeGestureHint(prefs: SharedPreferences, onWatch: Boolean, visible: Boolean): Boolean {
+    if (!onWatch || !visible || prefs.getBoolean("gestureHintShown", false)) return false
     prefs.edit().putBoolean("gestureHintShown", true).apply()
     return true
 }
