@@ -82,7 +82,7 @@ The screenshot shows KingInstaller in Portuguese: "Selecione o APK para instalar
 
 ### 4. Use it
 
-1. Open **YT Auto** on the phone. To use your YouTube account, tap **You** > **Sign in** (optional).
+1. Open **YT Auto** on the phone. To use your YouTube account, tap **Sign in** on the banner at the top (optional; sign-in only works on the phone, the car uses the same account).
 2. Connect the phone to the car and open **YT Auto** from the Android Auto launcher.
 
 Updates: install the new APK with KingInstaller the same way. Your sign-in and settings are kept.

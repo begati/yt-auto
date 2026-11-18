@@ -81,7 +81,7 @@ ou gerenciador de arquivos).
 
 ### 4. Use
 
-1. Abra o **YT Auto** no celular. Para usar sua conta do YouTube, toque em **Você** > **Fazer login** (opcional).
+1. Abra o **YT Auto** no celular. Para usar sua conta do YouTube, toque em **Entrar** no aviso do topo (opcional; o login só funciona no celular, e o carro usa a mesma conta).
 2. Conecte o celular ao carro e abra o **YT Auto** pelo menu do Android Auto.
 
 Atualizações: instale o APK novo pelo KingInstaller do mesmo jeito. Login e configurações são mantidos.
