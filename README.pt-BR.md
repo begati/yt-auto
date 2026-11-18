@@ -104,16 +104,22 @@ carro não tem botões próprios para avançar ou voltar; use estes gestos:
 
 Os botões do volante (tocar/pausar, próximo, anterior) e o card de mídia do Android Auto também controlam o vídeo.
 
-### O carro mostra "Abra o YT Auto no carro para tocar"
+### O carro mostra "Abra o YT Auto pela lista de apps do carro"
 
 Essa tela é o player de mídia do YT Auto, não a tela de vídeo. O Android Auto esconde a tela de vídeo de apps que
 não vieram da Play Store, e é isso que o KingInstaller contorna. Onde isso não funciona (por exemplo no GrapheneOS),
-ative **Fontes desconhecidas** no Android Auto:
+ative **Fontes desconhecidas** no Android Auto. Só liberar o modo desenvolvedor não basta: Fontes desconhecidas é
+uma opção separada dentro dele.
 
 1. Abra as configurações do Android Auto no celular (no GrapheneOS: **Configurações** > **Apps** > **Android Auto**)
    e toque 10 vezes em **Versão** para liberar as configurações de desenvolvedor.
-2. No Android Auto, abra o menu **⋮** > **Configurações do desenvolvedor** e ative **Fontes desconhecidas**.
-3. Reinicie o celular e conecte de novo ao carro. A tela de vídeo do YT Auto passa a aparecer no menu.
+2. No Android Auto, abra o menu **⋮** > **Configurações do desenvolvedor** e ative **Fontes desconhecidas** (fica
+   mais para baixo na lista).
+3. Reinicie o celular e conecte de novo ao carro.
+4. No carro, abra o YT Auto pela lista de apps do Android Auto (ícone de grade), não pelo card de mídia.
+
+Ainda não aparece? Nas configurações do Android Auto no celular, abra **Personalizar inicializador** e confira se o
+YT Auto está marcado. Se instalou o APK sem o KingInstaller, instale de novo pelo KingInstaller.
 
 ## Compilando o código
 

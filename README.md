@@ -104,16 +104,22 @@ its own for seeking; use these gestures:
 
 The steering wheel buttons (play/pause, next, previous) and the Android Auto media card also control the video.
 
-### The car shows "Open YT Auto in the car to play"
+### The car shows "Open YT Auto from the car's app list"
 
 That screen is YT Auto's media player, not the video screen. Android Auto hides the video screen of apps that
 weren't installed from the Play Store, which is what KingInstaller works around. Where that doesn't work (for
-example on GrapheneOS), turn on **Unknown sources** in Android Auto:
+example on GrapheneOS), turn on **Unknown sources** in Android Auto. Unlocking developer mode alone is not enough:
+Unknown sources is a separate switch inside it.
 
 1. Open Android Auto's settings on the phone (on GrapheneOS: **Settings** > **Apps** > **Android Auto**) and tap
    **Version** 10 times to unlock the developer settings.
-2. In Android Auto, open the **⋮** menu > **Developer settings** and turn on **Unknown sources**.
-3. Restart the phone and reconnect it to the car. YT Auto's video screen now shows up in the launcher.
+2. In Android Auto, open the **⋮** menu > **Developer settings** and turn on **Unknown sources** (it is further
+   down the list).
+3. Restart the phone and reconnect it to the car.
+4. In the car, open YT Auto from Android Auto's app list (the grid icon), not from the media card.
+
+Still missing? In Android Auto's settings on the phone, open **Customize launcher** and check that YT Auto is ticked.
+If you installed the APK without KingInstaller, install it again with KingInstaller.
 
 ## Building from source
 
