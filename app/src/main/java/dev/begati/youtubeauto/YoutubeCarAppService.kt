@@ -83,7 +83,9 @@ private const val YT_NAV_GAPS = "ytm-app{padding-top:0!important}ytm-feed-filter
 // Google sign-in links ("Fazer login" rows and buttons, like buttons while signed out): sign-in happens on the phone.
 // Feed and search titles cap their height in px for the default font size; the car's text zoom (130% by default) makes two lines
 // taller than that and cuts the second one. The 2-line clamp still applies.
-private const val TITLE_FIT = ".ytLockupMetadataViewModelTitle,.ytLockupMetadataViewModelHeadingReset,.media-item-headline,.media-item-metadata" +
+// History and playlist rows (compact items) cap the channel + views block the same way and cut the views line.
+private const val TITLE_FIT = ".ytLockupMetadataViewModelTitle,.ytLockupMetadataViewModelHeadingReset,.media-item-headline,.media-item-metadata," +
+    ".YtmCompactMediaItemSubhead,.YtmCompactMediaItemMetadataContent,.YtmCompactMediaItemHost" +
     "{max-height:none!important;height:auto!important}"
 private const val SIGN_IN_LINKS = "a[href*=\"accounts.google.com\"],ytm-button-renderer:has(>a[href*=\"accounts.google.com\"])"
 
