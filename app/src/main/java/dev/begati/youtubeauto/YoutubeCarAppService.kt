@@ -285,6 +285,13 @@ internal fun nextAspect(prefs: SharedPreferences): String {
     return keys[(keys.indexOf(choice(prefs, ASPECT)) + 1) % keys.size].also { setChoice(prefs, ASPECT, it) }
 }
 
+// Car aspect button icon for aspect [aspect] (an ASPECT key): Ajustar, Preencher, Esticar.
+internal fun aspectIcon(aspect: String) = when (aspect) {
+    "contain" -> R.drawable.ic_fit_screen
+    "cover" -> R.drawable.ic_crop
+    else -> R.drawable.ic_open_in_full
+}
+
 // Home button label (string id): the chosen home page's name (Home / Subscriptions / History).
 internal fun homeLabel(prefs: SharedPreferences) = HOME_PAGE.options.getValue(choice(prefs, HOME_PAGE))
 
@@ -918,21 +925,22 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         }
     }
 
+    private fun icon(id: Int) = CarIcon.Builder(IconCompat.createWithResource(carContext, id)).build()
+
     override fun onGetTemplate() = NavigationTemplate.Builder()
         .setActionStrip(
             ActionStrip.Builder()
-                .addAction(Action.Builder().setTitle(carContext.getString(R.string.back)).setOnClickListener { exitFullscreen?.onCustomViewHidden() ?: webView?.goBack() }.build())
-                // Named after the chosen home page (Home / Subscriptions / History).
-                .addAction(Action.Builder().setTitle(carContext.getString(homeLabel(prefs(carContext)))).setOnClickListener {
+                .addAction(Action.Builder().setIcon(icon(R.drawable.ic_arrow_back)).setOnClickListener { exitFullscreen?.onCustomViewHidden() ?: webView?.goBack() }.build())
+                .addAction(Action.Builder().setIcon(icon(R.drawable.ic_home)).setOnClickListener {
                     pageUrl = choice(carContext, HOME_PAGE)
                     webView?.loadUrl(pageUrl)
                 }.build())
                 .apply {
                     toggleShown = playToggleShown(pageUrl, playing)
                     if (toggleShown)
-                        addAction(Action.Builder().setTitle(carContext.getString(if (playing) R.string.pause else R.string.play)).setOnClickListener { js(JS_TOGGLE) }.build())
+                        addAction(Action.Builder().setIcon(icon(if (playing) R.drawable.ic_pause else R.drawable.ic_play_arrow)).setOnClickListener { js(JS_TOGGLE) }.build())
                 }
-                .addAction(Action.Builder().setTitle(carContext.getString(R.string.search)).setOnClickListener {
+                .addAction(Action.Builder().setIcon(icon(R.drawable.ic_search)).setOnClickListener {
                     screenManager.push(SearchScreen(carContext) { query ->
                         pageUrl = searchUrl(query)
                         webView?.loadUrl(pageUrl)
@@ -942,16 +950,19 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         )
         .setMapActionStrip(
             ActionStrip.Builder()
-                // Video aspect: Ajustar -> Preencher -> Esticar, saved as the default.
+                // Video aspect: Ajustar -> Preencher -> Esticar, saved as the default; the icon shows the current one.
                 .addAction(
                     Action.Builder()
-                        .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_aspect_ratio)).build())
-                        .setOnClickListener { CarToast.makeText(carContext, cycleAspect(carContext), CarToast.LENGTH_SHORT).show() }
+                        .setIcon(icon(aspectIcon(choice(carContext, ASPECT))))
+                        .setOnClickListener {
+                            CarToast.makeText(carContext, cycleAspect(carContext), CarToast.LENGTH_SHORT).show()
+                            invalidate()
+                        }
                         .build()
                 )
                 .addAction(
                     Action.Builder()
-                        .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_settings)).build())
+                        .setIcon(icon(R.drawable.ic_settings))
                         .setOnClickListener {
                             screenManager.push(SettingsScreen(carContext) {
                                 // Flags are read live by the page; zoom, quality, speed and captions need a push.
@@ -959,7 +970,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                                 applyPlayback()
                                 listenSpeed() // the audio flag may have just been turned on
                                 updateCover()
-                                invalidate() // home button label
+                                invalidate()
                             })
                         }
                         .build()
