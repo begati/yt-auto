@@ -840,6 +840,14 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
     private var skipAt = 0L
     private val ui = android.os.Handler(android.os.Looper.getMainLooper())
+    // Next turn of Waze / Maps (see NavListener), top left over everything; shownTurn is the maneuver text on screen.
+    private var navView: View? = null
+    private var navCard: View? = null
+    private var navIcon: android.widget.ImageView? = null
+    private var navDistance: android.widget.TextView? = null
+    private var navText: android.widget.TextView? = null
+    private var shownTurn: String? = null
+    private val navChanged = { showNav() }
     private val hideSkip = Runnable {
         skipView?.animate()?.alpha(0f)?.setDuration(200)?.withEndAction { skipView?.visibility = View.GONE }
     }
@@ -1220,6 +1228,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             frame.addView(dragIndicator(context).also { dragView = it })
             frame.addView(offline)
             frame.addView(audioCover(context).also { cover = it })
+            frame.addView(navOverlay(context).also { navView = it }) // over the audio cover too: driving is when it matters
+            onNavChanged = navChanged
+            showNav()
             updateCover()
             fitToArea()
             setContentView(frame)
@@ -1251,6 +1262,13 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         dragTime = null
         dragDiff = null
         dragFill = null
+        if (onNavChanged === navChanged) onNavChanged = null
+        navView = null
+        navCard = null
+        navIcon = null
+        navDistance = null
+        navText = null
+        shownTurn = null
         skipView = null
         skipMoon = null
         skipLabel = null
@@ -1414,6 +1432,87 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             },
             FrameLayout.LayoutParams(-1, -2, android.view.Gravity.CENTER),
         )
+    }
+
+    // Next-turn card, same family as the drag panel: maneuver icon, distance big, maneuver text below. Never takes touches.
+    private fun navOverlay(ctx: Context) = FrameLayout(ctx).apply {
+        fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
+        visibility = View.GONE
+        addView(android.widget.LinearLayout(ctx).also { navCard = it }.apply {
+            orientation = android.widget.LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            setPadding(dp(12), dp(10), dp(16), dp(12))
+            // More opaque than the drag panel: it stays up over bright video for the whole drive.
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = dp(16).toFloat()
+                setColor(0xE0000000.toInt())
+            }
+            elevation = dp(4).toFloat()
+            addView(android.widget.ImageView(ctx).also { navIcon = it }, android.widget.LinearLayout.LayoutParams(dp(44), dp(44)).apply {
+                marginEnd = dp(12)
+            })
+            addView(android.widget.LinearLayout(ctx).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                addView(android.widget.TextView(ctx).also { navDistance = it }.apply {
+                    setTextColor(android.graphics.Color.WHITE)
+                    textSize = 26f
+                    typeface = android.graphics.Typeface.DEFAULT_BOLD
+                    fontFeatureSettings = "tnum" // the distance counts down without the card twitching
+                    includeFontPadding = false
+                    maxLines = 1
+                })
+                addView(android.widget.TextView(ctx).also { navText = it }.apply {
+                    setTextColor(0xDEFFFFFF.toInt())
+                    textSize = 16f
+                    maxLines = 2
+                    ellipsize = android.text.TextUtils.TruncateAt.END
+                    maxWidth = dp(220)
+                    setPadding(0, dp(2), 0, 0)
+                })
+            }, android.widget.LinearLayout.LayoutParams(-2, -2))
+        }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.TOP or android.view.Gravity.LEFT).apply {
+            leftMargin = dp(12)
+            topMargin = dp(12)
+        })
+    }
+
+    // Shows, updates or hides the card from navFeed. Only a new maneuver animates; the distance ticking down does not.
+    private fun showNav() {
+        val view = navView ?: return
+        val turn = navToShow(prefs(carContext), navFeed)
+        if (turn == null) {
+            if (view.visibility == View.VISIBLE) view.animate().alpha(0f).setDuration(150).withEndAction { view.visibility = View.GONE }.start()
+            shownTurn = null
+            return
+        }
+        navDistance?.text = turn.distance
+        navDistance?.visibility = if (turn.distance.isEmpty()) View.GONE else View.VISIBLE
+        navText?.text = turn.maneuver
+        navText?.visibility = if (turn.maneuver.isEmpty()) View.GONE else View.VISIBLE
+        val icon = turn.icon
+        if (icon != null) {
+            navIcon?.imageTintList = null // Maps' arrow keeps its own colors
+            navIcon?.setImageIcon(icon)
+        } else {
+            navIcon?.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+            navIcon?.setImageResource(maneuverIcon(maneuverOf(turn.maneuver)))
+        }
+        val ease = android.view.animation.DecelerateInterpolator(2f)
+        if (view.visibility != View.VISIBLE) {
+            view.animate().cancel()
+            view.alpha = 0f
+            view.visibility = View.VISIBLE
+            navCard?.translationY = -navCard!!.resources.displayMetrics.density * 8
+            view.animate().alpha(1f).setDuration(200).setInterpolator(ease).start()
+            navCard?.animate()?.translationY(0f)?.setDuration(240)?.setInterpolator(ease)?.start()
+        } else if (turn.maneuver != shownTurn) navCard?.run {
+            scaleX = 0.96f
+            scaleY = 0.96f
+            pivotX = 0f
+            pivotY = 0f
+            animate().scaleX(1f).scaleY(1f).setDuration(220).setInterpolator(ease).start()
+        }
+        shownTurn = turn.maneuver
     }
 
     // Centered panel while a drag seeks: target / duration, the signed jump and a track at the target.
@@ -2022,6 +2121,17 @@ internal fun maneuverOf(text: String): Maneuver {
         left < right -> if (keep) Maneuver.KEEP_LEFT else Maneuver.LEFT
         else -> if (keep) Maneuver.KEEP_RIGHT else Maneuver.RIGHT
     }
+}
+
+internal fun maneuverIcon(m: Maneuver) = when (m) {
+    Maneuver.ARRIVE -> R.drawable.ic_flag
+    Maneuver.ROUNDABOUT -> R.drawable.ic_roundabout_right
+    Maneuver.U_TURN -> R.drawable.ic_u_turn_left
+    Maneuver.KEEP_LEFT -> R.drawable.ic_turn_slight_left
+    Maneuver.KEEP_RIGHT -> R.drawable.ic_turn_slight_right
+    Maneuver.LEFT -> R.drawable.ic_turn_left
+    Maneuver.RIGHT -> R.drawable.ic_turn_right
+    Maneuver.STRAIGHT -> R.drawable.ic_straight
 }
 
 internal fun bannerClosed(prefs: SharedPreferences) = prefs.getBoolean("bannerClosed", false)
