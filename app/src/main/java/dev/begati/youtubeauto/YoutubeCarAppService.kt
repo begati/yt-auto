@@ -970,7 +970,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
 
     private fun setPlaying(p: Boolean) {
-        val visible = display?.surface != null && cover?.visibility != View.VISIBLE
+        // On screen: the surface is drawn, no audio cover over it, and no list (settings, search) pushed on top.
+        val visible = display?.surface != null && cover?.visibility != View.VISIBLE && screenManager.top === this
         if (p && takeGestureHint(prefs(carContext), onWatch, visible, hintShown)) {
             hintShown = true
             CarToast.makeText(carContext, R.string.gesture_hint, CarToast.LENGTH_LONG).show()
