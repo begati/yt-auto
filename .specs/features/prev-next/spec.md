@@ -53,7 +53,7 @@ pena esse botao no app, só que nem sempre tem próximo vídeo a ser exibido, tr
 3. WHEN o motorista toca em próximo THEN the app SHALL abrir o próximo vídeo do YouTube
 4. WHEN o motorista toca em anterior e o YouTube tem vídeo anterior THEN the app SHALL abrir o vídeo anterior
 5. WHEN o motorista toca em anterior e o YouTube não tem vídeo anterior THEN the app SHALL voltar o vídeo atual ao início
-6. WHILE a página não é um vídeo the app SHALL mostrar na barra lateral só proporção e configurações
+6. WHILE a página não é um vídeo the app SHALL mostrar na barra lateral só configurações (era "proporção e configurações"; mudado em 2026-11-19 pela spec critique-fixes, FIX-04)
 7. WHEN o YouTube passa a ter ou deixa de ter próximo vídeo THEN the app SHALL atualizar a barra lateral
 
 **Independent Test**: no DHU, num vídeo de mix: anterior e próximo na barra; próximo troca de vídeo; num vídeo solto,

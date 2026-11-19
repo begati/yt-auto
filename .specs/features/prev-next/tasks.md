@@ -120,8 +120,8 @@ Proof: run unit | PN-04 previous opens the previous video when there is one PASS
 **C5** - Anterior sem vídeo anterior volta ao início (PN-05, AC 5)
 Proof: run unit | PN-05 previous restarts the video when there is none PASSED
 
-**C6** - Fora de vídeo, só proporção e configurações (PN-06, AC 6)
-Proof: run unit | PN-06 off a video the side strip is aspect and settings PASSED
+**C6** - Fora de vídeo, só configurações (PN-06, AC 6; mudado pela spec critique-fixes)
+Proof: run unit | FIX-04 off a video the side strip has settings only PASSED
 
 **C7** - A barra se atualiza quando o próximo aparece ou some (PN-07, AC 7)
 Proof: walk - DHU + DevTools: página reporta `neighbors` ao trocar de vídeo; screenshots da barra num mix e no Início

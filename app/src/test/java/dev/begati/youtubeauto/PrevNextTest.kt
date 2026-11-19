@@ -29,8 +29,10 @@ class PrevNextTest {
     }
 
     @Test
-    fun `PN-06 off a video the side strip is aspect and settings`() {
-        assertEquals(listOf("aspect", "settings"), mapStrip(onWatch = false, hasNext = true))
-        assertEquals(listOf("aspect", "settings"), mapStrip(onWatch = false, hasNext = false))
+    fun `FIX-04 off a video the side strip has settings only`() {
+        assertEquals(listOf("settings"), mapStrip(onWatch = false, hasNext = true))
+        assertEquals(listOf("settings"), mapStrip(onWatch = false, hasNext = false))
+        // On a video the aspect stays, before settings.
+        assertEquals(listOf("previous", "aspect", "settings"), mapStrip(onWatch = true, hasNext = false))
     }
 }

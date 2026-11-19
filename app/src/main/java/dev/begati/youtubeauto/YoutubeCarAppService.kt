@@ -2238,10 +2238,10 @@ private const val RELEASES_API = "https://api.github.com/repos/begati/yt-auto/re
 
 /**
  * The car's side strip (spec prev-next): on a video, previous, next (only when YouTube has one), aspect and settings;
- * elsewhere aspect and settings. The host allows four actions there.
+ * elsewhere settings only, as the aspect changes nothing off a video (spec critique-fixes). The host allows four.
  */
 internal fun mapStrip(onWatch: Boolean, hasNext: Boolean) =
-    if (!onWatch) listOf("aspect", "settings") else listOfNotNull("previous", "next".takeIf { hasNext }, "aspect", "settings")
+    if (!onWatch) listOf("settings") else listOfNotNull("previous", "next".takeIf { hasNext }, "aspect", "settings")
 
 /**
  * Script for previous, from the car's side strip and from the steering wheel / media card alike: the previous video
