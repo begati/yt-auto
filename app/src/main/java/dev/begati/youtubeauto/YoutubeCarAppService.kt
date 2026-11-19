@@ -1145,7 +1145,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         // YouTube for dark mode whatever the phone or the car day/night mode is.
         presentation = Presentation(carContext, vd.display, android.R.style.Theme_DeviceDefault_NoActionBar).apply {
             val frame = FrameLayout(context)
-            val offline = offlineView(context)
+            val offline = offlineView(context, car = true)
             val wv = WebView(context).apply {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
@@ -1338,7 +1338,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             }, android.widget.LinearLayout.LayoutParams(dp(56), dp(56)))
             addView(android.widget.TextView(ctx).also { skipText = it }.apply {
                 setTextColor(android.graphics.Color.WHITE)
-                textSize = 18f
+                textSize = 20f
                 typeface = android.graphics.Typeface.DEFAULT_BOLD
                 setShadowLayer(4f, 0f, 1f, 0x80000000.toInt())
                 setPadding(0, dp(4), 0, 0)
@@ -1425,7 +1425,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 addView(android.widget.ImageView(ctx).also { coverArt = it }, android.widget.LinearLayout.LayoutParams(dp(320), dp(180)))
                 addView(android.widget.TextView(ctx).also { coverTitle = it }.apply {
                     setTextColor(android.graphics.Color.WHITE)
-                    textSize = 22f
+                    textSize = 24f
                     maxLines = 2
                     ellipsize = android.text.TextUtils.TruncateAt.END
                     gravity = android.view.Gravity.CENTER
@@ -1434,7 +1434,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 addView(android.widget.TextView(ctx).apply {
                     setText(R.string.audio_only_moving)
                     setTextColor(0xB3FFFFFF.toInt())
-                    textSize = 18f
+                    textSize = 20f
                     gravity = android.view.Gravity.CENTER
                 })
             },
@@ -1483,10 +1483,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 })
                 addView(android.widget.TextView(ctx).also { navText = it }.apply {
                     setTextColor(0xDEFFFFFF.toInt())
-                    textSize = 18f
+                    textSize = 20f
                     maxLines = 2
                     ellipsize = android.text.TextUtils.TruncateAt.END
-                    maxWidth = dp(260)
+                    maxWidth = dp(290) // two lines of 20 sp at the width 18 sp had
                     setPadding(0, dp(2), 0, 0)
                 })
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
@@ -1559,7 +1559,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
             addView(android.widget.TextView(ctx).also { dragDiff = it }.apply {
                 setTextColor(0xB3FFFFFF.toInt())
-                textSize = 18f
+                textSize = 20f
                 fontFeatureSettings = "tnum"
                 setPadding(0, dp(2), 0, dp(12))
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
@@ -1890,9 +1890,10 @@ internal fun movingAfter(was: Boolean, mps: Float) = if (was) mps >= 0.5f else m
 
 /**
  * Black loading screen: wifi_off icon, spinner, "Sem conexão. Tentando de novo…" and "Verifique a internet do celular",
- * hidden until a page fails. Sizes in dp of [ctx]'s display (the car's virtual display on the car).
+ * hidden until a page fails. Sizes in dp of [ctx]'s display (the car's virtual display on the car); [car] sets the
+ * 20 sp text floor of the car overlays.
  */
-private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
+private fun offlineView(ctx: Context, car: Boolean = false): View = FrameLayout(ctx).apply {
     val dp = ctx.resources.displayMetrics.density
     setBackgroundColor(android.graphics.Color.BLACK)
     visibility = View.GONE
@@ -1913,14 +1914,14 @@ private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
             addView(android.widget.TextView(ctx).apply {
                 setText(R.string.offline_retrying)
                 setTextColor(android.graphics.Color.WHITE)
-                textSize = 20f
+                textSize = if (car) 24f else 20f
                 gravity = android.view.Gravity.CENTER
                 setPadding(0, (24 * dp).toInt(), 0, 0)
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
             addView(android.widget.TextView(ctx).apply {
                 setText(R.string.offline_hint)
                 setTextColor(0xB3FFFFFF.toInt())
-                textSize = 16f
+                textSize = if (car) 20f else 16f
                 gravity = android.view.Gravity.CENTER
                 setPadding(0, (8 * dp).toInt(), 0, 0)
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
