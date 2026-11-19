@@ -76,8 +76,8 @@ T1 → T2 → T3 → T4
 
 **Done when**:
 
-- [ ] Walk DHU HD + DevTools: vídeo pulado para o fim chama `ended(true, …)`; o valor de reprodução automática bate com o rótulo do botão
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk DHU HD + DevTools: vídeo pulado para o fim chama `ended(true, …)`; o valor de reprodução automática bate com o rótulo do botão
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build

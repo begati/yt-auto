@@ -186,6 +186,11 @@ private const val PAGE_JS =
         "document.documentElement.classList.toggle('yta-noads',yta.flag('skipAds'));" +
         // Only the URL's own video counts: during an ad the player reports the ad's id and time.
         "const p=document.getElementById('${PLAYER_ID}'),id=new URLSearchParams(location.search).get('v');" +
+        // End of the video (spec video-end), with the last autoplay state YouTube's toggle showed: the toggle is only in
+        // the page on some videos, so -1 when it was never seen. Reported while ended and once when that changes.
+        "const at=document.querySelector('.ytwAutonavToggleButtonHost');if(at)window.__ytaAn=at.getAttribute('aria-pressed')==='true';" +
+        "const en=!!p&&!!p.getPlayerState&&p.getPlayerState()===0&&location.pathname==='/watch';" +
+        "if(en||en!==window.__ytaEn){window.__ytaEn=en;yta.ended(en,window.__ytaAn===undefined?-1:window.__ytaAn?1:0)}" +
         // Ads: unskippable ones have no button, and YouTube may ignore a scripted click, so the ad is also run to
         // its end (the player then moves on to the video by itself).
         "const ad=!!p&&p.classList.contains('ad-showing');" +
@@ -807,6 +812,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Set while a video is fullscreen; calling it exits fullscreen.
     private var exitFullscreen: WebChromeClient.CustomViewCallback? = null
     private var playing = false
+    // End of the video (spec video-end): uptime since the page reports it ended (0 while not), and the autoplay state
+    // last seen in the page (null: never seen).
+    private var endedAt = 0L
+    private var autonav: Boolean? = null
     // Whether this car screen already showed the gesture hint (see takeGestureHint).
     private var hintShown = false
     // Whether the last template built had Tocar/Pausar: a page change that flips it rebuilds the template.
@@ -987,6 +996,11 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         session.setPlaybackState(playbackState(p, positionMs, rate))
         invalidate()
         dropVideoIfGone()
+    }
+
+    private fun setEnded(e: Boolean, an: Int) {
+        autonav = if (an < 0) null else an == 1
+        endedAt = if (!e) 0L else endedAt.takeIf { it > 0 } ?: SystemClock.uptimeMillis()
     }
 
     // Off a video page with nothing playing (Início, search): no video is left in the car, so the phone bar and the
@@ -1187,6 +1201,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
                     @JavascriptInterface
                     fun aspect() = choice(carContext, ASPECT)
+
+                    @JavascriptInterface
+                    fun ended(e: Boolean, autonav: Int) = carContext.mainExecutor.execute { setEnded(e, autonav) }
 
                     @JavascriptInterface
                     fun meta(title: String, artist: String, art: String) =
