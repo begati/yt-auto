@@ -154,11 +154,12 @@ private const val PAGE_JS =
         "s.textContent='${PLAYLIST_PANEL}{display:none!important}" +
         "${FEED_ADS}{display:none!important}" +
         "${YT_NAV},${SIGN_IN_LINKS}{display:none!important}${YT_NAV_GAPS}${TITLE_FIT}" +
-        // Fullscreen video: the host's strips sit over the player's top corner and already have play/pause, and the car
-        // settings have captions and quality; YouTube's top controls and middle pause would only repeat them. Paused,
-        // the middle play stays: it is the obvious way to start a video that did not autoplay.
+        // Fullscreen video: the host's strips sit over the player's top corner and already have play/pause, the media
+        // bar and the steering wheel have previous and next, and the car settings have captions and quality. YouTube's
+        // top controls and middle buttons would only repeat them, so they hide in every player state (spec
+        // player-controls); the progress bar and time stay for the tap-to-seek.
         "html.yta-watch player-top-controls{display:none!important}" +
-        "html.yta-watch:has(.html5-video-player.playing-mode) .player-control-play-pause-icon{visibility:hidden!important}" +
+        "html.yta-watch player-middle-controls{visibility:hidden!important}" +
         "html.yta-watch ${PLAYER_CONTAINER}{position:fixed!important;inset:0!important;" +
         "width:100vw!important;height:100vh!important;z-index:99999!important;background:#000!important}" +
         // Wrappers between the container and the video (#player keeps an aspect-ratio padding, the video
