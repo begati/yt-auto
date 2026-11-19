@@ -102,7 +102,7 @@ Updates: install the new APK with KingInstaller the same way. Your sign-in and s
 
 ### On the car screen
 
-Tap the page as on a phone. A tap also brings up the car's buttons for a few seconds: back, home menu, play/pause
+Tap the page as on a phone. A tap also brings up the car's buttons for a few seconds: back, home (your start page), play/pause
 and search at the top, video aspect and settings on the side. On a video the side also has **previous** and **next**:
 next shows only when YouTube has a next video, and previous goes to the previous one or, with none, back to the start
 of the video. To move within the video, use these gestures:
@@ -114,7 +114,8 @@ of the video. To move within the video, use these gestures:
   drag, and the video jumps there when you let go.
 - **Drag up or down** to scroll the page.
 
-The car settings have a **Gestures** row that explains these again.
+The car settings have a **Go to** row (Home, Subscriptions, History, Playlists) and a **Gestures** row that explains
+these again.
 
 The steering wheel buttons (play/pause, next, previous) and the Android Auto media card also control the video.
 

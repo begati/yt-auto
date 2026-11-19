@@ -100,8 +100,8 @@ Atualizações: instale o APK novo pelo KingInstaller do mesmo jeito. Login e co
 
 ### Na tela do carro
 
-Toque na página como no celular. Um toque também mostra os botões do carro por alguns segundos: voltar, menu de
-páginas, tocar/pausar e busca no topo, proporção do vídeo e configurações na lateral. Num vídeo, a lateral também tem
+Toque na página como no celular. Um toque também mostra os botões do carro por alguns segundos: voltar, início (a sua
+página inicial), tocar/pausar e busca no topo, proporção do vídeo e configurações na lateral. Num vídeo, a lateral também tem
 **anterior** e **próximo**: o próximo só aparece quando o YouTube tem um próximo vídeo, e o anterior vai ao vídeo
 anterior ou, se não houver, volta ao início do vídeo. Para andar dentro do vídeo, use estes gestos:
 
@@ -113,7 +113,8 @@ anterior ou, se não houver, volta ao início do vídeo. Para andar dentro do v�
   destino aparece enquanto você arrasta, e o vídeo pula para lá quando você solta.
 - **Arraste para cima ou para baixo** para rolar a página.
 
-As configurações do carro têm a linha **Gestos**, que explica esses gestos de novo.
+As configurações do carro têm a linha **Ir para** (Início, Inscrições, Histórico, Playlists) e a linha **Gestos**,
+que explica esses gestos de novo.
 
 Os botões do volante (tocar/pausar, próximo, anterior) e o card de mídia do Android Auto também controlam o vídeo.
 
