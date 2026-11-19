@@ -2316,6 +2316,15 @@ internal enum class KingAction { OPEN, DOWNLOAD }
 
 internal fun kingAction(kingInstalled: Boolean) = if (kingInstalled) KingAction.OPEN else KingAction.DOWNLOAD
 
+/**
+ * Title and text of the warning: with KingInstaller on the phone it was most likely used and its method did not
+ * record the Play Store (the install origin is hidden from apps), so ask for another method (spec install-check, INST-08).
+ */
+internal fun installTexts(kingInstalled: Boolean) =
+    if (kingInstalled) R.string.install_title_king to R.string.install_text_king else R.string.install_title to R.string.install_text
+
+internal fun Context.kingInstalled() = packageManager.getLaunchIntentForPackage(KING_PACKAGE) != null
+
 /** Notify when Android Auto (the car) binds the media service and the install is wrong. */
 internal fun notifyInstall(client: String, warning: Boolean) = warning && client == "com.google.android.projection.gearhead"
 
@@ -2344,6 +2353,7 @@ internal fun Context.notifyWrongInstall() {
     val now = SystemClock.uptimeMillis()
     if (!notifyDue(now, installNotifiedAt)) return
     installNotifiedAt = now
+    val (title, text) = installTexts(kingInstalled())
     val nm = getSystemService(android.app.NotificationManager::class.java)
     nm.createNotificationChannel(android.app.NotificationChannel(
         "install", getString(R.string.install_channel), android.app.NotificationManager.IMPORTANCE_HIGH))
@@ -2352,9 +2362,9 @@ internal fun Context.notifyWrongInstall() {
     runCatching { // no permission (Android 13+ denied): the phone strip still shows
         nm.notify(1, android.app.Notification.Builder(this, "install")
             .setSmallIcon(R.drawable.ic_flag)
-            .setContentTitle(getString(R.string.install_title))
-            .setContentText(getString(R.string.install_text))
-            .setStyle(android.app.Notification.BigTextStyle().bigText(getString(R.string.install_text)))
+            .setContentTitle(getString(title))
+            .setContentText(getString(text))
+            .setStyle(android.app.Notification.BigTextStyle().bigText(getString(text)))
             .setContentIntent(open)
             .setAutoCancel(true)
             .build())
@@ -2619,6 +2629,7 @@ class LoginActivity : Activity() {
         setBackgroundColor(0xFF1F1F1F.toInt())
         setPadding((12 * dp).toInt(), (8 * dp).toInt(), 0, (8 * dp).toInt())
         val white = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+        val (title, text) = installTexts(kingInstalled())
         addView(android.widget.ImageView(context).apply {
             setImageResource(R.drawable.ic_flag)
             imageTintList = white
@@ -2627,12 +2638,12 @@ class LoginActivity : Activity() {
             orientation = android.widget.LinearLayout.VERTICAL
             setPadding((12 * dp).toInt(), 0, (8 * dp).toInt(), 0)
             addView(android.widget.TextView(context).apply {
-                setText(R.string.install_title)
+                setText(title)
                 setTextColor(android.graphics.Color.WHITE)
                 typeface = android.graphics.Typeface.DEFAULT_BOLD
             })
             addView(android.widget.TextView(context).apply {
-                setText(R.string.install_text)
+                setText(text)
                 setTextColor(0xB3FFFFFF.toInt())
             })
             addView(android.widget.Button(context, null, android.R.attr.borderlessButtonStyle).apply {

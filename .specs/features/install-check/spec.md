@@ -1,6 +1,7 @@
 # Install Check Specification
 
 **Approved**: 2026-11-19 - user: "aprovado, segue para as tarefas"
+**Amendment (P1b)**: 2026-11-19 - user: "sim, pode implementar"
 
 ## Problem Statement
 
@@ -70,6 +71,21 @@ começou a dar o mesmo problema descrito no README". O app não avisa nada, e o 
 
 ---
 
+### P1b: Aviso quando o KingInstaller foi usado e o método falhou
+
+**User Story**: Como usuário que já instalou pelo KingInstaller, quero que o aviso me diga para trocar de método, e não que eu "instalei de outro jeito".
+
+**Why P1b**: Pergunta do usuário (2026-11-19): "fica claro pro usuário que ele pôde ter instalado via kingstaller mas o método selecionado não funcionou a contento?". Teste com um app comum no celular: a origem da instalação (`originatingPackageName`) volta `null` para apps sem permissão de sistema, então o app não sabe se o KingInstaller foi usado; sabe se ele está no celular.
+
+**Acceptance Criteria**:
+
+1. WHERE o KingInstaller está no celular and o instalador registrado não é `com.android.vending` THEN the app SHALL mostrar na faixa e na notificação o título `install_title_king` "O YT Auto não ficou registrado como da Play Store" e o texto `install_text_king` "Reinstale pelo KingInstaller. Se já reinstalou, escolha outro método (Shizuku ou Root)."
+2. WHERE o KingInstaller não está no celular and o instalador registrado não é `com.android.vending` THEN the app SHALL manter `install_title` e `install_text`
+
+**Independent Test**: com o KingInstaller no celular e o app instalado por `adb install`, a faixa e a notificação mostram o texto novo; desinstalar o KingInstaller não é preciso para o caso 2 (coberto pela regra).
+
+---
+
 ### P2: README que resolve
 
 **User Story**: Como usuário com o carro mostrando só o player de mídia, quero um roteiro na ordem certa.
@@ -94,13 +110,15 @@ começou a dar o mesmo problema descrito no README". O app não avisa nada, e o 
 | INST-04 | P1 (AC 7) | Tasks | Pending |
 | INST-06 | P1 (AC 8) | Tasks | Pending |
 | INST-07 | P1 (AC 9) | Tasks | Pending |
+| INST-08 | P1b (AC 1-2) | Tasks | Pending |
 | INST-05 | P2 (AC 1) | Tasks | Pending |
 
-**Coverage:** 7 total, 0 mapped to tasks, 5 unmapped ⚠️
+**Coverage:** 8 total, 0 mapped to tasks, 5 unmapped ⚠️
 
 ## Sources
 
 - Relato do usuário no carro (2026-11-19), citado no Problem Statement
 - `dumpsys package dev.begati.youtubeauto` depois da instalação pelo KingInstaller: `installerPackageName=com.android.vending`, `initiatingPackageName=com.google.android.packageinstaller`, `originatingPackageName=com.example.kinginstaller`, `packageSource=4`
+- Teste com um app sem permissões (2026-11-19, depois da reinstalação pelo KingInstaller): `installing=com.android.vending initiating=com.google.android.packageinstaller originating=null source=4`
 - Revisão do impeccable (clarify + Android): ação primeiro no texto, sem jargão; aviso fechável por haver instalações válidas sem KingInstaller; uma faixa por vez; ícone próprio; permissão pedida no contexto do aviso
 - Memória do projeto: `adb install` deixa `installerPackageName=null`; o DHU lista o app, o carro esconde

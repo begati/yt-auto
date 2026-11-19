@@ -73,6 +73,8 @@
     <string name="signin_car_text">Abre YT Auto en el teléfono y toca Iniciar sesión. El coche usa la misma cuenta.</string>
     <string name="install_title">Reinstala con KingInstaller</string>
     <string name="install_text">Instalado de otra forma, YT Auto aparece en el coche solo como reproductor, sin el video.</string>
+    <string name="install_title_king">YT Auto no quedó registrado como de Play Store</string>
+    <string name="install_text_king">Reinstala con KingInstaller. Si ya lo hiciste, elige otro método (Shizuku o Root).</string>
     <string name="install_open_king">Abrir KingInstaller</string>
     <string name="install_get_king">Descargar KingInstaller</string>
     <string name="install_ignore">Ignorar</string>

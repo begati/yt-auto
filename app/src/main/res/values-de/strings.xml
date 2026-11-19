@@ -73,6 +73,8 @@
     <string name="signin_car_text">Öffne YT Auto auf dem Handy und tippe auf Anmelden. Das Auto nutzt dasselbe Konto.</string>
     <string name="install_title">Mit KingInstaller neu installieren</string>
     <string name="install_text">Anders installiert erscheint YT Auto im Auto nur als Player, ohne das Video.</string>
+    <string name="install_title_king">YT Auto ist nicht als Play-Store-App registriert</string>
+    <string name="install_text_king">Mit KingInstaller neu installieren. Schon gemacht? Wähle eine andere Methode (Shizuku oder Root).</string>
     <string name="install_open_king">KingInstaller öffnen</string>
     <string name="install_get_king">KingInstaller herunterladen</string>
     <string name="install_ignore">Ignorieren</string>

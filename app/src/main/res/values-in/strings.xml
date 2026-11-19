@@ -73,6 +73,8 @@
     <string name="signin_car_text">Buka YT Auto di ponsel dan ketuk Login. Mobil memakai akun yang sama.</string>
     <string name="install_title">Instal ulang dengan KingInstaller</string>
     <string name="install_text">Jika diinstal dengan cara lain, YT Auto muncul di mobil hanya sebagai pemutar, tanpa video.</string>
+    <string name="install_title_king">YT Auto tidak tercatat dari Play Store</string>
+    <string name="install_text_king">Instal ulang dengan KingInstaller. Jika sudah, pilih metode lain (Shizuku atau Root).</string>
     <string name="install_open_king">Buka KingInstaller</string>
     <string name="install_get_king">Unduh KingInstaller</string>
     <string name="install_ignore">Abaikan</string>

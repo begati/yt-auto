@@ -10,6 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: inline (regras em `internal fun` puras testadas na JVM; faixa no `LoginActivity` no padrão da faixa de login; notificação a partir do `MediaService`)
 **Status**: Approved
+**Amendment (T5)**: 2026-11-19 - user: "sim, pode implementar"
 **Approved**: 2026-11-19 - user: "sim"
 **Build**: `./gradlew assembleDebug`
 **Run unit**: `./gradlew testDebugUnitTest --rerun`
@@ -41,7 +42,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ### Phase 1: Aviso de instalação
 
 ```
-T1 → T2 → T3 → T4
+T1 → T2 → T3 → T4 → T5
 ```
 
 ---
@@ -124,6 +125,25 @@ T1 → T2 → T3 → T4
 
 ---
 
+### T5: Texto para quem já usou o KingInstaller
+
+**What**: `internal fun installTexts(kingInstalled: Boolean)` devolve (título, texto): com o KingInstaller no celular `install_title_king` / `install_text_king`, sem ele `install_title` / `install_text`; faixa e notificação usam a regra; strings nos 11 idiomas; com teste.
+**Where**: `app/src/main/java/dev/begati/youtubeauto/YoutubeCarAppService.kt` (+ `res/values*/strings.xml`)
+**Depends on**: T4
+**Reuses**: `kingAction`, `installBanner`, `notifyWrongInstall`
+**Requirement**: INST-08
+
+**Done when**:
+
+- [x] `INST-08` testado; walk no celular com `adb install`: faixa e notificação com o texto novo
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+
+**Tests**: unit
+**Gate**: build
+**Commit**: `fix: tell users who used KingInstaller to try another method`
+
+---
+
 ## Checks
 
 **C1** - Instalador ≠ Play Store e não ignorado: aviso; Play Store: nenhum (INST-01, AC 1-2)
@@ -150,18 +170,21 @@ Proof: `for f in README.md README.pt-BR.md README.es.md; do awk '/^### (The car 
 **C8** - Sessão do carro notifica com instalação errada, no máximo uma vez a cada 10 minutos (INST-07, AC 9)
 Proof: run unit | INST-07 a car session notifies on a wrong install, at most once per 10 minutes PASSED
 
+**C9** - Com o KingInstaller no celular, título e texto pedem outro método; sem ele, o aviso de antes (INST-08)
+Proof: run unit | INST-08 with KingInstaller on the phone the warning asks for another method PASSED
+
 ---
 
 ## Handoff
 
 **Settled mid-build:** found in the walk: Android Auto does not bind the media service on connect (only when the media card is used), so the notification is also posted from the car session, guarded to once per 10 minutes
 **Dispatched:** Verifier at HEAD c26ac18 (diff 84e8b3f..HEAD), returned FAIL with 4 findings, all closed in 30b9eb9
-**Walked:** 2026-11-19, orchestrator, phone over USB. Reach: `adb install -r` of the debug build (dumpsys: `installerPackageName=null`), KingInstaller installed on the phone, YT Auto opened from the launcher. C4: the strip shows the flag icon, "Reinstale pelo KingInstaller", "Instalado de outro jeito, o YT Auto aparece no carro só como player, sem o vídeo.", "Abrir KingInstaller" and X, with no sign-in banner; Android's "Permitir que o app YT Auto envie notificações?" dialog opened right after (in1) and was answered Permitir for the notification walk. "Abrir KingInstaller" brought `com.example.kinginstaller/.MainActivity` to the front. X saved `installIgnoredAt` = this install's lastUpdateTime and the strip went away (in2). C5: reinstalled by `adb install -r` (new lastUpdateTime, so the warning is back) and the DHU reconnected: Android Auto bound the car app service, not the media service, so the notification also fires on the car session (`onCreateSession`), with a 10-minute guard against the second binding of the same connection; the phone shows "YT Auto - Reinstale pelo KingInstaller - Instalado de outro jeito, o YT Auto aparece no carro só como player, sem o vídeo." (nt1); tapping it brought `dev.begati.youtubeauto/.LoginActivity` to the front.
+**Walked:** 2026-11-19, orchestrator, phone over USB. Reach: `adb install -r` of the debug build (dumpsys: `installerPackageName=null`), KingInstaller installed on the phone, YT Auto opened from the launcher. C4: the strip shows the flag icon, "Reinstale pelo KingInstaller", "Instalado de outro jeito, o YT Auto aparece no carro só como player, sem o vídeo.", "Abrir KingInstaller" and X, with no sign-in banner; Android's "Permitir que o app YT Auto envie notificações?" dialog opened right after (in1) and was answered Permitir for the notification walk. "Abrir KingInstaller" brought `com.example.kinginstaller/.MainActivity` to the front. X saved `installIgnoredAt` = this install's lastUpdateTime and the strip went away (in2). C5: reinstalled by `adb install -r` (new lastUpdateTime, so the warning is back) and the DHU reconnected: Android Auto bound the car app service, not the media service, so the notification also fires on the car session (`onCreateSession`), with a 10-minute guard against the second binding of the same connection; the phone shows "YT Auto - Reinstale pelo KingInstaller - Instalado de outro jeito, o YT Auto aparece no carro só como player, sem o vídeo." (nt1); tapping it brought `dev.begati.youtubeauto/.LoginActivity` to the front. T5: the user reinstalled with KingInstaller; a permission-less probe app read `installing=com.android.vending initiating=com.google.android.packageinstaller originating=null source=4` (origin hidden from apps), then was uninstalled. With KingInstaller on the phone and the app reinstalled by `adb install -r`, the strip reads "O YT Auto não ficou registrado como da Play Store" / "Reinstale pelo KingInstaller. Se já reinstalou, escolha outro método (Shizuku ou Root)." with "Abrir KingInstaller", and the notification (DHU still connected) has the same title and text (in3).
 
 ---
 
 ## Phase Execution Map
 
 ```
-Phase 1:  T1 → T2 → T3 → T4
+Phase 1:  T1 → T2 → T3 → T4 → T5
 ```

@@ -1,6 +1,6 @@
 # install-check proofs
 
-**HEAD**: 7c692e7
+**HEAD**: adeb810
 **Tree**: clean
 **Shell**: /bin/sh
 **Result**: 9 pass, 0 fail

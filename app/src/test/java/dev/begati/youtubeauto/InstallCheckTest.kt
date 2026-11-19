@@ -43,4 +43,10 @@ class InstallCheckTest {
         assertFalse(notifyDue(now = 1_599_999, last = 1_000_000))
         assertTrue(notifyDue(now = 1_600_000, last = 1_000_000))
     }
+
+    @Test
+    fun `INST-08 with KingInstaller on the phone the warning asks for another method`() {
+        assertEquals(R.string.install_title_king to R.string.install_text_king, installTexts(kingInstalled = true))
+        assertEquals(R.string.install_title to R.string.install_text, installTexts(kingInstalled = false))
+    }
 }

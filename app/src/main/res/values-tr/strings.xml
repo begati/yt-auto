@@ -73,6 +73,8 @@
     <string name="signin_car_text">Telefonda YT Auto\'yu aç ve Oturum aç\'a dokun. Araç aynı hesabı kullanır.</string>
     <string name="install_title">KingInstaller ile yeniden kur</string>
     <string name="install_text">Başka yolla kurulunca YT Auto araçta videosuz, yalnızca oynatıcı olarak görünür.</string>
+    <string name="install_title_king">YT Auto Play Store\'dan yüklenmiş olarak kaydedilmedi</string>
+    <string name="install_text_king">KingInstaller ile yeniden kur. Zaten yaptıysan başka bir yöntem seç (Shizuku veya Root).</string>
     <string name="install_open_king">KingInstaller\'ı aç</string>
     <string name="install_get_king">KingInstaller\'ı indir</string>
     <string name="install_ignore">Yok say</string>

@@ -73,6 +73,8 @@
     <string name="signin_car_text">Откройте YT Auto на телефоне и нажмите «Войти». Машина использует тот же аккаунт.</string>
     <string name="install_title">Переустановите через KingInstaller</string>
     <string name="install_text">При другой установке YT Auto в машине открывается только как плеер, без видео.</string>
+    <string name="install_title_king">YT Auto не записан как приложение из Play Маркета</string>
+    <string name="install_text_king">Переустановите через KingInstaller. Если уже сделали, выберите другой способ (Shizuku или Root).</string>
     <string name="install_open_king">Открыть KingInstaller</string>
     <string name="install_get_king">Скачать KingInstaller</string>
     <string name="install_ignore">Игнорировать</string>
