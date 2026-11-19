@@ -154,6 +154,10 @@ private const val PAGE_JS =
         "s.textContent='${PLAYLIST_PANEL}{display:none!important}" +
         "${FEED_ADS}{display:none!important}" +
         "${YT_NAV},${SIGN_IN_LINKS}{display:none!important}${YT_NAV_GAPS}${TITLE_FIT}" +
+        // Fullscreen video: the host's strips sit over the player's top corner and already have play/pause, and the car
+        // settings have captions and quality; YouTube's top controls and middle play/pause would only repeat them.
+        "html.yta-watch player-top-controls{display:none!important}" +
+        "html.yta-watch .player-control-play-pause-icon{visibility:hidden!important}" +
         "html.yta-watch ${PLAYER_CONTAINER}{position:fixed!important;inset:0!important;" +
         "width:100vw!important;height:100vh!important;z-index:99999!important;background:#000!important}" +
         // Wrappers between the container and the video (#player keeps an aspect-ratio padding, the video
