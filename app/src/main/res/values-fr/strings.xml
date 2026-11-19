@@ -53,7 +53,12 @@
     <string name="seek_seconds">%d s</string>
     <string name="gesture_hint">Astuce : touchez deux fois la vidéo pour sauter 10 s, ou faites glisser sur le côté pour avancer</string>
     <string name="gestures">Gestes</string>
-    <string name="gestures_text">Touchez deux fois la moitié droite de la vidéo pour avancer de 10 s, la moitié gauche pour reculer de 10 s. Faites glisser sur le côté sur la vidéo pour avancer ou reculer. Touchez la vidéo, puis la barre de progression, pour aller à ce point.</string>
+    <string name="gesture_double_tap">Double appui : ±10 s</string>
+    <string name="gesture_double_tap_text">La moitié droite avance, la gauche recule</string>
+    <string name="gesture_drag">Glisser sur le côté</string>
+    <string name="gesture_drag_text">Avance ou recule : la largeur de l\'écran est toute la vidéo</string>
+    <string name="gesture_bar">Barre de progression</string>
+    <string name="gesture_bar_text">Touchez la vidéo, puis la barre, pour aller à ce point</string>
     <string name="watch_later">À regarder plus tard</string>
     <string name="liked">Vidéos J\'aime</string>
     <string name="playlists">Playlists</string>

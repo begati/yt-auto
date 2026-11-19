@@ -96,8 +96,8 @@ T1 → T2 → T3 → T4 → T5
 
 **Done when**:
 
-- [ ] `FIX-03` testado; walk DHU: Configurações > Gestos com três linhas
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] `FIX-03` testado; walk DHU: Configurações > Gestos com três linhas
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: unit
 **Gate**: build
@@ -167,9 +167,9 @@ Proof: `! grep -q "7 idiomas" PRODUCT.md && grep -q "pl, tr" PRODUCT.md`
 
 ## Handoff
 
-**Settled mid-build:** none
+**Settled mid-build:** user, on the home icon: keep the menu ("Manter o menu (Recomendado)"), then "e se ambos seguir o que foi configurado no celular?" and "Linha nas configurações (Recomendado)" - added to the spec as FIX-07/08 and task T6
 **Dispatched:** none
-**Walked:** 2026-11-19, orchestrator, DHU 1280x720 + phone over USB, debug build installed with data kept. C1: a video ended by DevTools `currentTime = duration - 1`: the centered panel reads "Voltando para Início" and under it "Toque para ir agora" (w1). C2: phone "Só áudio com o carro em movimento" on, location granted by `pm grant`, a shell test GPS provider moving ~15 m/s, app restarted: the headphones cover shows (w3); a video ended under it shows the panel at the bottom, under the cover's art, title and line (w4); without the cover the panel is centered (w1). The test provider was removed, the mock-location op reset, both location permissions revoked and the option turned off again.
+**Walked:** 2026-11-19, orchestrator, DHU 1280x720 + phone over USB, debug build installed with data kept. C1: a video ended by DevTools `currentTime = duration - 1`: the centered panel reads "Voltando para Início" and under it "Toque para ir agora" (w1). C2: phone "Só áudio com o carro em movimento" on, location granted by `pm grant`, a shell test GPS provider moving ~15 m/s, app restarted: the headphones cover shows (w3); a video ended under it shows the panel at the bottom, under the cover's art, title and line (w4); without the cover the panel is centered (w1). The test provider was removed, the mock-location op reset, both location permissions revoked and the option turned off again. C3: car Configurações > Gestos shows three rows - "Toque duplo: ±10 s" / "Metade direita avança, metade esquerda volta", "Arrastar para o lado" / "Avança ou volta: a largura da tela é o vídeo todo", "Barra de progresso" / "Toque no vídeo e depois na barra para ir ao ponto" - each with its icon (x3).
 
 ---
 

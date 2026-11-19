@@ -53,7 +53,12 @@
     <string name="seek_seconds">%d dtk</string>
     <string name="gesture_hint">Tips: ketuk video dua kali untuk melompat 10 dtk, atau geser ke samping untuk memajukan</string>
     <string name="gestures">Gestur</string>
-    <string name="gestures_text">Ketuk dua kali sisi kanan video untuk maju 10 dtk, sisi kiri untuk mundur 10 dtk. Geser ke samping di atas video untuk memajukan atau memundurkan. Ketuk video, lalu bilah progres, untuk melompat ke titik itu.</string>
+    <string name="gesture_double_tap">Ketuk dua kali: ±10 dtk</string>
+    <string name="gesture_double_tap_text">Sisi kanan maju, sisi kiri mundur</string>
+    <string name="gesture_drag">Geser ke samping</string>
+    <string name="gesture_drag_text">Maju atau mundur: lebar layar adalah seluruh video</string>
+    <string name="gesture_bar">Bilah progres</string>
+    <string name="gesture_bar_text">Ketuk video, lalu bilah, untuk melompat ke titik itu</string>
     <string name="watch_later">Tonton nanti</string>
     <string name="liked">Video yang disukai</string>
     <string name="playlists">Playlist</string>

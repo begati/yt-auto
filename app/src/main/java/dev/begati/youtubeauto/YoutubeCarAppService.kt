@@ -2188,14 +2188,27 @@ class HomeMenuScreen(ctx: CarContext, private val onPick: (String) -> Unit) : Sc
 }
 
 /** "Entre pelo celular": shown instead of Google's sign-in form, which needs a keyboard the car lacks. OK goes back. */
-/** The car video gestures, for whoever missed the tips. */
+/** The car video gestures as (title, detail, icon) rows, in the order the gestures matter (spec critique-fixes). */
+internal val GESTURE_ROWS = listOf(
+    Triple(R.string.gesture_double_tap, R.string.gesture_double_tap_text, R.drawable.ic_forward_10),
+    Triple(R.string.gesture_drag, R.string.gesture_drag_text, R.drawable.ic_fast_forward),
+    Triple(R.string.gesture_bar, R.string.gesture_bar_text, R.drawable.ic_skip_next),
+)
+
+/** The car video gestures, for whoever missed the tips: one short row each, read at a glance. */
 class GesturesScreen(ctx: CarContext) : Screen(ctx) {
-    override fun onGetTemplate() = MessageTemplate.Builder(carContext.getString(R.string.gestures_text))
-        .setTitle(carContext.getString(R.string.gestures))
-        .setHeaderAction(Action.BACK)
-        .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_forward_10)).build())
-        .addAction(Action.Builder().setTitle(carContext.getString(android.R.string.ok)).setOnClickListener { screenManager.pop() }.build())
-        .build()
+    override fun onGetTemplate(): ListTemplate {
+        val list = ItemList.Builder()
+        for ((title, text, icon) in GESTURE_ROWS) list.addItem(
+            Row.Builder().setTitle(carContext.getString(title)).addText(carContext.getString(text))
+                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, icon)).build()).build()
+        )
+        return ListTemplate.Builder()
+            .setTitle(carContext.getString(R.string.gestures))
+            .setHeaderAction(Action.BACK)
+            .setSingleList(list.build())
+            .build()
+    }
 }
 
 class SignInScreen(ctx: CarContext) : Screen(ctx) {

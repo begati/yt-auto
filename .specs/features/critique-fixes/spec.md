@@ -102,6 +102,22 @@ problemas na tela do carro. Pedido do usuário: "Todos", começando pela contage
 
 ---
 
+### P1: Casinha e fim do vídeo no mesmo destino
+
+**User Story**: Como motorista, quero que a casinha e o fim do vídeo me levem ao mesmo lugar: a página inicial que configurei no celular.
+
+**Why P1**: Pedido do usuário no meio da implementação: "e se ambos seguir o que foi configurado no celular?" e, para o menu, "Linha nas configurações (Recomendado)".
+
+**Acceptance Criteria**:
+
+1. WHEN o motorista toca na casinha da barra do carro THEN the app SHALL abrir a página inicial configurada (Início, Inscrições ou Histórico)
+2. WHEN o motorista abre as configurações do carro THEN the app SHALL mostrar no topo a linha "Ir para", que abre o menu Início, Inscrições, Histórico, Playlists
+3. WHEN o motorista escolhe um destino em "Ir para" THEN the app SHALL abrir essa página e voltar ao vídeo/página, fechando o menu e as configurações
+
+**Independent Test**: no DHU, com Página inicial = Inscrições, a casinha abre Inscrições; Configurações > Ir para > Histórico abre o Histórico.
+
+---
+
 ## Requirement Traceability
 
 | Requirement ID | Story | Phase | Status |
@@ -112,8 +128,10 @@ problemas na tela do carro. Pedido do usuário: "Todos", começando pela contage
 | FIX-04 | Proporção (AC 1-2) | Tasks | Pending |
 | FIX-05 | Visual (AC 1) | Tasks | Pending |
 | FIX-06 | Visual (AC 2) | Tasks | Pending |
+| FIX-07 | Casinha (AC 1) | Tasks | Pending |
+| FIX-08 | Casinha (AC 2-3) | Tasks | Pending |
 
-**Coverage:** 6 total, 0 mapped to tasks, 6 unmapped ⚠️
+**Coverage:** 8 total, 0 mapped to tasks, 6 unmapped ⚠️
 
 ## Sources
 

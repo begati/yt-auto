@@ -84,7 +84,7 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 
 1. WHILE the car shows a YouTube page the app SHALL hide YouTube's top bar and bottom tab bar
 2. The car action strip SHALL show icons with no text: back (`arrow_back`), home (`home`), play or pause (`play_arrow` / `pause`) when shown, and search (`search`)
-3. WHEN the driver taps the home icon THEN the app SHALL open a car list screen with Início, Inscrições, Histórico and Playlists, each with an icon (`home`, `subscriptions`, `history`, `video_library`)
+3. WHEN the driver taps the home icon THEN the app SHALL open a car list screen with Início, Inscrições, Histórico and Playlists, each with an icon (`home`, `subscriptions`, `history`, `video_library`) (changed 2026-11-19 by spec critique-fixes, FIX-07/08: the home icon opens the configured start page; this list opens from the car settings row "Ir para")
 4. WHEN the driver picks an entry in that list THEN the app SHALL load its page in the car and close the list
 5. The car aspect action SHALL show the icon of the current aspect: Ajustar `fit_screen`, Preencher `crop`, Esticar `open_in_full`
 6. WHEN the driver taps the aspect action THEN the app SHALL switch to the next aspect and show the next aspect's icon

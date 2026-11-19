@@ -53,7 +53,12 @@
     <string name="seek_seconds">%d s</string>
     <string name="gesture_hint">Tipp: Tippe zweimal auf das Video, um 10 s zu springen, oder wische seitlich zum Spulen</string>
     <string name="gestures">Gesten</string>
-    <string name="gestures_text">Tippe zweimal auf die rechte Hälfte des Videos, um 10 s vorzuspringen, auf die linke, um 10 s zurückzuspringen. Wische seitlich über das Video zum Spulen. Tippe auf das Video und dann auf die Fortschrittsleiste, um zu dieser Stelle zu springen.</string>
+    <string name="gesture_double_tap">Doppeltippen: ±10 s</string>
+    <string name="gesture_double_tap_text">Rechte Hälfte springt vor, linke zurück</string>
+    <string name="gesture_drag">Seitlich wischen</string>
+    <string name="gesture_drag_text">Spulen: Die Bildschirmbreite ist das ganze Video</string>
+    <string name="gesture_bar">Fortschrittsleiste</string>
+    <string name="gesture_bar_text">Tippe auf das Video, dann auf die Leiste, um dorthin zu springen</string>
     <string name="watch_later">Später ansehen</string>
     <string name="liked">Videos mit „Mag ich“</string>
     <string name="playlists">Playlists</string>

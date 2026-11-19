@@ -53,7 +53,12 @@
     <string name="seek_seconds">%d s</string>
     <string name="gesture_hint">Wskazówka: kliknij film dwukrotnie, aby przeskoczyć 10 s, albo przeciągnij w bok, aby przewinąć</string>
     <string name="gestures">Gesty</string>
-    <string name="gestures_text">Kliknij dwukrotnie prawą połowę filmu, aby przeskoczyć 10 s do przodu, lewą, aby cofnąć o 10 s. Przeciągnij w bok po filmie, aby przewinąć. Kliknij film, a potem pasek postępu, aby przejść do tego miejsca.</string>
+    <string name="gesture_double_tap">Podwójne kliknięcie: ±10 s</string>
+    <string name="gesture_double_tap_text">Prawa połowa do przodu, lewa do tyłu</string>
+    <string name="gesture_drag">Przeciągnięcie w bok</string>
+    <string name="gesture_drag_text">Przewija: szerokość ekranu to cały film</string>
+    <string name="gesture_bar">Pasek postępu</string>
+    <string name="gesture_bar_text">Kliknij film, a potem pasek, aby przejść do tego miejsca</string>
     <string name="watch_later">Do obejrzenia</string>
     <string name="liked">Polubione filmy</string>
     <string name="playlists">Playlisty</string>

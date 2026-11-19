@@ -36,3 +36,18 @@ class PrevNextTest {
         assertEquals(listOf("previous", "aspect", "settings"), mapStrip(onWatch = true, hasNext = false))
     }
 }
+
+/** FIX-03 (spec critique-fixes). */
+class GesturesListTest {
+    @Test
+    fun `FIX-03 the gestures screen lists double tap, drag and bar in order`() {
+        assertEquals(
+            listOf(
+                Triple(R.string.gesture_double_tap, R.string.gesture_double_tap_text, R.drawable.ic_forward_10),
+                Triple(R.string.gesture_drag, R.string.gesture_drag_text, R.drawable.ic_fast_forward),
+                Triple(R.string.gesture_bar, R.string.gesture_bar_text, R.drawable.ic_skip_next),
+            ),
+            GESTURE_ROWS,
+        )
+    }
+}

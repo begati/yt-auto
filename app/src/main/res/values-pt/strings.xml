@@ -53,7 +53,12 @@
     <string name="seek_seconds">%d s</string>
     <string name="gesture_hint">Dica: toque duas vezes no vídeo para pular 10 s, ou arraste para o lado para avançar</string>
     <string name="gestures">Gestos</string>
-    <string name="gestures_text">Toque duas vezes na metade direita do vídeo para avançar 10 s, na metade esquerda para voltar 10 s. Arraste para o lado sobre o vídeo para avançar ou voltar. Toque no vídeo e depois na barra de progresso para ir àquele ponto.</string>
+    <string name="gesture_double_tap">Toque duplo: ±10 s</string>
+    <string name="gesture_double_tap_text">Metade direita avança, metade esquerda volta</string>
+    <string name="gesture_drag">Arrastar para o lado</string>
+    <string name="gesture_drag_text">Avança ou volta: a largura da tela é o vídeo todo</string>
+    <string name="gesture_bar">Barra de progresso</string>
+    <string name="gesture_bar_text">Toque no vídeo e depois na barra para ir ao ponto</string>
     <string name="watch_later">Assistir mais tarde</string>
     <string name="liked">Vídeos curtidos</string>
     <string name="playlists">Playlists</string>
