@@ -47,7 +47,7 @@ botão nem rótulo. Quem não lê o README não descobre que existem. Pedido do 
 **Acceptance Criteria**:
 
 1. WHEN um vídeo de uma página `/watch` começa a tocar no carro e a dica nunca foi mostrada THEN the app SHALL mostrar um `CarToast` longo com o texto `gesture_hint` no idioma do celular
-2. WHEN a dica é mostrada THEN the app SHALL salvar que ela foi mostrada, e SHALL não mostrá-la de novo, nem depois de reiniciar o app
+2. WHEN a dica é mostrada THEN the app SHALL não mostrá-la de novo na mesma tela do carro, e SHALL mostrá-la só nas 3 primeiras telas do carro (contagem salva; quem viu a dica antiga conta 1) (mudado em 2026-11-19 pela crítica do impeccable: passageiro e outro motorista nunca viam a dica; user: "roda todos na ordem")
 3. IF o vídeo toca fora de `/watch` (prévia no feed, miniplayer) THEN the app SHALL não mostrar a dica nem marcá-la como mostrada
 4. IF o vídeo toca sem estar na tela do carro (outro app em primeiro plano com "tocar com outro app na tela", ou a capa de só áudio por cima) THEN the app SHALL não mostrar a dica nem marcá-la como mostrada (achado do Verifier)
 
@@ -89,8 +89,8 @@ botão nem rótulo. Quem não lê o README não descobre que existem. Pedido do 
 **C1** - O primeiro vídeo em `/watch` pede a dica (HINT-01, AC 1)
 Proof: run unit | HINT-01 the first video on watch asks for the hint PASSED
 
-**C2** - Depois de mostrada, a dica não volta, nem com as preferências relidas (HINT-02, AC 2)
-Proof: run unit | HINT-02 the hint shows only once PASSED
+**C2** - A dica aparece uma vez por tela do carro, nas 3 primeiras, com a contagem nas preferências (HINT-02, AC 2)
+Proof: run unit | HINT-02 the hint shows once per car screen for the first 3 PASSED
 
 **C3** - Vídeo fora de `/watch` não mostra nem gasta a dica (HINT-03, AC 3)
 Proof: run unit | HINT-03 a video off watch neither shows nor uses up the hint PASSED

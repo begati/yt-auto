@@ -801,6 +801,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Set while a video is fullscreen; calling it exits fullscreen.
     private var exitFullscreen: WebChromeClient.CustomViewCallback? = null
     private var playing = false
+    // Whether this car screen already showed the gesture hint (see takeGestureHint).
+    private var hintShown = false
     // Whether the last template built had Tocar/Pausar: a page change that flips it rebuilds the template.
     private var toggleShown = false
     private var positionMs = PlaybackState.PLAYBACK_POSITION_UNKNOWN
@@ -969,8 +971,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
     private fun setPlaying(p: Boolean) {
         val visible = display?.surface != null && cover?.visibility != View.VISIBLE
-        if (p && takeGestureHint(prefs(carContext), onWatch, visible))
+        if (p && takeGestureHint(prefs(carContext), onWatch, visible, hintShown)) {
+            hintShown = true
             CarToast.makeText(carContext, R.string.gesture_hint, CarToast.LENGTH_LONG).show()
+        }
         playing = p
         published = SystemClock.elapsedRealtime()
         session.setPlaybackState(playbackState(p, positionMs, rate))
@@ -2063,11 +2067,17 @@ internal fun isNewer(tag: String, current: String): Boolean {
 internal fun bannerShown(signedIn: Boolean, closedWhileSignedOut: Boolean) = !signedIn && !closedWhileSignedOut
 // The car's gestures have no buttons: the first video played on a watch page tells about them, once per install,
 // while the video is on screen (not behind another app or the audio-only cover).
-internal fun takeGestureHint(prefs: SharedPreferences, onWatch: Boolean, visible: Boolean): Boolean {
-    if (!onWatch || !visible || prefs.getBoolean("gestureHintShown", false)) return false
-    prefs.edit().putBoolean("gestureHintShown", true).apply()
+internal fun takeGestureHint(prefs: SharedPreferences, onWatch: Boolean, visible: Boolean, shownThisSession: Boolean): Boolean {
+    if (!onWatch || !visible || shownThisSession) return false
+    // A passenger or another driver uses the car too: the hint comes back on the first video of each car screen, for
+    // the first GESTURE_HINT_SESSIONS of them. The old once-only flag counts as one.
+    val shown = prefs.getInt("gestureHints", if (prefs.getBoolean("gestureHintShown", false)) 1 else 0)
+    if (shown >= GESTURE_HINT_SESSIONS) return false
+    prefs.edit().putInt("gestureHints", shown + 1).apply()
     return true
 }
+
+internal const val GESTURE_HINT_SESSIONS = 3
 
 // Turn-by-turn from Waze or Google Maps: Android Auto hides their turn card while this (navigation-category) app is in
 // front, so the next turn is read from their ongoing navigation notification and drawn over the car screen.

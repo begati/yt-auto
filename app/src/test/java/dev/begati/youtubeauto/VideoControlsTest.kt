@@ -107,34 +107,44 @@ class VideoControlsTest {
     }
 }
 
-/** HINT-01..03 (spec gesture-hint). */
+/** HINT-01..04 (spec gesture-hint). */
 class GestureHintTest {
     @Test
     fun `HINT-01 the first video on watch asks for the hint`() {
-        assertTrue(takeGestureHint(MemoryPrefs(), onWatch = true, visible = true))
+        assertTrue(takeGestureHint(MemoryPrefs(), onWatch = true, visible = true, shownThisSession = false))
     }
 
     @Test
-    fun `HINT-02 the hint shows only once`() {
+    fun `HINT-02 the hint shows once per car screen for the first 3`() {
         val prefs = MemoryPrefs()
-        assertTrue(takeGestureHint(prefs, onWatch = true, visible = true))
-        assertFalse(takeGestureHint(prefs, onWatch = true, visible = true))
-        // Stored, not held in memory: a restarted app reads the same prefs.
-        assertEquals(true, prefs.map["gestureHintShown"])
+        for (session in 1..3) {
+            assertTrue(takeGestureHint(prefs, onWatch = true, visible = true, shownThisSession = false))
+            // Same car screen: no second hint.
+            assertFalse(takeGestureHint(prefs, onWatch = true, visible = true, shownThisSession = true))
+        }
+        // Fourth car screen: no more. Stored, not held in memory: a restarted app reads the same prefs.
+        assertFalse(takeGestureHint(prefs, onWatch = true, visible = true, shownThisSession = false))
+        assertEquals(3, prefs.map["gestureHints"])
+        // Someone who saw the old once-only hint has two more to go.
+        val old = MemoryPrefs().apply { map["gestureHintShown"] = true }
+        assertTrue(takeGestureHint(old, onWatch = true, visible = true, shownThisSession = false))
+        assertTrue(takeGestureHint(old, onWatch = true, visible = true, shownThisSession = false))
+        assertFalse(takeGestureHint(old, onWatch = true, visible = true, shownThisSession = false))
     }
 
     @Test
     fun `HINT-03 a video off watch neither shows nor uses up the hint`() {
         val prefs = MemoryPrefs()
-        assertFalse(takeGestureHint(prefs, onWatch = false, visible = true))
-        assertTrue(takeGestureHint(prefs, onWatch = true, visible = true))
+        assertFalse(takeGestureHint(prefs, onWatch = false, visible = true, shownThisSession = false))
+        assertEquals(null, prefs.map["gestureHints"])
+        assertTrue(takeGestureHint(prefs, onWatch = true, visible = true, shownThisSession = false))
     }
 
     @Test
     fun `HINT-04 a video not on screen neither shows nor uses up the hint`() {
         val prefs = MemoryPrefs()
-        assertFalse(takeGestureHint(prefs, onWatch = true, visible = false))
-        assertEquals(null, prefs.map["gestureHintShown"])
-        assertTrue(takeGestureHint(prefs, onWatch = true, visible = true))
+        assertFalse(takeGestureHint(prefs, onWatch = true, visible = false, shownThisSession = false))
+        assertEquals(null, prefs.map["gestureHints"])
+        assertTrue(takeGestureHint(prefs, onWatch = true, visible = true, shownThisSession = false))
     }
 }
