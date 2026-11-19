@@ -1190,7 +1190,12 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             .setIcon(icon(R.drawable.ic_settings))
             .setOnClickListener {
                 stopEnd() // a list over the video: the countdown would run unseen
-                screenManager.push(SettingsScreen(carContext) {
+                screenManager.push(SettingsScreen(carContext, onGo = { url ->
+                    // A page picked in Go to: open it and come back to the car screen over settings and the menu.
+                    pageUrl = url
+                    webView?.loadUrl(url)
+                    screenManager.popToRoot()
+                }) {
                     // Flags are read live by the page; zoom, quality, speed and captions need a push.
                     webView?.settings?.textZoom = choice(carContext, TEXT_ZOOM).toInt()
                     applyPlayback()
@@ -1210,12 +1215,11 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     stopEnd() // leaving the video: no countdown landing over the page gone back to
                     exitFullscreen?.onCustomViewHidden() ?: webView?.goBack()
                 }.build())
+                // The configured start page, the same place the end-of-video countdown goes (spec critique-fixes).
                 .addAction(Action.Builder().setIcon(icon(R.drawable.ic_home)).setOnClickListener {
                     stopEnd()
-                    screenManager.push(HomeMenuScreen(carContext) { url ->
-                        pageUrl = url
-                        webView?.loadUrl(url)
-                    })
+                    pageUrl = choice(carContext, HOME_PAGE)
+                    webView?.loadUrl(pageUrl)
                 }.build())
                 .apply {
                     toggleShown = playToggleShown(pageUrl, playing)
@@ -2102,10 +2106,13 @@ private fun offlineView(ctx: Context, car: Boolean = false): View = FrameLayout(
 }
 
 /** Car settings (CAR_SETTINGS), same values as the phone's Settings menu. [onChanged] re-applies them to the live page. */
-class SettingsScreen(ctx: CarContext, private val onChanged: () -> Unit) : Screen(ctx) {
+class SettingsScreen(ctx: CarContext, private val onGo: (String) -> Unit, private val onChanged: () -> Unit) : Screen(ctx) {
     override fun onGetTemplate(): ListTemplate {
         val list = ItemList.Builder()
         fun icon(id: Int) = CarIcon.Builder(IconCompat.createWithResource(carContext, id)).build()
+        // Go to: Início, Inscrições, Histórico, Playlists (the home icon opens the start page itself).
+        list.addItem(Row.Builder().setTitle(carContext.getString(R.string.go_to)).setImage(icon(R.drawable.ic_video_library)).setBrowsable(true)
+            .setOnClickListener { screenManager.push(HomeMenuScreen(carContext, onGo)) }.build())
         CAR_SETTINGS.forEach { (key, img) ->
             val c = CHOICES.find { it.key == key }
             val row = Row.Builder().setImage(icon(img))

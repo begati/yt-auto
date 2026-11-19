@@ -41,7 +41,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ### Phase 1: Correções da crítica
 
 ```
-T1 → T2 → T3 → T4 → T5
+T1 → T2 → T3 → T4 → T5 → T6
 ```
 
 ---
@@ -143,6 +143,25 @@ T1 → T2 → T3 → T4 → T5
 
 ---
 
+### T6: Casinha vai à página configurada; "Ir para" nas configurações
+
+**What**: a ação da casinha para a contagem e abre `choice(HOME_PAGE)`; `SettingsScreen` ganha no topo a linha "Ir para" (`go_to`) que abre `HomeMenuScreen`; escolher um destino abre a página e volta à tela do vídeo.
+**Where**: `app/src/main/java/dev/begati/youtubeauto/YoutubeCarAppService.kt`
+**Depends on**: T5
+**Reuses**: `HomeMenuScreen`, `SettingsScreen`, `choice(HOME_PAGE)`
+**Requirement**: FIX-07, FIX-08
+
+**Done when**:
+
+- [x] Walk DHU: Página inicial = Inscrições, a casinha abre `/feed/subscriptions`; Configurações > Ir para > Histórico abre `/feed/history` e volta à tela do vídeo
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+
+**Tests**: none
+**Gate**: build
+**Commit**: `feat: send the car home icon to the start page and move Go to into settings`
+
+---
+
 ## Checks
 
 **C1** - A contagem mostra "Toque para ir agora" abaixo do título (FIX-01, AC 1)
@@ -163,18 +182,24 @@ Proof: walk - DHU: screenshots dos dois painéis
 **C6** - PRODUCT.md lista os 11 idiomas (FIX-06)
 Proof: `! grep -q "7 idiomas" PRODUCT.md && grep -q "pl, tr" PRODUCT.md`
 
+**C7** - A casinha abre a página inicial configurada (FIX-07)
+Proof: walk - DHU + DevTools: Página inicial = Inscrições, toque na casinha, `location.href` é `/feed/subscriptions`; opção restaurada
+
+**C8** - "Ir para" no topo das configurações abre o menu; um destino abre a página e fecha o menu e as configurações (FIX-08)
+Proof: walk - DHU + DevTools: Configurações mostra "Ir para" em primeiro; Ir para > Histórico, `location.href` é `/feed/history` e a tela do vídeo volta
+
 ---
 
 ## Handoff
 
 **Settled mid-build:** user, on the home icon: keep the menu ("Manter o menu (Recomendado)"), then "e se ambos seguir o que foi configurado no celular?" and "Linha nas configurações (Recomendado)" - added to the spec as FIX-07/08 and task T6
 **Dispatched:** none
-**Walked:** 2026-11-19, orchestrator, DHU 1280x720 + phone over USB, debug build installed with data kept. C1: a video ended by DevTools `currentTime = duration - 1`: the centered panel reads "Voltando para Início" and under it "Toque para ir agora" (w1). C2: phone "Só áudio com o carro em movimento" on, location granted by `pm grant`, a shell test GPS provider moving ~15 m/s, app restarted: the headphones cover shows (w3); a video ended under it shows the panel at the bottom, under the cover's art, title and line (w4); without the cover the panel is centered (w1). The test provider was removed, the mock-location op reset, both location permissions revoked and the option turned off again. C3: car Configurações > Gestos shows three rows - "Toque duplo: ±10 s" / "Metade direita avança, metade esquerda volta", "Arrastar para o lado" / "Avança ou volta: a largura da tela é o vídeo todo", "Barra de progresso" / "Toque no vídeo e depois na barra para ir ao ponto" - each with its icon (x3). C5: the countdown panel draws with 16 dp corners and a 6 dp bar (y1, 1280x720). The drag panel was not walked: the DHU has no swipe command and its drag comes only from a mouse drag by a person; `dragIndicator` sets the same `cornerRadius = dp(16)` and `LayoutParams(dp(240), dp(6))`.
+**Walked:** 2026-11-19, orchestrator, DHU 1280x720 + phone over USB, debug build installed with data kept. C1: a video ended by DevTools `currentTime = duration - 1`: the centered panel reads "Voltando para Início" and under it "Toque para ir agora" (w1). C2: phone "Só áudio com o carro em movimento" on, location granted by `pm grant`, a shell test GPS provider moving ~15 m/s, app restarted: the headphones cover shows (w3); a video ended under it shows the panel at the bottom, under the cover's art, title and line (w4); without the cover the panel is centered (w1). The test provider was removed, the mock-location op reset, both location permissions revoked and the option turned off again. C3: car Configurações > Gestos shows three rows - "Toque duplo: ±10 s" / "Metade direita avança, metade esquerda volta", "Arrastar para o lado" / "Avança ou volta: a largura da tela é o vídeo todo", "Barra de progresso" / "Toque no vídeo e depois na barra para ir ao ponto" - each with its icon (x3). C5: the countdown panel draws with 16 dp corners and a 6 dp bar (y1, 1280x720). The drag panel was not walked: the DHU has no swipe command and its drag comes only from a mouse drag by a person; `dragIndicator` sets the same `cornerRadius = dp(16)` and `LayoutParams(dp(240), dp(6))`. C7: phone Página inicial = Inscrições; on a video, a tap to bring up the strips, then the home icon: the car page (DevTools lists the phone page first) is `/feed/subscriptions`; the option was set back to Início. C8: car Configurações shows "Ir para" first (z3); Ir para lists Início, Inscrições, Histórico, Playlists (z4); Histórico opened `/feed/history` and the car screen came back over settings and the menu (z5).
 
 ---
 
 ## Phase Execution Map
 
 ```
-Phase 1:  T1 → T2 → T3 → T4 → T5
+Phase 1:  T1 → T2 → T3 → T4 → T5 → T6
 ```
