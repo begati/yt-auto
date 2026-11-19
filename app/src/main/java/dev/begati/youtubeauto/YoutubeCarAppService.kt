@@ -1366,7 +1366,11 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         skipMoon?.layoutParams = FrameLayout.LayoutParams((aw * 0.42f).toInt(), (ah * 1.6f).toInt(), side or android.view.Gravity.CENTER_VERTICAL).apply {
             if (side == android.view.Gravity.LEFT) leftMargin = -out else rightMargin = -out
         }
-        skipLabel?.layoutParams = FrameLayout.LayoutParams((aw * 0.42f).toInt() - out, -2, side or android.view.Gravity.CENTER_VERTICAL)
+        // The host's strips sit on the page's edge while shown (the visible area shrinks by them): the label keeps clear.
+        val strip = area?.let { if (side == android.view.Gravity.LEFT) it[0] - l else r - it[2] }?.coerceIn(0, aw / 4) ?: 0
+        skipLabel?.layoutParams = FrameLayout.LayoutParams((aw * 0.42f).toInt() - out - strip, -2, side or android.view.Gravity.CENTER_VERTICAL).apply {
+            if (side == android.view.Gravity.LEFT) leftMargin = strip else rightMargin = strip
+        }
         skipIcon?.setImageResource(if (skipTotal < 0) R.drawable.ic_rewind else R.drawable.ic_fast_forward)
         skipText?.text = carContext.getString(R.string.seek_seconds, kotlin.math.abs(skipTotal))
         ui.removeCallbacks(hideSkip)
