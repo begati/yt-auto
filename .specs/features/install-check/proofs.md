@@ -1,9 +1,9 @@
 # install-check proofs
 
-**HEAD**: c26ac18
+**HEAD**: ba419c7
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 8 pass, 0 fail
+**Result**: 9 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -13,7 +13,8 @@
 | C4 | `walk - celular: screenshot da faixa depois de adb install; diálogo de permissão na primeira vez` | pass (Walked) |
 | C5 | `walk - celular + DHU: notificação ao conectar; toque abre o YT Auto com a faixa` | pass (Walked) |
 | C6 | `run unit / INST-06 ignoring hides the warning until the app is installed again PASSED` | pass |
-| C7 | `grep -q "KingInstaller" README.md && grep -c "Shizuku" README.md README.pt-BR.md README.es.md / grep -v ":0" /` | pass |
+| C7 | `for f in README.md README.pt-BR.md README.es.md; do awk '/^### (The car shows/O carro mostra/El coche muestra)` | pass |
+| C8 | `run unit / INST-07 a car session notifies on a wrong install, at most once per 10 minutes PASSED` | pass |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output
@@ -35,10 +36,10 @@ VideoFillTest > ASPECT-07 default on a fresh install is cover (fill the screen) 
 VideoFillTest > ASPECT-05 the saved aspect applies PASSED
 
 BUILD SUCCESSFUL in 1s
-24 actionable tasks: 4 executed, 20 up-to-date
+24 actionable tasks: 1 executed, 23 up-to-date
 ```
 
-`grep -q "KingInstaller" README.md && grep -c "Shizuku" README.md README.pt-BR.md README.es.md / grep -v ":0" /` - exit 0
+`for f in README.md README.pt-BR.md README.es.md; do awk '/^### (The car shows/O carro mostra/El coche muestra)` - exit 0
 
 ```
 (no output)
