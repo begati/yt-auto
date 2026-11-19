@@ -843,7 +843,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     }
     private var skipAt = 0L
     private val ui = android.os.Handler(android.os.Looper.getMainLooper())
-    // Next turn of Waze / Maps (see NavListener), top left over everything; shownTurn is the maneuver text on screen.
+    // Next turn of Waze / Maps (see NavListener), top start corner over everything; shownTurn is the maneuver text on screen.
     private var navView: View? = null
     private var navCard: View? = null
     private var navIcon: android.widget.ImageView? = null
@@ -1498,8 +1498,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     setPadding(0, dp(2), 0, 0)
                 })
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
-        }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.TOP or android.view.Gravity.LEFT).apply {
-            leftMargin = dp(12)
+        // Start corner: top right in right-to-left languages, where reading begins.
+        }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.TOP or android.view.Gravity.START).apply {
+            marginStart = dp(12)
             topMargin = dp(12)
         })
     }
@@ -1540,7 +1541,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         } else if (turn.maneuver != shownTurn) navCard?.run {
             scaleX = 0.96f
             scaleY = 0.96f
-            pivotX = 0f
+            pivotX = if (layoutDirection == View.LAYOUT_DIRECTION_RTL) width.toFloat() else 0f // grows from its corner
             pivotY = 0f
             animate().scaleX(1f).scaleY(1f).setDuration(220).setInterpolator(ease).start()
         }
