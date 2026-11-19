@@ -384,7 +384,10 @@ class YoutubeCarAppService : CarAppService() {
     // ponytail: accepts any host, fine for a sideloaded personal app; restrict to Google's hosts if ever published
     override fun createHostValidator() = HostValidator.ALLOW_ALL_HOSTS_VALIDATOR
 
+    // Android Auto opening a car session: the same notification as the media card's (spec install-check).
     override fun onCreateSession() = object : Session() {
+        init { if (applicationContext.installWarningNow()) applicationContext.notifyWrongInstall() }
+
         override fun onCreateScreen(intent: Intent): Screen = YoutubeScreen(carContext)
     }
 }
@@ -766,7 +769,11 @@ class MediaService : MediaBrowserService() {
         sessionToken = mediaSession(this).sessionToken
     }
 
-    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?) = BrowserRoot("root", null)
+    // The car binding the player (the media card, the only thing a wrong install shows in the car): spec install-check.
+    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): BrowserRoot {
+        if (notifyInstall(clientPackageName, installWarningNow())) notifyWrongInstall()
+        return BrowserRoot("root", null)
+    }
 
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowser.MediaItem>>) {
         fun folder(id: String, title: String) =
@@ -2322,6 +2329,31 @@ internal fun Context.installWarningNow(): Boolean {
 }
 
 internal fun Context.installedAt() = packageManager.getPackageInfo(packageName, 0).lastUpdateTime
+
+// Last wrong-install notification (uptime): the car session and the media card both bind on one connection.
+private var installNotifiedAt = Long.MIN_VALUE / 2
+
+/** Notification "Reinstale pelo KingInstaller"; tapping it opens the phone app with the strip. Once per 10 minutes. */
+internal fun Context.notifyWrongInstall() {
+    val now = SystemClock.uptimeMillis()
+    if (now - installNotifiedAt < 600_000) return
+    installNotifiedAt = now
+    val nm = getSystemService(android.app.NotificationManager::class.java)
+    nm.createNotificationChannel(android.app.NotificationChannel(
+        "install", getString(R.string.install_channel), android.app.NotificationManager.IMPORTANCE_HIGH))
+    val open = android.app.PendingIntent.getActivity(this, 0, Intent(this, LoginActivity::class.java),
+        android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT)
+    runCatching { // no permission (Android 13+ denied): the phone strip still shows
+        nm.notify(1, android.app.Notification.Builder(this, "install")
+            .setSmallIcon(R.drawable.ic_flag)
+            .setContentTitle(getString(R.string.install_title))
+            .setContentText(getString(R.string.install_text))
+            .setStyle(android.app.Notification.BigTextStyle().bigText(getString(R.string.install_text)))
+            .setContentIntent(open)
+            .setAutoCancel(true)
+            .build())
+    }
+}
 
 /**
  * Whether a video that [ended] (for [endedForMs]) should start the countdown back to the start page (spec video-end):

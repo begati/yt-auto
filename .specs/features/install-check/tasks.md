@@ -96,8 +96,8 @@ T1 → T2 → T3 → T4
 
 **Done when**:
 
-- [ ] Walk: instalado por `adb install`, DHU conectando mostra a notificação no celular; tocar abre o app com a faixa
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk: instalado por `adb install`, DHU conectando mostra a notificação no celular; tocar abre o app com a faixa
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build
@@ -151,9 +151,9 @@ Proof: `grep -q "KingInstaller" README.md && grep -c "Shizuku" README.md README.
 
 ## Handoff
 
-**Settled mid-build:** none
+**Settled mid-build:** found in the walk: Android Auto does not bind the media service on connect (only when the media card is used), so the notification is also posted from the car session, guarded to once per 10 minutes
 **Dispatched:** none
-**Walked:** 2026-11-19, orchestrator, phone over USB. Reach: `adb install -r` of the debug build (dumpsys: `installerPackageName=null`), KingInstaller installed on the phone, YT Auto opened from the launcher. C4: the strip shows the flag icon, "Reinstale pelo KingInstaller", "Instalado de outro jeito, o YT Auto aparece no carro só como player, sem o vídeo.", "Abrir KingInstaller" and X, with no sign-in banner; Android's "Permitir que o app YT Auto envie notificações?" dialog opened right after (in1) and was answered Permitir for the notification walk. "Abrir KingInstaller" brought `com.example.kinginstaller/.MainActivity` to the front. X saved `installIgnoredAt` = this install's lastUpdateTime and the strip went away (in2).
+**Walked:** 2026-11-19, orchestrator, phone over USB. Reach: `adb install -r` of the debug build (dumpsys: `installerPackageName=null`), KingInstaller installed on the phone, YT Auto opened from the launcher. C4: the strip shows the flag icon, "Reinstale pelo KingInstaller", "Instalado de outro jeito, o YT Auto aparece no carro só como player, sem o vídeo.", "Abrir KingInstaller" and X, with no sign-in banner; Android's "Permitir que o app YT Auto envie notificações?" dialog opened right after (in1) and was answered Permitir for the notification walk. "Abrir KingInstaller" brought `com.example.kinginstaller/.MainActivity` to the front. X saved `installIgnoredAt` = this install's lastUpdateTime and the strip went away (in2). C5: reinstalled by `adb install -r` (new lastUpdateTime, so the warning is back) and the DHU reconnected: Android Auto bound the car app service, not the media service, so the notification also fires on the car session (`onCreateSession`), with a 10-minute guard against the second binding of the same connection; the phone shows "YT Auto - Reinstale pelo KingInstaller - Instalado de outro jeito, o YT Auto aparece no carro só como player, sem o vídeo." (nt1); tapping it brought `dev.begati.youtubeauto/.LoginActivity` to the front.
 
 ---
 
