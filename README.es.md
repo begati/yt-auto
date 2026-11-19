@@ -57,7 +57,8 @@ del coche, con tu cuenta, suscripciones e historial, y convierte el teléfono en
   página principal, tamaño del texto, navegación en pantalla.
 - Retoma el video donde se quedó cuando el coche se vuelve a conectar.
 - Idiomas: English, Português (Brasil), Español, Français, Italiano, Deutsch, Polski, Türkçe, Bahasa Indonesia,
-  Русский y العربية. La app sigue el idioma del teléfono y usa inglés cuando el idioma no está disponible.
+  Русский y العربية. La app sigue el idioma del teléfono y usa inglés cuando el idioma no está disponible; en
+  Android 13 o posterior, elige otro en Ajustes del teléfono > Apps > YT Auto > Idioma.
 
 ## Requisitos
 

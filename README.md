@@ -55,7 +55,8 @@ with your account, subscriptions and history, and turns your phone into a remote
   on-screen navigation.
 - Resumes the video where it stopped when the car reconnects.
 - Languages: English, Português (Brasil), Español, Français, Italiano, Deutsch, Polski, Türkçe, Bahasa Indonesia,
-  Русский and العربية. The app follows the phone's language and falls back to English.
+  Русский and العربية. The app follows the phone's language and falls back to English; on Android 13 or newer,
+  pick another one in the phone's Settings > Apps > YT Auto > Language.
 
 ## Requirements
 

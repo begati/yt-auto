@@ -25,6 +25,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
+    // Lists the values-* languages for Android 13+'s per-app language setting (Settings > Apps > YT Auto > Language);
+    // the default language is in res/resources.properties.
+    androidResources { generateLocaleConfig = true }
 }
 
 // APK named yt-auto-<version>-<buildType>.apk

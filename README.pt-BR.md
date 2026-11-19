@@ -56,7 +56,8 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
   página inicial, tamanho do texto, navegação na tela.
 - Retoma o vídeo de onde parou quando o carro reconecta.
 - Idiomas: English, Português (Brasil), Español, Français, Italiano, Deutsch, Polski, Türkçe, Bahasa Indonesia,
-  Русский e العربية. O app segue o idioma do celular e usa inglês quando o idioma não é suportado.
+  Русский e العربية. O app segue o idioma do celular e usa inglês quando o idioma não é suportado; no Android 13
+  ou mais novo, escolha outro em Configurações do celular > Apps > YT Auto > Idioma.
 
 ## Requisitos
 
