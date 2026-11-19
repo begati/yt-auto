@@ -1685,7 +1685,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             gravity = android.view.Gravity.CENTER_HORIZONTAL
             setPadding(dp(28), dp(18), dp(28), dp(22))
             background = android.graphics.drawable.GradientDrawable().apply {
-                cornerRadius = dp(20).toFloat()
+                cornerRadius = dp(16).toFloat() // same corners as the turn card
                 setColor(0xCC000000.toInt())
             }
             addView(android.widget.TextView(ctx).also { endText = it }.apply {
@@ -1716,7 +1716,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             gravity = android.view.Gravity.CENTER_HORIZONTAL
             setPadding(dp(28), dp(16), dp(28), dp(20))
             background = android.graphics.drawable.GradientDrawable().apply {
-                cornerRadius = dp(20).toFloat()
+                cornerRadius = dp(16).toFloat()
                 setColor(0xCC000000.toInt())
             }
             addView(android.widget.TextView(ctx).also { dragTime = it }.apply {
@@ -1734,7 +1734,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             addView(FrameLayout(ctx).apply {
                 setBackgroundColor(0x4DFFFFFF)
                 addView(View(ctx).also { dragFill = it }.apply { setBackgroundColor(android.graphics.Color.WHITE) }, FrameLayout.LayoutParams(0, -1))
-            }, android.widget.LinearLayout.LayoutParams(dp(240), dp(4)))
+            }, android.widget.LinearLayout.LayoutParams(dp(240), dp(6))) // same bar as the countdown
         }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.CENTER))
     }
 
