@@ -345,13 +345,13 @@ internal fun aspectIcon(aspect: String) = when (aspect) {
     else -> R.drawable.ic_open_in_full
 }
 
-// Car home menu (url, title string id, icon): the pages YouTube's hidden tab bar led to. m.youtube.com has no
-// playlists feed of its own; the library page lists them.
+// Car home menu (url, title string id, icon): the pages YouTube's hidden tab bar led to. Playlists is its own feed
+// (the library page is YouTube's "You" page, profile and history first).
 internal val HOME_MENU = listOf(
     Triple("https://m.youtube.com", R.string.home_home, R.drawable.ic_home),
     Triple("https://m.youtube.com/feed/subscriptions", R.string.subscriptions, R.drawable.ic_subscriptions),
     Triple("https://m.youtube.com/feed/history", R.string.history, R.drawable.ic_history),
-    Triple("https://m.youtube.com/feed/library", R.string.playlists, R.drawable.ic_video_library),
+    Triple("https://m.youtube.com/feed/playlists", R.string.playlists, R.drawable.ic_video_library),
 )
 
 // Page the car screen opens on: the last one shown in this process, else the chosen home page.
@@ -2025,7 +2025,7 @@ class HomeMenuScreen(ctx: CarContext, private val onPick: (String) -> Unit) : Sc
             )
         }
         return ListTemplate.Builder()
-            .setTitle(carContext.getString(R.string.home_title))
+            .setTitle(carContext.getString(R.string.go_to)) // not "Página inicial": that is the start page setting
             .setHeaderAction(Action.BACK)
             .setSingleList(list.build())
             .build()

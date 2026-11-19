@@ -32,7 +32,7 @@ class UiPolishTest {
                 Triple("https://m.youtube.com", R.string.home_home, R.drawable.ic_home), // Início
                 Triple("https://m.youtube.com/feed/subscriptions", R.string.subscriptions, R.drawable.ic_subscriptions),
                 Triple("https://m.youtube.com/feed/history", R.string.history, R.drawable.ic_history),
-                Triple("https://m.youtube.com/feed/library", R.string.playlists, R.drawable.ic_video_library),
+                Triple("https://m.youtube.com/feed/playlists", R.string.playlists, R.drawable.ic_video_library),
             ),
             HOME_MENU,
         )

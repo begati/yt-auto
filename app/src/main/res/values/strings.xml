@@ -9,6 +9,7 @@
     <string name="speed_150">1.5x</string>
     <string name="speed_175">1.75x</string>
     <string name="home_title">Home page</string>
+    <string name="go_to">Go to</string>
     <string name="home_home">Home</string>
     <string name="subscriptions">Subscriptions</string>
     <string name="history">History</string>

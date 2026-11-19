@@ -9,6 +9,7 @@
     <string name="speed_150">1,5x</string>
     <string name="speed_175">1,75x</string>
     <string name="home_title">Стартовая страница</string>
+    <string name="go_to">Перейти</string>
     <string name="home_home">Главная</string>
     <string name="subscriptions">Подписки</string>
     <string name="history">История</string>
