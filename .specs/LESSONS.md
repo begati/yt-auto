@@ -120,6 +120,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: F1 / C19 (car-screen)
 - last seen: 2026-11-18T21:58:45Z
 
+### L-019 - When an AC lists player states, walk every one (end of video, ad) and hide YouTube elements with their descendants, not only the parent.
+- signal: `weak_test` · recurrence: 1 feature(s) · scope: `webview` · harmful: 0
+- features: player-controls
+- evidence: player-controls C1 (webview)
+- last seen: 2026-11-19T13:18:36Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

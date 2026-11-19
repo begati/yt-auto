@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 19,
+  "next_id": 20,
   "lessons": [
     {
       "id": "L-001",
@@ -330,6 +330,24 @@
       ],
       "created": "2026-11-18T21:58:45Z",
       "last_seen": "2026-11-18T21:58:45Z"
+    },
+    {
+      "id": "L-019",
+      "key": "weak_test::when an ac lists player states walk every one end of video ad and hide youtube elements with their descendants not only the parent",
+      "text": "When an AC lists player states, walk every one (end of video, ad) and hide YouTube elements with their descendants, not only the parent.",
+      "signal": "weak_test",
+      "scope": "webview",
+      "status": "candidate",
+      "features": [
+        "player-controls"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "player-controls C1 (webview)"
+      ],
+      "created": "2026-11-19T13:18:36Z",
+      "last_seen": "2026-11-19T13:18:36Z"
     }
   ]
 }
