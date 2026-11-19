@@ -75,8 +75,8 @@ T1 → T2 → T3
 
 **Done when**:
 
-- [ ] Walk DHU + DevTools: vídeo de mix reporta (true, true); vídeo solto (false, true)
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk DHU + DevTools: vídeo de mix reporta (true, true); vídeo solto (false, true)
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build

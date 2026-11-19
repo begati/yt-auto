@@ -194,6 +194,10 @@ private const val PAGE_JS =
         "const at=document.querySelector('.ytwAutonavToggleButtonHost');if(at)window.__ytaAn=at.getAttribute('aria-pressed')==='true';" +
         "const en=!!p&&!!p.getPlayerState&&p.getPlayerState()===0&&location.pathname==='/watch';" +
         "if(en||en!==window.__ytaEn){window.__ytaEn=en;yta.ended(en,window.__ytaAn===undefined?-1:window.__ytaAn?1:0)}" +
+        // Previous and next of YouTube's player (spec prev-next): its own buttons stay in the page while hidden, the
+        // first one previous and the second next; enabled means there is a video to go to. Reported when that changes.
+        "const nb=[...document.querySelectorAll('.player-middle-controls-prev-next-button')].map(b=>!b.classList.contains('icon-disable'));" +
+        "const nk=(nb[0]===true)+','+(nb[1]===true);if(nk!==window.__ytaNb){window.__ytaNb=nk;yta.neighbors(nb[0]===true,nb[1]===true)}" +
         // Ads: unskippable ones have no button, and YouTube may ignore a scripted click, so the ad is also run to
         // its end (the player then moves on to the video by itself).
         "const ad=!!p&&p.classList.contains('ad-showing');" +
@@ -818,6 +822,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // End of the video (spec video-end): uptime since the page reports it ended (0 while not), and the autoplay state
     // last seen in the page (null: never seen).
     private var endedAt = 0L
+    // Whether YouTube's player has a previous and a next video (spec prev-next), as the page last reported.
+    private var hasPrevious = false
+    private var hasNext = false
     private var autonav: Boolean? = null
     // Countdown panel back to the start page, and whether it is counting.
     private var endView: View? = null
@@ -1011,6 +1018,13 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         session.setPlaybackState(playbackState(p, positionMs, rate))
         invalidate()
         dropVideoIfGone()
+    }
+
+    private fun setNeighbors(prev: Boolean, next: Boolean) {
+        if (prev == hasPrevious && next == hasNext) return
+        hasPrevious = prev
+        hasNext = next
+        invalidate() // the side strip shows next only when there is one
     }
 
     private fun setEnded(e: Boolean, an: Int) {
@@ -1255,6 +1269,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
                     @JavascriptInterface
                     fun aspect() = choice(carContext, ASPECT)
+
+                    @JavascriptInterface
+                    fun neighbors(prev: Boolean, next: Boolean) = carContext.mainExecutor.execute { setNeighbors(prev, next) }
 
                     @JavascriptInterface
                     fun ended(e: Boolean, autonav: Int) = carContext.mainExecutor.execute { setEnded(e, autonav) }
