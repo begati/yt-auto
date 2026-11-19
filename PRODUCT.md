@@ -41,7 +41,8 @@ cima do vídeo, controle pelo celular, mídia no navegador do Android Auto, bloq
 - `NavigationTemplate` exige uma ação nativa na action strip.
 - Toque na superfície (`onClick`) só em hosts com Car API 5 ou mais.
 - Distribuição só por APK no GitHub; o Android Auto esconde o app sem o KingInstaller (ou Fontes desconhecidas).
-- 7 idiomas (en, pt-BR, es, fr, it, ru, ar), com RTL em árabe.
+- 11 idiomas (en, pt-BR, es, fr, it, de, pl, tr, id, ru, ar), com RTL em árabe; no Android 13+ o idioma do app
+  se escolhe nas configurações do sistema.
 
 ## Brand Commitments
 
@@ -64,5 +65,5 @@ cima do vídeo, controle pelo celular, mídia no navegador do Android Auto, bloq
 
 ## Accessibility & Inclusion
 
-- `contentDescription` em todo botão desenhado pelo app; textos nos 7 idiomas; layout espelhado em RTL.
+- `contentDescription` em todo botão desenhado pelo app; textos nos 11 idiomas; layout espelhado em RTL.
 - Alvo de toque no carro: 76 dp mínimo (diretriz de carro do Google) para controles próprios.

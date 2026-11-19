@@ -134,8 +134,8 @@ T1 → T2 → T3 → T4 → T5
 
 **Done when**:
 
-- [ ] `grep` não acha "7 idiomas" no PRODUCT.md
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] `grep` não acha "7 idiomas" no PRODUCT.md
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build
