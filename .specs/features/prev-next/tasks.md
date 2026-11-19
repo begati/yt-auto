@@ -94,8 +94,8 @@ T1 → T2 → T3
 
 **Done when**:
 
-- [ ] Walk DHU: barra com anterior/próximo no vídeo, sem eles no Início; próximo troca de vídeo; anterior no vídeo solto volta a 0
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk DHU: barra com anterior/próximo no vídeo, sem eles no Início; próximo troca de vídeo; anterior no vídeo solto volta a 0
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build
@@ -132,7 +132,7 @@ Proof: walk - DHU + DevTools: página reporta `neighbors` ao trocar de vídeo; s
 
 **Settled mid-build:** none
 **Dispatched:** none
-**Walked:** none
+**Walked:** 2026-11-19, orchestrator, DHU 800x480 + phone over USB, debug build installed with data kept. Reach: YT Auto on the DHU, a feed or search video opened by a tap (or DevTools `location.href`), a tap on the video to bring up the host's strips. T2: DevTools `window.__ytaNb` reads `false,true` on a lone video (VkSrmUJgKhQ) and on the first video of a mix (JvMXVHVr72A&list=RD9bZkp7q19f0); `true,true` after next opened a second video. C1/C7: on a video the side strip shows previous, next, aspect, settings (s1h). C3: next on 7Ry0YV4rYuI opened UAdlZQ3Ggeg (`v=` changed). C4: there, `__ytaNb` `true,true`; at 40 s, previous went back to 7Ry0YV4rYuI. C5: on 7Ry0YV4rYuI (`false,true`) at 40 s, previous left `currentTime` at 1 s, same video. C2: a feed video with no next showed previous, aspect, settings only (s2h). C6/C7: the native back from a video to Início rebuilt the side strip to aspect and settings only (s5h).
 
 ---
 

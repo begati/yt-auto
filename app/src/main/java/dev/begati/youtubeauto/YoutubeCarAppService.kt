@@ -241,6 +241,7 @@ private fun jsSeekBy(seconds: Int) =
 // Puts the main video at [seconds].
 private fun jsSeekTo(seconds: Double) = "(v=>v&&(v.currentTime=$seconds))(document.querySelector('${MAIN_VIDEO}'))"
 // Player's own "next": the playlist's next item, or the autoplay pick outside a playlist.
+private const val JS_PREVIOUS = "document.getElementById('${PLAYER_ID}')?.previousVideo?.()"
 private const val JS_NEXT = "document.getElementById('${PLAYER_ID}')?.nextVideo?.()"
 // Player and progress bar rects in page px (the bar only while YouTube's controls show it), and the main video's time.
 private const val PROGRESS_BAR = ".ytPlayerProgressBarDragContainer"
@@ -1159,6 +1160,40 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
     private fun icon(id: Int) = CarIcon.Builder(IconCompat.createWithResource(carContext, id)).build()
 
+    // Whether the side strip last built was a video's (with previous/next): a page change that flips it rebuilds.
+    private var stripWatch = false
+
+    // One action of the side strip (see mapStrip).
+    private fun mapAction(key: String): Action = when (key) {
+        // Previous video in YouTube's queue, or the start of this one when there is none (spec prev-next).
+        "previous" -> Action.Builder().setIcon(icon(R.drawable.ic_skip_previous))
+            .setOnClickListener { js(if (previousRestarts(hasPrevious)) JS_RESTART else JS_PREVIOUS) }.build()
+        "next" -> Action.Builder().setIcon(icon(R.drawable.ic_skip_next)).setOnClickListener { js(JS_NEXT) }.build()
+        // Video aspect: Ajustar -> Preencher -> Esticar, saved as the default; the icon shows the current one.
+        "aspect" -> Action.Builder()
+            .setIcon(icon(aspectIcon(choice(carContext, ASPECT))))
+            .setOnClickListener {
+                CarToast.makeText(carContext, cycleAspect(carContext), CarToast.LENGTH_SHORT).show()
+                invalidate()
+            }
+            .build()
+        else -> Action.Builder()
+            .setIcon(icon(R.drawable.ic_settings))
+            .setOnClickListener {
+                stopEnd() // a list over the video: the countdown would run unseen
+                screenManager.push(SettingsScreen(carContext) {
+                    // Flags are read live by the page; zoom, quality, speed and captions need a push.
+                    webView?.settings?.textZoom = choice(carContext, TEXT_ZOOM).toInt()
+                    applyPlayback()
+                    listenSpeed() // the audio flag may have just been turned on
+                    updateCover()
+                    showNav() // on-screen navigation may have just been turned on or off
+                    invalidate()
+                })
+            }
+            .build()
+    }
+
     override fun onGetTemplate() = NavigationTemplate.Builder()
         .setActionStrip(
             ActionStrip.Builder()
@@ -1188,35 +1223,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 .build()
         )
         .setMapActionStrip(
-            ActionStrip.Builder()
-                // Video aspect: Ajustar -> Preencher -> Esticar, saved as the default; the icon shows the current one.
-                .addAction(
-                    Action.Builder()
-                        .setIcon(icon(aspectIcon(choice(carContext, ASPECT))))
-                        .setOnClickListener {
-                            CarToast.makeText(carContext, cycleAspect(carContext), CarToast.LENGTH_SHORT).show()
-                            invalidate()
-                        }
-                        .build()
-                )
-                .addAction(
-                    Action.Builder()
-                        .setIcon(icon(R.drawable.ic_settings))
-                        .setOnClickListener {
-                            stopEnd() // a list over the video: the countdown would run unseen
-                            screenManager.push(SettingsScreen(carContext) {
-                                // Flags are read live by the page; zoom, quality, speed and captions need a push.
-                                webView?.settings?.textZoom = choice(carContext, TEXT_ZOOM).toInt()
-                                applyPlayback()
-                                listenSpeed() // the audio flag may have just been turned on
-                                updateCover()
-                                showNav() // on-screen navigation may have just been turned on or off
-                                invalidate()
-                            })
-                        }
-                        .build()
-                )
-                .build()
+            ActionStrip.Builder().apply {
+                stripWatch = onWatch
+                for (key in mapStrip(onWatch, hasNext)) addAction(mapAction(key))
+            }.build()
         )
         .build()
 
@@ -1295,7 +1305,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
                         url ?: return
                         pageUrl = url
-                        if (playToggleShown(url, playing) != toggleShown) invalidate()
+                        if (playToggleShown(url, playing) != toggleShown || (videoIdFromUrl(url) != null) != stripWatch) invalidate()
                         dropVideoIfGone()
                     }
                 }
