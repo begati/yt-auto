@@ -1,6 +1,6 @@
 # prev-next proofs
 
-**HEAD**: ff0fee0
+**HEAD**: 0d112c6
 **Tree**: dirty - .impeccable/critique/2026-11-19T14-22-29Z__egati-youtubeauto-youtubecarappservice-kt-7019eb6a.md
 **Shell**: /bin/sh
 **Result**: 8 pass, 0 fail
@@ -35,5 +35,5 @@ VideoFillTest > ASPECT-07 default on a fresh install is cover (fill the screen) 
 VideoFillTest > ASPECT-05 the saved aspect applies PASSED
 
 BUILD SUCCESSFUL in 1s
-24 actionable tasks: 3 executed, 21 up-to-date
+24 actionable tasks: 1 executed, 23 up-to-date
 ```

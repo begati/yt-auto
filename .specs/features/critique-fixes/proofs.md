@@ -1,6 +1,6 @@
 # critique-fixes proofs
 
-**HEAD**: be9ed25
+**HEAD**: 0d112c6
 **Tree**: dirty - .impeccable/critique/2026-11-19T14-22-29Z__egati-youtubeauto-youtubecarappservice-kt-7019eb6a.md
 **Shell**: /bin/sh
 **Result**: 9 pass, 0 fail
@@ -11,7 +11,7 @@
 | C2 | `walk - DHU: screenshots com e sem a capa (GPS de teste)` | pass (Walked) |
 | C3 | `run unit / FIX-03 the gestures screen lists double tap, drag and bar in order PASSED` | pass |
 | C4 | `run unit / FIX-04 off a video the side strip has settings only PASSED` | pass |
-| C5 | `walk - DHU: screenshots dos dois painéis` | pass (Walked) |
+| C5 | `run unit / FIX-05 the car panels share 16 dp corners and a 6 dp bar PASSED` | pass |
 | C6 | `! grep -q "7 idiomas" PRODUCT.md && grep -q "pl, tr" PRODUCT.md` | pass |
 | C7 | `walk - DHU + DevTools: Página inicial = Inscrições, toque na casinha, location.href é /feed/subscriptions; opç` | pass (Walked) |
 | C8 | `walk - DHU + DevTools: Configurações mostra "Ir para" em primeiro; Ir para > Histórico, location.href é /feed/` | pass (Walked) |
