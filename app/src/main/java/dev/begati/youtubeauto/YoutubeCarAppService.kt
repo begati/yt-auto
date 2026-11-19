@@ -2097,6 +2097,14 @@ private fun Activity.requestLocation() {
 // Latest release of this app on GitHub: the app isn't on the Play Store, so it checks there for updates.
 private const val RELEASES_API = "https://api.github.com/repos/begati/yt-auto/releases/latest"
 
+/**
+ * Whether a video that [ended] (for [endedForMs]) should start the countdown back to the start page (spec video-end):
+ * with autoplay off ([autonav] false) nothing comes next, so at once; on or unknown, only if YouTube opened nothing in
+ * 10 s.
+ */
+internal fun endCountdownDue(ended: Boolean, autonav: Boolean?, endedForMs: Long) =
+    ended && (autonav == false || endedForMs >= 10_000)
+
 /** Whether release tag [tag] ("v1.1") is a newer version than [current] ("1.0"), number by number. */
 internal fun isNewer(tag: String, current: String): Boolean {
     fun parts(v: String) = v.trim().trimStart('v', 'V').split('.').map { p -> p.takeWhile(Char::isDigit).toIntOrNull() ?: 0 }
