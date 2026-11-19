@@ -1889,7 +1889,7 @@ private class RemoteBar(ctx: Context, private val car: MediaController) : androi
 internal fun movingAfter(was: Boolean, mps: Float) = if (was) mps >= 0.5f else mps > 2f
 
 /**
- * Black loading screen: wifi_off icon, spinner, "Sem conexão. Tentando de novo…" and "Verifique a internet do celular",
+ * Black loading screen: wifi_off icon, spinner (phone only), "Sem conexão. Tentando de novo…" and "Verifique a internet do celular",
  * hidden until a page fails. Sizes in dp of [ctx]'s display (the car's virtual display on the car); [car] sets the
  * 20 sp text floor of the car overlays.
  */
@@ -1907,7 +1907,9 @@ private fun offlineView(ctx: Context, car: Boolean = false): View = FrameLayout(
                 imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
                 setPadding(0, 0, 0, (16 * dp).toInt())
             }, android.widget.LinearLayout.LayoutParams((72 * dp).toInt(), (88 * dp).toInt()))
-            addView(android.widget.ProgressBar(ctx, null, android.R.attr.progressBarStyleLarge).apply {
+            // Car: no spinner. At the car's low density it draws as a stray dash and competes with the icon; the title
+            // already says it is retrying.
+            if (!car) addView(android.widget.ProgressBar(ctx, null, android.R.attr.progressBarStyleLarge).apply {
                 isIndeterminate = true
                 indeterminateTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
             })
