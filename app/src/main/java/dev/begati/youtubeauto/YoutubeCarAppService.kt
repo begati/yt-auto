@@ -2618,6 +2618,13 @@ class LoginActivity : Activity() {
     // Back from KingInstaller (or the system) after a reinstall: the warning goes away without restarting the app.
     override fun onResume() {
         super.onResume()
+        // KingInstaller may have just been installed (or removed): rebuild the strip so its text and button follow.
+        installBanner?.let { old ->
+            val parent = old.parent as? android.view.ViewGroup ?: return@let
+            val at = parent.indexOfChild(old)
+            parent.removeView(old)
+            parent.addView(installBanner().also { installBanner = it }, at)
+        }
         checkSignIn()
     }
 

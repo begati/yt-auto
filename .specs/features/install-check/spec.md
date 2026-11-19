@@ -82,6 +82,8 @@ começou a dar o mesmo problema descrito no README". O app não avisa nada, e o 
 1. WHERE o KingInstaller está no celular and o instalador registrado não é `com.android.vending` THEN the app SHALL mostrar na faixa e na notificação o título `install_title_king` "O YT Auto não ficou registrado como da Play Store" e o texto `install_text_king` "Reinstale pelo KingInstaller. Se já reinstalou, escolha outro método (Shizuku ou Root)."
 2. WHERE o KingInstaller não está no celular and o instalador registrado não é `com.android.vending` THEN the app SHALL manter `install_title` e `install_text`
 
+Com o KingInstaller no celular, INST-08 substitui o título e o texto citados em P1 AC 1 e AC 5 (os critérios aprovados ficam como estão; achado do Verifier). A faixa refaz texto e botão ao voltar ao app, para acompanhar o KingInstaller instalado ou removido nesse meio-tempo.
+
 **Independent Test**: com o KingInstaller no celular e o app instalado por `adb install`, a faixa e a notificação mostram o texto novo; desinstalar o KingInstaller não é preciso para o caso 2 (coberto pela regra).
 
 ---
