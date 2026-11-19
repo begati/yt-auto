@@ -76,7 +76,7 @@
     <string name="summary_captions">Muestra subtítulos cuando el vídeo los tiene</string>
     <string name="summary_nav_overlay">Muestra el próximo giro de Waze o Google Maps en la pantalla del coche</string>
     <string name="nav_access_needed">Permite el acceso a las notificaciones en el teléfono: Ajustes de YT Auto &gt; Navegación en pantalla</string>
-    <string name="offline_hint">Revisa el internet del teléfono</string>
+    <string name="offline_hint">Revisa los datos móviles o el Wi-Fi del teléfono</string>
     <string name="previous">Anterior</string>
     <string name="next">Siguiente</string>
     <string name="playback_options">Opciones de reproducción</string>

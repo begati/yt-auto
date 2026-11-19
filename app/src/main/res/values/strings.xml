@@ -76,7 +76,7 @@
     <string name="summary_captions">Shows captions when the video has them</string>
     <string name="summary_nav_overlay">Shows the next Waze or Google Maps turn over the car screen</string>
     <string name="nav_access_needed">Allow notification access on the phone: YT Auto settings &gt; On-screen navigation</string>
-    <string name="offline_hint">Check the phone\'s internet</string>
+    <string name="offline_hint">Check the phone\'s mobile data or Wi-Fi</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
     <string name="playback_options">Playback options</string>
