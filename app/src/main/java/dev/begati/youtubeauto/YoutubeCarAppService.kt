@@ -384,9 +384,9 @@ class YoutubeCarAppService : CarAppService() {
     // ponytail: accepts any host, fine for a sideloaded personal app; restrict to Google's hosts if ever published
     override fun createHostValidator() = HostValidator.ALLOW_ALL_HOSTS_VALIDATOR
 
-    // Android Auto opening a car session: the same notification as the media card's (spec install-check).
+    // Android Auto opening a car session: the same notification as the media card's (spec install-check, INST-07).
     override fun onCreateSession() = object : Session() {
-        init { if (applicationContext.installWarningNow()) applicationContext.notifyWrongInstall() }
+        init { if (notifyOnSession(applicationContext.installWarningNow())) applicationContext.notifyWrongInstall() }
 
         override fun onCreateScreen(intent: Intent): Screen = YoutubeScreen(carContext)
     }
@@ -2319,6 +2319,9 @@ internal fun kingAction(kingInstalled: Boolean) = if (kingInstalled) KingAction.
 /** Notify when Android Auto (the car) binds the media service and the install is wrong. */
 internal fun notifyInstall(client: String, warning: Boolean) = warning && client == "com.google.android.projection.gearhead"
 
+/** A car session opening (Android Auto connects without binding the media card) notifies whenever the install is wrong. */
+internal fun notifyOnSession(warning: Boolean) = warning
+
 // This install's recorded installer and lastUpdateTime, and whether to warn about it (see installWarning).
 internal fun Context.installWarningNow(): Boolean {
     val installer = runCatching {
@@ -2333,10 +2336,13 @@ internal fun Context.installedAt() = packageManager.getPackageInfo(packageName, 
 // Last wrong-install notification (uptime): the car session and the media card both bind on one connection.
 private var installNotifiedAt = Long.MIN_VALUE / 2
 
+/** Whether a wrong-install notification is due [now], the last one posted at [last]: at most once per 10 minutes. */
+internal fun notifyDue(now: Long, last: Long) = now - last >= 600_000
+
 /** Notification "Reinstale pelo KingInstaller"; tapping it opens the phone app with the strip. Once per 10 minutes. */
 internal fun Context.notifyWrongInstall() {
     val now = SystemClock.uptimeMillis()
-    if (now - installNotifiedAt < 600_000) return
+    if (!notifyDue(now, installNotifiedAt)) return
     installNotifiedAt = now
     val nm = getSystemService(android.app.NotificationManager::class.java)
     nm.createNotificationChannel(android.app.NotificationChannel(

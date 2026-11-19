@@ -34,4 +34,13 @@ class InstallCheckTest {
         assertFalse(installWarning(null, updatedAt = 100, ignoredAt = 100))
         assertTrue(installWarning(null, updatedAt = 200, ignoredAt = 100)) // installed again, still wrong
     }
+
+    @Test
+    fun `INST-07 a car session notifies on a wrong install, at most once per 10 minutes`() {
+        assertTrue(notifyOnSession(warning = true))
+        assertFalse(notifyOnSession(warning = false))
+        assertTrue(notifyDue(now = 1_000_000, last = Long.MIN_VALUE / 2)) // first time in the process
+        assertFalse(notifyDue(now = 1_599_999, last = 1_000_000))
+        assertTrue(notifyDue(now = 1_600_000, last = 1_000_000))
+    }
 }

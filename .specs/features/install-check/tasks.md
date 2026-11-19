@@ -144,8 +144,11 @@ Proof: walk - celular + DHU: notificação ao conectar; toque abre o YT Auto com
 **C6** - X esconde até a próxima instalação (INST-06, AC 8)
 Proof: run unit | INST-06 ignoring hides the warning until the app is installed again PASSED
 
-**C7** - READMEs com o roteiro em 5 passos (INST-05)
-Proof: `grep -q "KingInstaller" README.md && grep -c "Shizuku" README.md README.pt-BR.md README.es.md | grep -v ":0" | wc -l | grep -q 3`
+**C7** - READMEs com o roteiro em 5 passos, na ordem, dentro da seção do erro (INST-05)
+Proof: `for f in README.md README.pt-BR.md README.es.md; do awk '/^### (The car shows|O carro mostra|El coche muestra)/{on=1;next} /^#/{on=0} on && /^[1-5]\. \*\*/{n++; if (substr($0,1,1)!=n) bad=1} END{exit !(n==5 && !bad)}' $f || exit 1; done`
+
+**C8** - Sessão do carro notifica com instalação errada, no máximo uma vez a cada 10 minutos (INST-07, AC 9)
+Proof: run unit | INST-07 a car session notifies on a wrong install, at most once per 10 minutes PASSED
 
 ---
 

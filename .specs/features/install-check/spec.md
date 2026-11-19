@@ -60,10 +60,11 @@ começou a dar o mesmo problema descrito no README". O app não avisa nada, e o 
 2. IF o instalador registrado é `com.android.vending` THEN the app SHALL não mostrar a faixa
 3. WHERE o KingInstaller está instalado THEN the app SHALL mostrar o botão "Abrir KingInstaller", que abre o KingInstaller
 4. WHERE o KingInstaller não está instalado THEN the app SHALL mostrar o botão "Baixar KingInstaller", que abre `https://github.com/fcaronte/KingInstaller/releases`
-5. WHEN o Android Auto se conecta ao app (sessão do carro ou player de mídia) e o instalador registrado não é `com.android.vending` THEN the app SHALL mostrar uma notificação com `install_title` e `install_text`, no máximo uma vez a cada 10 minutos (ajustado no walk: o Android Auto não liga o player de mídia ao conectar)
+5. WHEN o Android Auto se conecta ao player de mídia do app e o instalador registrado não é `com.android.vending` THEN the app SHALL mostrar uma notificação com `install_title` e `install_text`
 6. WHEN o motorista toca na notificação THEN the app SHALL abrir o YT Auto no celular
 7. WHILE a permissão de notificação não foi concedida (Android 13+) the app SHALL pedi-la uma vez, ao mostrar a faixa
 8. WHEN o usuário toca no X da faixa THEN the app SHALL esconder a faixa e não notificar até a próxima instalação do app
+9. WHEN o Android Auto abre uma sessão do carro e o instalador registrado não é `com.android.vending` THEN the app SHALL mostrar a mesma notificação, no máximo uma vez a cada 10 minutos somando os dois caminhos (achado no walk: o Android Auto não liga o player de mídia ao conectar; requisito novo pelo Verifier)
 
 **Independent Test**: com o app instalado por `adb install`, o celular mostra a faixa e o DHU conectando dispara a notificação; reinstalado pelo KingInstaller, nada aparece.
 
@@ -92,9 +93,10 @@ começou a dar o mesmo problema descrito no README". O app não avisa nada, e o 
 | INST-03 | P1 (AC 5-6) | Tasks | Pending |
 | INST-04 | P1 (AC 7) | Tasks | Pending |
 | INST-06 | P1 (AC 8) | Tasks | Pending |
+| INST-07 | P1 (AC 9) | Tasks | Pending |
 | INST-05 | P2 (AC 1) | Tasks | Pending |
 
-**Coverage:** 6 total, 0 mapped to tasks, 5 unmapped ⚠️
+**Coverage:** 7 total, 0 mapped to tasks, 5 unmapped ⚠️
 
 ## Sources
 

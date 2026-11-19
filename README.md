@@ -128,11 +128,11 @@ or updating YT Auto any other way (opening the APK directly, `adb install`, a fi
 falls back to the player. That is the most common cause. Go through these steps in order:
 
 1. **Open YT Auto on the phone.** If it shows "Reinstall with KingInstaller" at the top, the installer was lost:
-   tap **Open KingInstaller** (or **Get KingInstaller**) and go to step 2. YT Auto also posts this notice when the
-   car connects.
+   tap **Open KingInstaller** (or **Get KingInstaller**) and go to step 2. If you allowed its notifications, YT Auto also
+   posts this notice when the car connects.
 2. **Reinstall with KingInstaller** (section 3 above). Do the same for every update: never open the new APK
    directly.
-3. **Still only the player?** In KingInstaller, try the other install methods it offers (**Shizuku**, or **Root** on
+3. **Still only the player?** Unlike section 3 above, now try the other install methods KingInstaller offers (**Shizuku**, or **Root** on
    a rooted phone), then reconnect to the car.
 4. **Turn on Unknown sources in Android Auto** (needed where KingInstaller doesn't work, for example on GrapheneOS):
    open Android Auto's settings on the phone (on GrapheneOS: **Settings** > **Apps** > **Android Auto**), tap

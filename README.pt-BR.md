@@ -126,10 +126,10 @@ atualizar o YT Auto de qualquer outro jeito (abrindo o APK direto, `adb install`
 isso, e o carro volta a mostrar só o player. Essa é a causa mais comum. Siga os passos na ordem:
 
 1. **Abra o YT Auto no celular.** Se aparecer "Reinstale pelo KingInstaller" no topo, o instalador se perdeu:
-   toque em **Abrir KingInstaller** (ou **Baixar KingInstaller**) e vá para o passo 2. O YT Auto também mostra esse
-   aviso como notificação quando o carro conecta.
+   toque em **Abrir KingInstaller** (ou **Baixar KingInstaller**) e vá para o passo 2. Se você permitiu as notificações dele,
+   o YT Auto também mostra esse aviso quando o carro conecta.
 2. **Reinstale pelo KingInstaller** (seção 3 acima). Faça o mesmo em toda atualização: nunca abra o APK novo direto.
-3. **Ainda só o player?** No KingInstaller, tente os outros métodos de instalação que ele oferece (**Shizuku**, ou
+3. **Ainda só o player?** Ao contrário da seção 3 acima, agora tente os outros métodos de instalação do KingInstaller (**Shizuku**, ou
    **Root** em celular com root) e conecte de novo ao carro.
 4. **Ative Fontes desconhecidas no Android Auto** (necessário onde o KingInstaller não funciona, por exemplo no
    GrapheneOS): abra as configurações do Android Auto no celular (no GrapheneOS: **Configurações** > **Apps** >

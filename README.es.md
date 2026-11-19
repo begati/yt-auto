@@ -132,11 +132,11 @@ gestor de archivos) borra eso, y el coche vuelve a mostrar solo el reproductor. 
 pasos en orden:
 
 1. **Abre YT Auto en el teléfono.** Si arriba aparece "Reinstala con KingInstaller", se perdió el instalador: toca
-   **Abrir KingInstaller** (o **Descargar KingInstaller**) y ve al paso 2. YT Auto también muestra este aviso como
-   notificación cuando el coche se conecta.
+   **Abrir KingInstaller** (o **Descargar KingInstaller**) y ve al paso 2. Si permitiste sus notificaciones, YT Auto
+   también muestra este aviso cuando el coche se conecta.
 2. **Reinstala con KingInstaller** (sección 3 de arriba). Haz lo mismo en cada actualización: nunca abras el APK
    nuevo directamente.
-3. **¿Sigue solo el reproductor?** En KingInstaller, prueba los otros métodos de instalación que ofrece (**Shizuku**,
+3. **¿Sigue solo el reproductor?** A diferencia de la sección 3 de arriba, ahora prueba los otros métodos de instalación de KingInstaller (**Shizuku**,
    o **Root** en un teléfono con root) y vuelve a conectar al coche.
 4. **Activa Fuentes desconocidas (Unknown sources) en Android Auto** (necesario donde KingInstaller no funciona, por
    ejemplo en GrapheneOS): abre los ajustes de Android Auto en el teléfono (en GrapheneOS: **Ajustes** > **Apps** >
