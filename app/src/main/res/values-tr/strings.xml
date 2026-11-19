@@ -11,6 +11,7 @@
     <string name="home_title">Başlangıç sayfası</string>
     <string name="go_to">Git</string>
     <string name="going_home">%1$s sayfasına dönülüyor</string>
+    <string name="going_home_tap">Hemen gitmek için dokun</string>
     <string name="home_home">Ana sayfa</string>
     <string name="subscriptions">Abonelikler</string>
     <string name="history">Geçmiş</string>

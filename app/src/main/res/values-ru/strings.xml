@@ -11,6 +11,7 @@
     <string name="home_title">Стартовая страница</string>
     <string name="go_to">Перейти</string>
     <string name="going_home">Возврат: %1$s</string>
+    <string name="going_home_tap">Коснитесь, чтобы перейти сейчас</string>
     <string name="home_home">Главная</string>
     <string name="subscriptions">Подписки</string>
     <string name="history">История</string>

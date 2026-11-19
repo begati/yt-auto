@@ -11,6 +11,7 @@
     <string name="home_title">Página inicial</string>
     <string name="go_to">Ir para</string>
     <string name="going_home">Voltando para %1$s</string>
+    <string name="going_home_tap">Toque para ir agora</string>
     <string name="home_home">Início</string>
     <string name="subscriptions">Inscrições</string>
     <string name="history">Histórico</string>

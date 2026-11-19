@@ -832,6 +832,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Countdown panel back to the start page, and whether it is counting.
     private var endView: View? = null
     private var endText: android.widget.TextView? = null
+    private var endPanel: View? = null
     private var endFill: View? = null
     private var endCounting = false
     private val goHome = Runnable {
@@ -1045,6 +1046,12 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         val view = endView ?: return
         endCounting = true
         endText?.text = carContext.getString(R.string.going_home, carContext.getString(homeLabel(prefs(carContext))))
+        // Over the audio-only cover: at the bottom, under the cover's art and title; else centered.
+        endPanel?.layoutParams = FrameLayout.LayoutParams(-2, -2,
+            if (cover?.visibility == View.VISIBLE) android.view.Gravity.BOTTOM or android.view.Gravity.CENTER_HORIZONTAL
+            else android.view.Gravity.CENTER).apply {
+            bottomMargin = (24 * view.resources.displayMetrics.density).toInt()
+        }
         endFill?.run {
             animate().cancel()
             // The track's fixed width: the panel may never have been laid out yet (GONE), so width can still be 0.
@@ -1387,6 +1394,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         endCounting = false
         endView = null
         endText = null
+        endPanel = null
         endFill = null
         dragTime = null
         dragDiff = null
@@ -1672,7 +1680,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private fun endIndicator(ctx: Context) = FrameLayout(ctx).apply {
         fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
         visibility = View.GONE
-        addView(android.widget.LinearLayout(ctx).apply {
+        addView(android.widget.LinearLayout(ctx).also { endPanel = it }.apply {
             orientation = android.widget.LinearLayout.VERTICAL
             gravity = android.view.Gravity.CENTER_HORIZONTAL
             setPadding(dp(28), dp(18), dp(28), dp(22))
@@ -1684,7 +1692,13 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 setTextColor(android.graphics.Color.WHITE)
                 textSize = 24f
                 typeface = android.graphics.Typeface.DEFAULT_BOLD
-                setPadding(0, 0, 0, dp(14))
+            }, android.widget.LinearLayout.LayoutParams(-2, -2))
+            // What the tap does (onClick goes at once): otherwise nothing on screen says it.
+            addView(android.widget.TextView(ctx).apply {
+                setText(R.string.going_home_tap)
+                setTextColor(0xB3FFFFFF.toInt())
+                textSize = 20f
+                setPadding(0, dp(2), 0, dp(14))
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
             addView(FrameLayout(ctx).apply {
                 setBackgroundColor(0x4DFFFFFF)

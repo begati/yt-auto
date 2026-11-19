@@ -77,8 +77,8 @@ T1 → T2 → T3 → T4 → T5
 
 **Done when**:
 
-- [ ] Walk DHU: painel no centro com as duas linhas; com a capa de só áudio, no rodapé
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk DHU: painel no centro com as duas linhas; com a capa de só áudio, no rodapé
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build
@@ -169,7 +169,7 @@ Proof: `! grep -q "7 idiomas" PRODUCT.md && grep -q "pl, tr" PRODUCT.md`
 
 **Settled mid-build:** none
 **Dispatched:** none
-**Walked:** none
+**Walked:** 2026-11-19, orchestrator, DHU 1280x720 + phone over USB, debug build installed with data kept. C1: a video ended by DevTools `currentTime = duration - 1`: the centered panel reads "Voltando para Início" and under it "Toque para ir agora" (w1). C2: phone "Só áudio com o carro em movimento" on, location granted by `pm grant`, a shell test GPS provider moving ~15 m/s, app restarted: the headphones cover shows (w3); a video ended under it shows the panel at the bottom, under the cover's art, title and line (w4); without the cover the panel is centered (w1). The test provider was removed, the mock-location op reset, both location permissions revoked and the option turned off again.
 
 ---
 

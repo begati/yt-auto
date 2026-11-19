@@ -11,6 +11,7 @@
     <string name="home_title">Halaman awal</string>
     <string name="go_to">Buka</string>
     <string name="going_home">Kembali ke %1$s</string>
+    <string name="going_home_tap">Ketuk untuk langsung ke sana</string>
     <string name="home_home">Beranda</string>
     <string name="subscriptions">Subscription</string>
     <string name="history">Histori</string>
