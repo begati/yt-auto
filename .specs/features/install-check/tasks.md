@@ -115,8 +115,8 @@ T1 → T2 → T3 → T4
 
 **Done when**:
 
-- [ ] Os três READMEs têm os 5 passos na ordem da spec
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Os três READMEs têm os 5 passos na ordem da spec
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build

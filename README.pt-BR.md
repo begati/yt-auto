@@ -120,20 +120,24 @@ Os botões do volante (tocar/pausar, próximo, anterior) e o card de mídia do A
 
 ### O carro mostra "Abra o YT Auto pela lista de apps do carro"
 
-Essa tela é o player de mídia do YT Auto, não a tela de vídeo. O Android Auto esconde a tela de vídeo de apps que
-não vieram da Play Store, e é isso que o KingInstaller contorna. Onde isso não funciona (por exemplo no GrapheneOS),
-ative **Fontes desconhecidas** no Android Auto. Só liberar o modo desenvolvedor não basta: Fontes desconhecidas é
-uma opção separada dentro dele.
+Essa tela é o player de mídia do YT Auto, não a tela de vídeo. O Android Auto do carro esconde a tela de vídeo de
+apps que ele acha que não vieram da Play Store. O KingInstaller grava a Play Store como instalador; instalar ou
+atualizar o YT Auto de qualquer outro jeito (abrindo o APK direto, `adb install`, um gerenciador de arquivos) apaga
+isso, e o carro volta a mostrar só o player. Essa é a causa mais comum. Siga os passos na ordem:
 
-1. Abra as configurações do Android Auto no celular (no GrapheneOS: **Configurações** > **Apps** > **Android Auto**)
-   e toque 10 vezes em **Versão** para liberar as configurações de desenvolvedor.
-2. No Android Auto, abra o menu **⋮** > **Configurações do desenvolvedor** e ative **Fontes desconhecidas** (fica
-   mais para baixo na lista).
-3. Reinicie o celular e conecte de novo ao carro.
-4. No carro, abra o YT Auto pela lista de apps do Android Auto (ícone de grade), não pelo card de mídia.
-
-Ainda não aparece? Nas configurações do Android Auto no celular, abra **Personalizar inicializador** e confira se o
-YT Auto está marcado. Se instalou o APK sem o KingInstaller, instale de novo pelo KingInstaller.
+1. **Abra o YT Auto no celular.** Se aparecer "Reinstale pelo KingInstaller" no topo, o instalador se perdeu:
+   toque em **Abrir KingInstaller** (ou **Baixar KingInstaller**) e vá para o passo 2. O YT Auto também mostra esse
+   aviso como notificação quando o carro conecta.
+2. **Reinstale pelo KingInstaller** (seção 3 acima). Faça o mesmo em toda atualização: nunca abra o APK novo direto.
+3. **Ainda só o player?** No KingInstaller, tente os outros métodos de instalação que ele oferece (**Shizuku**, ou
+   **Root** em celular com root) e conecte de novo ao carro.
+4. **Ative Fontes desconhecidas no Android Auto** (necessário onde o KingInstaller não funciona, por exemplo no
+   GrapheneOS): abra as configurações do Android Auto no celular (no GrapheneOS: **Configurações** > **Apps** >
+   **Android Auto**), toque 10 vezes em **Versão** para liberar as configurações de desenvolvedor e depois em **⋮** >
+   **Configurações do desenvolvedor** > **Fontes desconhecidas** (fica mais para baixo na lista; só o modo
+   desenvolvedor não basta). Reinicie o celular e conecte de novo ao carro.
+5. **Confira o inicializador:** nas configurações do Android Auto, abra **Personalizar inicializador** e confira se
+   o YT Auto está marcado; no carro, abra o YT Auto pela lista de apps (ícone de grade), não pelo card de mídia.
 
 ## Compilando o código
 
