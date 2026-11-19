@@ -48,6 +48,8 @@
     <string name="forward_10">تقديم 10 ث</string>
     <string name="seek_seconds">%d ث</string>
     <string name="gesture_hint">تلميح: انقر مرتين على الفيديو للتخطي 10 ث، أو اسحب جانبًا للتقديم</string>
+    <string name="gestures">الإيماءات</string>
+    <string name="gestures_text">انقر مرتين على النصف الأيمن من الفيديو للتقديم 10 ث، وعلى النصف الأيسر للرجوع 10 ث. اسحب جانبًا على الفيديو للتقديم أو الرجوع. انقر على الفيديو ثم على شريط التقدم للانتقال إلى تلك النقطة.</string>
     <string name="watch_later">المشاهدة لاحقًا</string>
     <string name="liked">الفيديوهات التي أعجبتك</string>
     <string name="playlists">قوائم التشغيل</string>

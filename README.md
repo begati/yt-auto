@@ -111,6 +111,8 @@ its own for seeking; use these gestures:
   drag, and the video jumps there when you let go.
 - **Drag up or down** to scroll the page.
 
+The car settings have a **Gestures** row that explains these again.
+
 The steering wheel buttons (play/pause, next, previous) and the Android Auto media card also control the video.
 
 ### The car shows "Open YT Auto from the car's app list"

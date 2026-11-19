@@ -48,6 +48,8 @@
     <string name="forward_10">Forward 10 s</string>
     <string name="seek_seconds">%d s</string>
     <string name="gesture_hint">Tip: double tap the video to skip 10 s, or drag sideways to seek</string>
+    <string name="gestures">Gestures</string>
+    <string name="gestures_text">Double tap the right half of the video to skip 10 s ahead, the left half to go back 10 s. Drag sideways across the video to seek. Tap the video, then its progress bar, to jump to that point.</string>
     <string name="watch_later">Watch later</string>
     <string name="liked">Liked videos</string>
     <string name="playlists">Playlists</string>

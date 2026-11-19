@@ -110,6 +110,8 @@ carro não tem botões próprios para avançar ou voltar; use estes gestos:
   destino aparece enquanto você arrasta, e o vídeo pula para lá quando você solta.
 - **Arraste para cima ou para baixo** para rolar a página.
 
+As configurações do carro têm a linha **Gestos**, que explica esses gestos de novo.
+
 Os botões do volante (tocar/pausar, próximo, anterior) e o card de mídia do Android Auto também controlam o vídeo.
 
 ### O carro mostra "Abra o YT Auto pela lista de apps do carro"

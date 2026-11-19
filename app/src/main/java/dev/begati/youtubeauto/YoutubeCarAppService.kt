@@ -1971,6 +1971,9 @@ class SettingsScreen(ctx: CarContext, private val onChanged: () -> Unit) : Scree
             }
             list.addItem(row.build())
         }
+        // The gestures have no button: here they can be read again after the first tips.
+        list.addItem(Row.Builder().setTitle(carContext.getString(R.string.gestures)).setImage(icon(R.drawable.ic_forward_10)).setBrowsable(true)
+            .setOnClickListener { screenManager.push(GesturesScreen(carContext)) }.build())
         // Points to the phone's full settings; a tap says where they are, so the row is never a dead end.
         list.addItem(Row.Builder().setTitle(carContext.getString(R.string.more_on_phone)).setImage(icon(R.drawable.ic_smartphone))
             .setOnClickListener { CarToast.makeText(carContext, R.string.more_on_phone_how, CarToast.LENGTH_LONG).show() }.build())
@@ -2026,6 +2029,16 @@ class HomeMenuScreen(ctx: CarContext, private val onPick: (String) -> Unit) : Sc
 }
 
 /** "Entre pelo celular": shown instead of Google's sign-in form, which needs a keyboard the car lacks. OK goes back. */
+/** The car video gestures, for whoever missed the tips. */
+class GesturesScreen(ctx: CarContext) : Screen(ctx) {
+    override fun onGetTemplate() = MessageTemplate.Builder(carContext.getString(R.string.gestures_text))
+        .setTitle(carContext.getString(R.string.gestures))
+        .setHeaderAction(Action.BACK)
+        .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_forward_10)).build())
+        .addAction(Action.Builder().setTitle(carContext.getString(android.R.string.ok)).setOnClickListener { screenManager.pop() }.build())
+        .build()
+}
+
 class SignInScreen(ctx: CarContext) : Screen(ctx) {
     override fun onGetTemplate() = MessageTemplate.Builder(carContext.getString(R.string.signin_car_text))
         .setTitle(carContext.getString(R.string.signin_car_title))

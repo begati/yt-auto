@@ -48,6 +48,8 @@
     <string name="forward_10">Вперёд на 10 с</string>
     <string name="seek_seconds">%d с</string>
     <string name="gesture_hint">Совет: коснитесь видео дважды, чтобы перемотать на 10 с, или проведите в сторону для перемотки</string>
+    <string name="gestures">Жесты</string>
+    <string name="gestures_text">Коснитесь дважды правой половины видео, чтобы перемотать вперёд на 10 с, левой — чтобы назад на 10 с. Проведите в сторону по видео для перемотки. Коснитесь видео, затем полосы прогресса, чтобы перейти к этой точке.</string>
     <string name="watch_later">Смотреть позже</string>
     <string name="liked">Понравившиеся</string>
     <string name="playlists">Плейлисты</string>

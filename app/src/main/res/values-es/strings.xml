@@ -48,6 +48,8 @@
     <string name="forward_10">Avanzar 10 s</string>
     <string name="seek_seconds">%d s</string>
     <string name="gesture_hint">Consejo: toca dos veces el vídeo para saltar 10 s, o arrastra hacia un lado para avanzar</string>
+    <string name="gestures">Gestos</string>
+    <string name="gestures_text">Toca dos veces la mitad derecha del vídeo para avanzar 10 s, la mitad izquierda para retroceder 10 s. Arrastra hacia un lado sobre el vídeo para avanzar o retroceder. Toca el vídeo y luego la barra de progreso para ir a ese punto.</string>
     <string name="watch_later">Ver más tarde</string>
     <string name="liked">Videos que me gustan</string>
     <string name="playlists">Listas de reproducción</string>
