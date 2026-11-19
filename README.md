@@ -53,8 +53,8 @@ with your account, subscriptions and history, and turns your phone into a remote
 - Settings: video quality, speed, aspect (fit / fill / stretch), captions, fullscreen on open, home page, text size,
   on-screen navigation.
 - Resumes the video where it stopped when the car reconnects.
-- Languages: English, Português (Brasil), Español, Français, Italiano, Русский and العربية. The app follows the
-  phone's language and falls back to English.
+- Languages: English, Português (Brasil), Español, Français, Italiano, Deutsch, Polski, Türkçe, Bahasa Indonesia,
+  Русский and العربية. The app follows the phone's language and falls back to English.
 
 ## Requirements
 

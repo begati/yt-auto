@@ -15,7 +15,7 @@ class I18nTest {
     fun `all languages have the same strings as English`() {
         val res = File("src/main/res")
         val english = names(File(res, "values/strings.xml"), translatable = false)
-        for (lang in listOf("pt", "es", "fr", "it", "ru", "ar")) {
+        for (lang in listOf("pt", "es", "fr", "it", "ru", "ar", "de", "tr", "in", "pl")) {
             assertEquals(lang, english, names(File(res, "values-$lang/strings.xml")))
         }
     }

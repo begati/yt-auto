@@ -54,8 +54,8 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
 - Configurações: qualidade, velocidade, proporção (ajustar / preencher / esticar), legendas, tela cheia ao abrir,
   página inicial, tamanho do texto, navegação na tela.
 - Retoma o vídeo de onde parou quando o carro reconecta.
-- Idiomas: English, Português (Brasil), Español, Français, Italiano, Русский e العربية. O app segue o idioma do
-  celular e usa inglês quando o idioma não é suportado.
+- Idiomas: English, Português (Brasil), Español, Français, Italiano, Deutsch, Polski, Türkçe, Bahasa Indonesia,
+  Русский e العربية. O app segue o idioma do celular e usa inglês quando o idioma não é suportado.
 
 ## Requisitos
 
