@@ -977,6 +977,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Opens [url] in the car; with no player yet it loads pageUrl when the car shows the screen.
     private fun open(url: String) {
         if (!lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) return waitForCar(url) // screen gone meanwhile
+        stopEnd()
         pageUrl = url
         val wv = webView
         if (wv != null) wv.loadUrl(url) else sharedSession?.setPlaybackState(waitingForCar())
@@ -1016,7 +1017,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         autonav = if (an < 0) null else an == 1
         endedAt = if (!e) 0L else endedAt.takeIf { it > 0 } ?: SystemClock.uptimeMillis()
         val due = flag(carContext, "fullscreen") && endCountdownDue(e, autonav, SystemClock.uptimeMillis() - endedAt)
-        if (!e) stopEnd() else if (due && !endCounting) startEnd()
+        // Only while the video screen is in front and drawn: a countdown nobody sees must not change the page. The page
+        // keeps reporting the end, so it starts once the driver is back; leaving cancels a running one.
+        val seen = screenManager.top === this && display?.surface != null
+        if (!e || !seen) stopEnd() else if (due && !endCounting) startEnd()
     }
 
     // 5 s with the bar emptying, then the chosen start page (goHome); a tap goes at once (onClick).
@@ -1026,7 +1030,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         endText?.text = carContext.getString(R.string.going_home, carContext.getString(homeLabel(prefs(carContext))))
         endFill?.run {
             animate().cancel()
-            pivotX = if (layoutDirection == View.LAYOUT_DIRECTION_RTL) width.toFloat() else 0f
+            // The track's fixed width: the panel may never have been laid out yet (GONE), so width can still be 0.
+            pivotX = if (layoutDirection == View.LAYOUT_DIRECTION_RTL) 240 * resources.displayMetrics.density else 0f
             scaleX = 1f
             animate().scaleX(0f).setDuration(5000).setInterpolator(android.view.animation.LinearInterpolator()).start()
         }
@@ -1143,8 +1148,12 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     override fun onGetTemplate() = NavigationTemplate.Builder()
         .setActionStrip(
             ActionStrip.Builder()
-                .addAction(Action.Builder().setIcon(icon(R.drawable.ic_arrow_back)).setOnClickListener { exitFullscreen?.onCustomViewHidden() ?: webView?.goBack() }.build())
+                .addAction(Action.Builder().setIcon(icon(R.drawable.ic_arrow_back)).setOnClickListener {
+                    stopEnd() // leaving the video: no countdown landing over the page gone back to
+                    exitFullscreen?.onCustomViewHidden() ?: webView?.goBack()
+                }.build())
                 .addAction(Action.Builder().setIcon(icon(R.drawable.ic_home)).setOnClickListener {
+                    stopEnd()
                     screenManager.push(HomeMenuScreen(carContext) { url ->
                         pageUrl = url
                         webView?.loadUrl(url)
@@ -1156,6 +1165,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         addAction(Action.Builder().setIcon(icon(if (playing) R.drawable.ic_pause else R.drawable.ic_play_arrow)).setOnClickListener { js(JS_TOGGLE) }.build())
                 }
                 .addAction(Action.Builder().setIcon(icon(R.drawable.ic_search)).setOnClickListener {
+                    stopEnd()
                     screenManager.push(SearchScreen(carContext) { query ->
                         pageUrl = searchUrl(query)
                         webView?.loadUrl(pageUrl)
@@ -1179,6 +1189,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     Action.Builder()
                         .setIcon(icon(R.drawable.ic_settings))
                         .setOnClickListener {
+                            stopEnd() // a list over the video: the countdown would run unseen
                             screenManager.push(SettingsScreen(carContext) {
                                 // Flags are read live by the page; zoom, quality, speed and captions need a push.
                                 webView?.settings?.textZoom = choice(carContext, TEXT_ZOOM).toInt()
@@ -1319,6 +1330,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Keep the display, WebView and playback alive; only drop the surface we can no longer draw on.
     override fun onSurfaceDestroyed(container: SurfaceContainer) {
         display?.surface = null
+        stopEnd() // unseen: it starts again from the next ended report once the screen is back
         if (!flag(carContext, "background")) js(JS_PAUSE)
     }
 
