@@ -29,7 +29,7 @@ pena esse botao no app, só que nem sempre tem próximo vídeo a ser exibido, tr
 | --------------------- | -------------- | --------- | ---------- |
 | Onde | Barra lateral nativa (map action strip), na ordem anterior, próximo, proporção, configurações | Cabe: o Android Auto aceita até 4 ações nela; estilo e tamanho do sistema | y - user: "Barra lateral nativa (Recomendado)" |
 | Sem próximo vídeo | O botão próximo some | Sem botão morto | y - user: "Some (Recomendado)" |
-| Anterior sem vídeo anterior | Volta ao início do vídeo; com vídeo anterior (playlist), vai a ele | Mesmo comportamento do volante e do card de mídia | y - user: "Volta ao início do vídeo (Recomendado)" |
+| Anterior sem vídeo anterior | Volta ao início do vídeo; com vídeo anterior (playlist), vai a ele | Mesmo comportamento do volante e do card de mídia (o volante passou a usar a mesma regra, achado do Verifier) | y - user: "Volta ao início do vídeo (Recomendado)" |
 | De onde vem "há próximo / há anterior" | Dos botões anterior/próximo do player do YouTube na página (ainda no DOM, só escondidos): habilitado = existe; a página avisa o app quando muda | É o que o YouTube faria ao tocar neles | y - user: "sim" |
 | Quando aparecem | Em qualquer página de vídeo (`/watch`), tocando, pausado ou terminado | O vídeo atual é o ponto de partida dos dois | y - user: "sim" |
 | Ação do próximo | `nextVideo()` do player, o mesmo do volante | Já usado pelo botão do volante (`JS_NEXT`) | y - user: "sim" |
