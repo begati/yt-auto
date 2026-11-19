@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 20,
+  "next_id": 21,
   "lessons": [
     {
       "id": "L-001",
@@ -348,6 +348,24 @@
       ],
       "created": "2026-11-19T13:18:36Z",
       "last_seen": "2026-11-19T13:18:36Z"
+    },
+    {
+      "id": "L-020",
+      "key": "ac_gap::a timed car overlay that changes the page must run only while the video screen is in front and drawn and every strip action that leaves must stop it",
+      "text": "A timed car overlay that changes the page must run only while the video screen is in front and drawn, and every strip action that leaves must stop it.",
+      "signal": "ac_gap",
+      "scope": "car-overlay",
+      "status": "candidate",
+      "features": [
+        "video-end"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "video-end finding 4 (car-overlay)"
+      ],
+      "created": "2026-11-19T13:39:10Z",
+      "last_seen": "2026-11-19T13:39:10Z"
     }
   ]
 }

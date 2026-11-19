@@ -126,6 +126,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: player-controls C1 (webview)
 - last seen: 2026-11-19T13:18:36Z
 
+### L-020 - A timed car overlay that changes the page must run only while the video screen is in front and drawn, and every strip action that leaves must stop it.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `car-overlay` · harmful: 0
+- features: video-end
+- evidence: video-end finding 4 (car-overlay)
+- last seen: 2026-11-19T13:39:10Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
