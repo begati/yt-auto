@@ -418,6 +418,33 @@ internal fun webViewBounds(w: Int, h: Int, area: List<Int>?): List<Int> {
     return if (bounds[0] < bounds[2] && bounds[1] < bounds[3]) bounds else full
 }
 
+// Big car buttons: the app's own bar at the bottom, since the host sizes its action strip icons itself.
+internal enum class CarButton { BACK, HOME, TOGGLE, SEARCH, ASPECT, SETTINGS }
+
+/** The app's own bar needs the surface's onClick, which hosts only send from Car API level 5. */
+internal fun bigBar(carApiLevel: Int) = carApiLevel >= 5
+
+internal fun barButtons(url: String, playing: Boolean) =
+    listOfNotNull(CarButton.BACK, CarButton.HOME, CarButton.TOGGLE.takeIf { playToggleShown(url, playing) }, CarButton.SEARCH, CarButton.ASPECT)
+
+/** Action strip and map action strip of the template; the template needs one native action, so settings stays. */
+internal fun nativeButtons(bigBar: Boolean, url: String, playing: Boolean): Pair<List<CarButton>, List<CarButton>> =
+    if (bigBar) listOf(CarButton.SETTINGS) to emptyList()
+    else barButtons(url, playing).minus(CarButton.ASPECT) to listOf(CarButton.ASPECT, CarButton.SETTINGS)
+
+/** While a video page plays the bar hides by itself; anywhere else it stays. */
+internal fun barAutoHides(url: String, playing: Boolean) = playing && videoIdFromUrl(url) != null
+
+/** Page bounds with a fixed bar [barHeight] px tall at the bottom (0 when it floats over the video). */
+internal fun pageBounds(w: Int, h: Int, area: List<Int>?, barHeight: Int): List<Int> {
+    val (l, t, r, b) = webViewBounds(w, h, area)
+    return if (b - barHeight > t) listOf(l, t, r, b - barHeight) else listOf(l, t, r, b)
+}
+
+/** Whether a tap at ([x], [y]) lands on the shown bar ([bar] null when hidden). */
+internal fun tapOnBar(x: Float, y: Float, bar: List<Float>?) =
+    bar != null && x >= bar[0] && x <= bar[2] && y >= bar[1] && y <= bar[3]
+
 // Watch page the car opens for a video id (from the phone, the media list or a short).
 internal fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + java.net.URLEncoder.encode(videoId, "UTF-8")
 
