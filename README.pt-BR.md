@@ -16,9 +16,9 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
 > responsabiliza** por multas, acidentes, danos ou qualquer outra consequência do uso deste app.
 > Veja também a [licença](LICENSE) ("THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND").
 
-| Busca no carro | Vídeo tocando no carro |
+| Página inicial do YouTube no carro | Vídeo tocando no carro |
 |---|---|
-| ![Busca do YouTube no Android Auto, com a barra de ícones](docs/car-search.png) | ![Vídeo tocando no Android Auto](docs/car-video.png) |
+| ![Página inicial do YouTube no Android Auto](docs/car-home.png) | ![Vídeo tocando no Android Auto](docs/car-video.png) |
 
 | App no celular (YouTube + controle remoto) | Configurações no celular |
 |---|---|

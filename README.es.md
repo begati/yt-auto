@@ -16,9 +16,9 @@ del coche, con tu cuenta, suscripciones e historial, y convierte el teléfono en
 > no se hace responsable** de multas, accidentes, daños ni de ninguna otra consecuencia del uso de esta app.
 > Consulta también la [licencia](LICENSE) ("THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND").
 
-| Búsqueda en el coche | Video reproduciéndose en el coche |
+| Página principal de YouTube en el coche | Video reproduciéndose en el coche |
 |---|---|
-| ![Búsqueda de YouTube en Android Auto, con la barra de iconos](docs/car-search.png) | ![Video reproduciéndose en Android Auto](docs/car-video.png) |
+| ![Página principal de YouTube en Android Auto](docs/car-home.png) | ![Video reproduciéndose en Android Auto](docs/car-video.png) |
 
 | App en el teléfono (YouTube + control remoto) | Ajustes en el teléfono |
 |---|---|
