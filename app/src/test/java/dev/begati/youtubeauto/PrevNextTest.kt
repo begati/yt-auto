@@ -1,7 +1,6 @@
 package dev.begati.youtubeauto
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -19,12 +18,14 @@ class PrevNextTest {
 
     @Test
     fun `PN-04 previous opens the previous video when there is one`() {
-        assertFalse(previousRestarts(hasPrevious = true))
+        assertEquals(JS_PREVIOUS, previousJs(hasPrevious = true))
+        assertTrue(JS_PREVIOUS.contains("previousVideo"))
     }
 
     @Test
     fun `PN-05 previous restarts the video when there is none`() {
-        assertTrue(previousRestarts(hasPrevious = false))
+        assertEquals(JS_RESTART, previousJs(hasPrevious = false))
+        assertTrue(JS_RESTART.contains("currentTime=0"))
     }
 
     @Test

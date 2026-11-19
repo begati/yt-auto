@@ -197,7 +197,7 @@ private const val PAGE_JS =
         // Previous and next of YouTube's player (spec prev-next): its own buttons stay in the page while hidden, the
         // first one previous and the second next; enabled means there is a video to go to. Reported when that changes.
         "const nb=[...document.querySelectorAll('.player-middle-controls-prev-next-button')].map(b=>!b.classList.contains('icon-disable'));" +
-        "const nk=(nb[0]===true)+','+(nb[1]===true);if(nk!==window.__ytaNb){window.__ytaNb=nk;yta.neighbors(nb[0]===true,nb[1]===true)}" +
+        "const nk=id+','+(nb[0]===true)+','+(nb[1]===true);if(nk!==window.__ytaNb){window.__ytaNb=nk;yta.neighbors(nb[0]===true,nb[1]===true)}" +
         // Ads: unskippable ones have no button, and YouTube may ignore a scripted click, so the ad is also run to
         // its end (the player then moves on to the video by itself).
         "const ad=!!p&&p.classList.contains('ad-showing');" +
@@ -234,14 +234,14 @@ private const val PHONE_JS =
 private const val JS_PLAY = "document.querySelector('${MAIN_VIDEO}')?.play()"
 private const val JS_PAUSE = "document.querySelector('${MAIN_VIDEO}')?.pause()"
 private const val JS_TOGGLE = "(v=>v&&(v.paused?v.play():v.pause()))(document.querySelector('${MAIN_VIDEO}'))"
-private const val JS_RESTART = "(v=>v&&(v.currentTime=0))(document.querySelector('${MAIN_VIDEO}'))"
+internal const val JS_RESTART = "(v=>v&&(v.currentTime=0))(document.querySelector('${MAIN_VIDEO}'))"
 // Moves the main video [seconds] back (negative) or forward, within the video.
 private fun jsSeekBy(seconds: Int) =
     "(v=>v&&(v.currentTime=Math.max(0,Math.min(v.duration||1e9,v.currentTime+($seconds)))))(document.querySelector('${MAIN_VIDEO}'))"
 // Puts the main video at [seconds].
 private fun jsSeekTo(seconds: Double) = "(v=>v&&(v.currentTime=$seconds))(document.querySelector('${MAIN_VIDEO}'))"
 // Player's own "next": the playlist's next item, or the autoplay pick outside a playlist.
-private const val JS_PREVIOUS = "document.getElementById('${PLAYER_ID}')?.previousVideo?.()"
+internal const val JS_PREVIOUS = "document.getElementById('${PLAYER_ID}')?.previousVideo?.()"
 private const val JS_NEXT = "document.getElementById('${PLAYER_ID}')?.nextVideo?.()"
 // Player and progress bar rects in page px (the bar only while YouTube's controls show it), and the main video's time.
 private const val PROGRESS_BAR = ".ytPlayerProgressBarDragContainer"
@@ -826,6 +826,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Whether YouTube's player has a previous and a next video (spec prev-next), as the page last reported.
     private var hasPrevious = false
     private var hasNext = false
+    // Video id the neighbors above belong to.
+    private var neighborsOf: String? = null
     private var autonav: Boolean? = null
     // Countdown panel back to the start page, and whether it is counting.
     private var endView: View? = null
@@ -914,7 +916,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             override fun onPlay() { js(JS_PLAY) }
             override fun onPause() { js(JS_PAUSE) }
             override fun onSkipToNext() { js(JS_NEXT) }
-            override fun onSkipToPrevious() { js(JS_RESTART) }
+            override fun onSkipToPrevious() { js(previousJs(hasPrevious)) } // same as the side strip's previous
             override fun onSeekTo(pos: Long) { js(jsSeekTo(pos / 1000.0)) }
             override fun onCustomAction(action: String, extras: Bundle?) {
                 when (action) {
@@ -1167,7 +1169,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private fun mapAction(key: String): Action = when (key) {
         // Previous video in YouTube's queue, or the start of this one when there is none (spec prev-next).
         "previous" -> Action.Builder().setIcon(icon(R.drawable.ic_skip_previous))
-            .setOnClickListener { js(if (previousRestarts(hasPrevious)) JS_RESTART else JS_PREVIOUS) }.build()
+            .setOnClickListener { js(previousJs(hasPrevious)) }.build()
         "next" -> Action.Builder().setIcon(icon(R.drawable.ic_skip_next)).setOnClickListener { js(JS_NEXT) }.build()
         // Video aspect: Ajustar -> Preencher -> Esticar, saved as the default; the icon shows the current one.
         "aspect" -> Action.Builder()
@@ -1305,6 +1307,11 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
                         url ?: return
                         pageUrl = url
+                        // Another video: the last one's previous/next no longer apply until the page reports this one's.
+                        if (videoIdFromUrl(url) != neighborsOf) {
+                            neighborsOf = videoIdFromUrl(url)
+                            setNeighbors(false, false)
+                        }
                         if (playToggleShown(url, playing) != toggleShown || (videoIdFromUrl(url) != null) != stripWatch) invalidate()
                         dropVideoIfGone()
                     }
@@ -2236,8 +2243,11 @@ private const val RELEASES_API = "https://api.github.com/repos/begati/yt-auto/re
 internal fun mapStrip(onWatch: Boolean, hasNext: Boolean) =
     if (!onWatch) listOf("aspect", "settings") else listOfNotNull("previous", "next".takeIf { hasNext }, "aspect", "settings")
 
-/** Previous with no previous video in YouTube's queue restarts the current one, as the steering wheel does. */
-internal fun previousRestarts(hasPrevious: Boolean) = !hasPrevious
+/**
+ * Script for previous, from the car's side strip and from the steering wheel / media card alike: the previous video
+ * in YouTube's queue when there is one, else the start of the current video.
+ */
+internal fun previousJs(hasPrevious: Boolean) = if (hasPrevious) JS_PREVIOUS else JS_RESTART
 
 /**
  * Whether a video that [ended] (for [endedForMs]) should start the countdown back to the start page (spec video-end):
