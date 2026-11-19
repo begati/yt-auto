@@ -101,8 +101,8 @@ Atualizações: instale o APK novo pelo KingInstaller do mesmo jeito. Login e co
 ### Na tela do carro
 
 Toque na página como no celular. Um toque também mostra os botões do carro por alguns segundos: voltar, início (a sua
-página inicial), tocar/pausar e busca no topo, proporção do vídeo e configurações na lateral. Num vídeo, a lateral também tem
-**anterior** e **próximo**: o próximo só aparece quando o YouTube tem um próximo vídeo, e o anterior vai ao vídeo
+página inicial), tocar/pausar e busca no topo, configurações na lateral. Num vídeo, a lateral também tem **anterior**, **próximo** e a
+proporção do vídeo: o próximo só aparece quando o YouTube tem um próximo vídeo, e o anterior vai ao vídeo
 anterior ou, se não houver, volta ao início do vídeo. Para andar dentro do vídeo, use estes gestos:
 
 - **Toque duas vezes** na metade direita do vídeo para avançar 10 s, na metade esquerda para voltar 10 s. Repita o

@@ -103,7 +103,8 @@ Updates: install the new APK with KingInstaller the same way. Your sign-in and s
 ### On the car screen
 
 Tap the page as on a phone. A tap also brings up the car's buttons for a few seconds: back, home (your start page), play/pause
-and search at the top, video aspect and settings on the side. On a video the side also has **previous** and **next**:
+and search at the top, settings on the side. On a video the side also has **previous**, **next** and the video
+aspect:
 next shows only when YouTube has a next video, and previous goes to the previous one or, with none, back to the start
 of the video. To move within the video, use these gestures:
 

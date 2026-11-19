@@ -106,8 +106,8 @@ Actualizaciones: instala el APK nuevo con KingInstaller de la misma forma. Se ma
 ### En la pantalla del coche
 
 Toca la página como en el teléfono. Un toque también muestra los botones del coche durante unos segundos: atrás, inicio (tu
-página principal), reproducir/pausar y búsqueda arriba, proporción del video y ajustes al lado. En un video, el lateral también
-tiene **anterior** y **siguiente**: siguiente solo aparece cuando YouTube tiene un video siguiente, y anterior va al
+página principal), reproducir/pausar y búsqueda arriba, ajustes al lado. En un video, el lateral también tiene **anterior**,
+**siguiente** y la proporción del video: siguiente solo aparece cuando YouTube tiene un video siguiente, y anterior va al
 video anterior o, si no lo hay, vuelve al inicio del video. Para moverte dentro del video, usa estos gestos:
 
 - **Toca dos veces** la mitad derecha del video para avanzar 10 s, la mitad izquierda para retroceder 10 s. Repite el

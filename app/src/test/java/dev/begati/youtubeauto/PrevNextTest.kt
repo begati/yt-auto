@@ -51,3 +51,12 @@ class GesturesListTest {
         )
     }
 }
+
+/** FIX-05 (spec critique-fixes): both centered panels read these, so one value sets both. */
+class PanelTokensTest {
+    @Test
+    fun `FIX-05 the car panels share 16 dp corners and a 6 dp bar`() {
+        assertEquals(16, PANEL_CORNER_DP)
+        assertEquals(6, PANEL_BAR_DP)
+    }
+}

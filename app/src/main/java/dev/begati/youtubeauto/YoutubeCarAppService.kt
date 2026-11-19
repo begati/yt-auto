@@ -983,6 +983,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         // No artwork: a headphones icon in its place.
         coverArt?.imageTintList = if (art != null) null else android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
         if (art != null) coverArt?.setImageBitmap(art) else coverArt?.setImageResource(R.drawable.ic_headphones)
+        placeEnd() // the cover came or went during a countdown
     }
 
     // Opens [url] in the car; with no player yet it loads pageUrl when the car shows the screen.
@@ -1046,12 +1047,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         val view = endView ?: return
         endCounting = true
         endText?.text = carContext.getString(R.string.going_home, carContext.getString(homeLabel(prefs(carContext))))
-        // Over the audio-only cover: at the bottom, under the cover's art and title; else centered.
-        endPanel?.layoutParams = FrameLayout.LayoutParams(-2, -2,
-            if (cover?.visibility == View.VISIBLE) android.view.Gravity.BOTTOM or android.view.Gravity.CENTER_HORIZONTAL
-            else android.view.Gravity.CENTER).apply {
-            bottomMargin = (24 * view.resources.displayMetrics.density).toInt()
-        }
+        placeEnd()
         endFill?.run {
             animate().cancel()
             // The track's fixed width: the panel may never have been laid out yet (GONE), so width can still be 0.
@@ -1073,6 +1069,19 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         ui.removeCallbacks(goHome)
         endFill?.animate()?.cancel()
         endView?.visibility = View.GONE
+        placeEnd() // the cover gets its art back
+    }
+
+    // Countdown over the audio-only cover: at the bottom, with the cover's art hidden so its title and line move up and
+    // stay clear of the panel even at 800x480; without the cover, centered. Re-run when the cover shows or hides.
+    private fun placeEnd() {
+        val overCover = endCounting && cover?.visibility == View.VISIBLE
+        coverArt?.visibility = if (overCover) View.GONE else View.VISIBLE
+        val panel = endPanel ?: return
+        panel.layoutParams = FrameLayout.LayoutParams(-2, -2,
+            if (overCover) android.view.Gravity.BOTTOM or android.view.Gravity.CENTER_HORIZONTAL else android.view.Gravity.CENTER).apply {
+            if (overCover) bottomMargin = (8 * panel.resources.displayMetrics.density).toInt()
+        }
     }
 
     // Off a video page with nothing playing (Início, search): no video is left in the car, so the phone bar and the
@@ -1689,7 +1698,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             gravity = android.view.Gravity.CENTER_HORIZONTAL
             setPadding(dp(28), dp(18), dp(28), dp(22))
             background = android.graphics.drawable.GradientDrawable().apply {
-                cornerRadius = dp(16).toFloat() // same corners as the turn card
+                cornerRadius = dp(PANEL_CORNER_DP).toFloat()
                 setColor(0xCC000000.toInt())
             }
             addView(android.widget.TextView(ctx).also { endText = it }.apply {
@@ -1707,7 +1716,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             addView(FrameLayout(ctx).apply {
                 setBackgroundColor(0x4DFFFFFF)
                 addView(View(ctx).also { endFill = it }.apply { setBackgroundColor(android.graphics.Color.WHITE) }, FrameLayout.LayoutParams(-1, -1))
-            }, android.widget.LinearLayout.LayoutParams(dp(240), dp(6)))
+            }, android.widget.LinearLayout.LayoutParams(dp(240), dp(PANEL_BAR_DP)))
         }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.CENTER))
     }
 
@@ -1720,7 +1729,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             gravity = android.view.Gravity.CENTER_HORIZONTAL
             setPadding(dp(28), dp(16), dp(28), dp(20))
             background = android.graphics.drawable.GradientDrawable().apply {
-                cornerRadius = dp(16).toFloat()
+                cornerRadius = dp(PANEL_CORNER_DP).toFloat()
                 setColor(0xCC000000.toInt())
             }
             addView(android.widget.TextView(ctx).also { dragTime = it }.apply {
@@ -1738,7 +1747,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             addView(FrameLayout(ctx).apply {
                 setBackgroundColor(0x4DFFFFFF)
                 addView(View(ctx).also { dragFill = it }.apply { setBackgroundColor(android.graphics.Color.WHITE) }, FrameLayout.LayoutParams(0, -1))
-            }, android.widget.LinearLayout.LayoutParams(dp(240), dp(6))) // same bar as the countdown
+            }, android.widget.LinearLayout.LayoutParams(dp(240), dp(PANEL_BAR_DP)))
         }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.CENTER))
     }
 
@@ -2269,6 +2278,10 @@ private fun Activity.requestLocation() {
 
 // Latest release of this app on GitHub: the app isn't on the Play Store, so it checks there for updates.
 private const val RELEASES_API = "https://api.github.com/repos/begati/yt-auto/releases/latest"
+
+// Corners and progress bar of the car's centered panels (drag, end countdown): one look, as the turn card's corners.
+internal const val PANEL_CORNER_DP = 16
+internal const val PANEL_BAR_DP = 6
 
 /**
  * The car's side strip (spec prev-next): on a video, previous, next (only when YouTube has one), aspect and settings;

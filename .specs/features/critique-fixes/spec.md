@@ -28,7 +28,7 @@ problemas na tela do carro. Pedido do usuário: "Todos", começando pela contage
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --------------------- | -------------- | --------- | ---------- |
 | Segunda linha da contagem | "Toque para ir agora" (string `going_home_tap`), menor e 70% branca, abaixo do título | Diz o que o toque faz, que hoje é invisível | y - user: "aprovado, segue para as tarefas" |
-| Contagem sobre a capa de só áudio | O painel desce para o rodapé (centralizado, 24 dp da borda) enquanto a capa aparece; sem a capa, fica no centro | Não cobre a arte e o título da capa | y - user: "aprovado, segue para as tarefas" |
+| Contagem sobre a capa de só áudio | O painel desce para o rodapé (centralizado, 8 dp da borda) e a arte da capa some enquanto ele aparece, para o título e a linha da capa subirem; sem a capa, fica no centro (ajustado pelo Verifier: em 800x480 o painel cobria o texto da capa) | Não cobre a arte e o título da capa | y - user: "aprovado, segue para as tarefas" |
 | Tela Gestos | Lista de 3 linhas, cada uma com ícone, título curto e uma linha de detalhe: toque duplo (±10 s), arrastar para o lado (avançar ou voltar), toque na barra (ir ao ponto); sem ação ao tocar | Leitura de relance, em vez de um parágrafo de 45 palavras | y - user: "aprovado, segue para as tarefas" |
 | Strings da tela Gestos | 6 strings novas nos 11 idiomas; `gestures_text` sai | Sem string morta | y - user: "aprovado, segue para as tarefas" |
 | Proporção fora do vídeo | Some: fora de `/watch` a barra lateral fica só com configurações | Proporção só afeta o vídeo; muda o AC 6 da spec prev-next | y - user: "aprovado, segue para as tarefas" |
