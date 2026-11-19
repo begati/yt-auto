@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 22,
+  "next_id": 23,
   "lessons": [
     {
       "id": "L-001",
@@ -384,6 +384,24 @@
       ],
       "created": "2026-11-19T14:02:11Z",
       "last_seen": "2026-11-19T14:02:11Z"
+    },
+    {
+      "id": "L-022",
+      "key": "ac_gap::android auto binds the car app service on connect but the media browser only when the media card is used hook car connect logic on the session not only ongetroot",
+      "text": "Android Auto binds the car app service on connect but the media browser only when the media card is used; hook car-connect logic on the session, not only onGetRoot.",
+      "signal": "ac_gap",
+      "scope": "car-install",
+      "status": "candidate",
+      "features": [
+        "install-check"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "install-check finding 2 (car-install)"
+      ],
+      "created": "2026-11-19T18:34:37Z",
+      "last_seen": "2026-11-19T18:34:37Z"
     }
   ]
 }

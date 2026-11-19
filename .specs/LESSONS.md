@@ -138,6 +138,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: prev-next finding 1-2 (car-controls)
 - last seen: 2026-11-19T14:02:11Z
 
+### L-022 - Android Auto binds the car app service on connect but the media browser only when the media card is used; hook car-connect logic on the session, not only onGetRoot.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `car-install` · harmful: 0
+- features: install-check
+- evidence: install-check finding 2 (car-install)
+- last seen: 2026-11-19T18:34:37Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
