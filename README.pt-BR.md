@@ -5,7 +5,7 @@
 [![Release](https://img.shields.io/github/v/release/begati/yt-auto)](https://github.com/begati/yt-auto/releases/latest)
 [![License](https://img.shields.io/github/license/begati/yt-auto)](LICENSE)
 
-[English](README.md) · **Português (Brasil)**
+[English](README.md) · **Português (Brasil)** · [Español](README.es.md)
 
 Assista ao YouTube na tela do carro pelo Android Auto. O YT Auto mostra o site mobile do YouTube na tela do carro,
 com sua conta, inscrições e histórico, e transforma o celular em controle remoto.
@@ -42,6 +42,7 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
   anterior).
 - Histórico, Inscrições, Assistir mais tarde, Vídeos curtidos e suas playlists no navegador de mídia do Android Auto.
 - O vídeo preenche a tela do carro por padrão; o botão de proporção (ajustar / preencher / esticar) lembra a escolha.
+- Quando um vídeo termina e nada toca em seguida, uma contagem de 5 s volta para a sua página inicial.
 - Pula patrocínios com o [SponsorBlock](https://sponsor.ajay.app) (só um prefixo de 4 caracteres do hash do id do
   vídeo é enviado).
 - Modo só áudio opcional com o carro em movimento (usa a velocidade do GPS do celular; desligado por padrão).
