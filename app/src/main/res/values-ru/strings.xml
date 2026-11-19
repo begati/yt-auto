@@ -65,6 +65,7 @@
     <string name="close">Закрыть</string>
     <string name="signed_in_toast">Готово: машина использует ваш аккаунт</string>
     <string name="more_on_phone">Другие настройки на телефоне</string>
+    <string name="more_on_phone_how">На телефоне откройте YT Auto и нажмите «Настройки»</string>
     <string name="group_playback">Воспроизведение</string>
     <string name="group_ads">Реклама</string>
     <string name="group_car">В машине</string>

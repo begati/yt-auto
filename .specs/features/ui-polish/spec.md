@@ -103,7 +103,7 @@ settings are an ungrouped wall, and the phone remote bar mixes icon families wit
 **Acceptance Criteria**:
 
 1. The car settings screen SHALL list, in this order, Qualidade do vídeo, Velocidade and Legendas, each with an icon (`high_quality`, `speed`, `closed_caption`)
-2. The car settings screen SHALL end with a row "Mais opções no celular" with a phone icon that does nothing when tapped
+2. The car settings screen SHALL end with a row "Mais opções no celular" with a phone icon; a tap SHALL show the toast `more_on_phone_how` ("No celular, abra o YT Auto e toque em Configurações") and leave the screen as is (changed 2026-11-19 by the impeccable critique: a row that did nothing read as a dead end; user: "roda todos na ordem")
 3. WHEN the driver changes a car setting THEN the app SHALL apply it as today (quality, speed and captions take effect on the playing video)
 
 **Independent Test**: DHU: settings show 4 rows; change speed; the video plays at the new speed.

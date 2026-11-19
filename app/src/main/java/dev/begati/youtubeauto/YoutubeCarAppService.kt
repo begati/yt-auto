@@ -1969,8 +1969,9 @@ class SettingsScreen(ctx: CarContext, private val onChanged: () -> Unit) : Scree
             }
             list.addItem(row.build())
         }
-        // Not tappable: points to the phone's full settings.
-        list.addItem(Row.Builder().setTitle(carContext.getString(R.string.more_on_phone)).setImage(icon(R.drawable.ic_smartphone)).build())
+        // Points to the phone's full settings; a tap says where they are, so the row is never a dead end.
+        list.addItem(Row.Builder().setTitle(carContext.getString(R.string.more_on_phone)).setImage(icon(R.drawable.ic_smartphone))
+            .setOnClickListener { CarToast.makeText(carContext, R.string.more_on_phone_how, CarToast.LENGTH_LONG).show() }.build())
         return ListTemplate.Builder()
             .setTitle(carContext.getString(R.string.settings))
             .setHeaderAction(Action.BACK)

@@ -65,6 +65,7 @@
     <string name="close">إغلاق</string>
     <string name="signed_in_toast">تم: السيارة تستخدم حسابك الآن</string>
     <string name="more_on_phone">خيارات أكثر على الهاتف</string>
+    <string name="more_on_phone_how">على الهاتف، افتح YT Auto واضغط على الإعدادات</string>
     <string name="group_playback">التشغيل</string>
     <string name="group_ads">الإعلانات</string>
     <string name="group_car">في السيارة</string>

@@ -65,6 +65,7 @@
     <string name="close">Fermer</string>
     <string name="signed_in_toast">C\'est fait : la voiture utilise votre compte</string>
     <string name="more_on_phone">Plus d\'options sur le téléphone</string>
+    <string name="more_on_phone_how">Sur le téléphone, ouvrez YT Auto et touchez Paramètres</string>
     <string name="group_playback">Lecture</string>
     <string name="group_ads">Annonces</string>
     <string name="group_car">Dans la voiture</string>
