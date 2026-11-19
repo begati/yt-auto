@@ -132,6 +132,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: video-end finding 4 (car-overlay)
 - last seen: 2026-11-19T13:39:10Z
 
+### L-021 - When two controls (side strip, steering wheel) do the same thing, route both through one helper and test the helper's output, not a boolean.
+- signal: `weak_test` · recurrence: 1 feature(s) · scope: `car-controls` · harmful: 0
+- features: prev-next
+- evidence: prev-next finding 1-2 (car-controls)
+- last seen: 2026-11-19T14:02:11Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

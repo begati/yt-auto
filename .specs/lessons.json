@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 21,
+  "next_id": 22,
   "lessons": [
     {
       "id": "L-001",
@@ -366,6 +366,24 @@
       ],
       "created": "2026-11-19T13:39:10Z",
       "last_seen": "2026-11-19T13:39:10Z"
+    },
+    {
+      "id": "L-021",
+      "key": "weak_test::when two controls side strip steering wheel do the same thing route both through one helper and test the helper s output not a boolean",
+      "text": "When two controls (side strip, steering wheel) do the same thing, route both through one helper and test the helper's output, not a boolean.",
+      "signal": "weak_test",
+      "scope": "car-controls",
+      "status": "candidate",
+      "features": [
+        "prev-next"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "prev-next finding 1-2 (car-controls)"
+      ],
+      "created": "2026-11-19T14:02:11Z",
+      "last_seen": "2026-11-19T14:02:11Z"
     }
   ]
 }
