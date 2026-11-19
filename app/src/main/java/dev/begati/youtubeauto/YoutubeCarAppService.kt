@@ -2203,6 +2203,16 @@ private fun Activity.requestLocation() {
 private const val RELEASES_API = "https://api.github.com/repos/begati/yt-auto/releases/latest"
 
 /**
+ * The car's side strip (spec prev-next): on a video, previous, next (only when YouTube has one), aspect and settings;
+ * elsewhere aspect and settings. The host allows four actions there.
+ */
+internal fun mapStrip(onWatch: Boolean, hasNext: Boolean) =
+    if (!onWatch) listOf("aspect", "settings") else listOfNotNull("previous", "next".takeIf { hasNext }, "aspect", "settings")
+
+/** Previous with no previous video in YouTube's queue restarts the current one, as the steering wheel does. */
+internal fun previousRestarts(hasPrevious: Boolean) = !hasPrevious
+
+/**
  * Whether a video that [ended] (for [endedForMs]) should start the countdown back to the start page (spec video-end):
  * with autoplay off ([autonav] false) nothing comes next, so at once; on or unknown, only if YouTube opened nothing in
  * 10 s.
