@@ -114,8 +114,8 @@ T1 → T2 → T3 → T4
 
 **Done when**:
 
-- [ ] Walk DHU HD + DevTools: botão e filhos `hidden` tocando e terminado; sem `yta-watch`, visível
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk DHU HD + DevTools: botão e filhos `hidden` tocando e terminado; sem `yta-watch`, visível
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build
@@ -161,7 +161,7 @@ Proof: walk - DHU HD + DevTools: com `yta-watch` removida, o wrapper fica `visib
 
 **Settled mid-build:** none
 **Dispatched:** none
-**Walked:** none
+**Walked:** 2026-11-19, orchestrator, DHU 1280x720 (160 dpi) + phone over USB, debug build installed with data kept. Reach: YT Auto on the DHU, a video opened by DevTools `location.href` (VkSrmUJgKhQ, whose page shows YouTube's autoplay toggle, `aria-pressed="false"`), a tap to show the controls, then DevTools `currentTime = duration - 1`. T2: the page's `__ytaEn` false while playing, true with `getPlayerState() === 0` after the end; `__ytaAn` false, matching the toggle's label "Reprodução automática desativada". C4: screenshots ~2 s and ~4.5 s after the end show the centered panel "Voltando para Início" with the bar nearly full, then under half (k1, k2). C5: ~6 s after the panel, the car page's `location.href` is `https://m.youtube.com/`. C6: a tap at the panel 2.5 s into the countdown, `location.href` is `https://m.youtube.com/` 0.8 s later. C7: the native play during the countdown hides the panel and restarts the video; 6 s later still `/watch`, playing (k4). C8: phone Configurações > Página inicial = Inscrições: the panel reads "Voltando para Inscrições" (k5) and the car opens `/feed/subscriptions`; the option was set back to Início. The panel over the audio cover was not walked (needs mock GPS); it is added after the cover in the frame. C9: DevTools on `.ytwPlayerBottomControlsFullscreenButtonWrapper` and its 8 descendants: all `hidden` in `playing-mode` (controls shown by a tap) and in `ended-mode`; the corner icon is gone in the ended screenshot (l2). C10: with `html.yta-watch` removed by DevTools, the wrapper reads `visible`; the class was put back.
 
 ---
 

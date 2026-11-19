@@ -160,6 +160,9 @@ private const val PAGE_JS =
         // player-controls); the progress bar and time stay for the tap-to-seek.
         "html.yta-watch player-top-controls{display:none!important}" +
         "html.yta-watch player-middle-controls,html.yta-watch player-middle-controls *{visibility:hidden!important}" +
+        // YouTube's fullscreen button: the car video already fills the screen and the aspect is the host's button.
+        "html.yta-watch .ytwPlayerBottomControlsFullscreenButtonWrapper,html.yta-watch .ytwPlayerBottomControlsFullscreenButtonWrapper *" +
+        "{visibility:hidden!important}" +
         "html.yta-watch ${PLAYER_CONTAINER}{position:fixed!important;inset:0!important;" +
         "width:100vw!important;height:100vh!important;z-index:99999!important;background:#000!important}" +
         // Wrappers between the container and the video (#player keeps an aspect-ratio padding, the video
