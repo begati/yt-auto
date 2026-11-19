@@ -71,6 +71,12 @@
     <string name="update_skip">Пропустить версию</string>
     <string name="signin_car_title">Войдите на телефоне</string>
     <string name="signin_car_text">Откройте YT Auto на телефоне и нажмите «Войти». Машина использует тот же аккаунт.</string>
+    <string name="install_title">Переустановите через KingInstaller</string>
+    <string name="install_text">При другой установке YT Auto в машине открывается только как плеер, без видео.</string>
+    <string name="install_open_king">Открыть KingInstaller</string>
+    <string name="install_get_king">Скачать KingInstaller</string>
+    <string name="install_ignore">Игнорировать</string>
+    <string name="install_channel">Установка</string>
     <string name="banner_text">Войдите, чтобы видеть подписки в машине</string>
     <string name="banner_signin">Войти</string>
     <string name="close">Закрыть</string>

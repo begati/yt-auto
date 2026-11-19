@@ -2312,6 +2312,17 @@ internal fun kingAction(kingInstalled: Boolean) = if (kingInstalled) KingAction.
 /** Notify when Android Auto (the car) binds the media service and the install is wrong. */
 internal fun notifyInstall(client: String, warning: Boolean) = warning && client == "com.google.android.projection.gearhead"
 
+// This install's recorded installer and lastUpdateTime, and whether to warn about it (see installWarning).
+internal fun Context.installWarningNow(): Boolean {
+    val installer = runCatching {
+        if (android.os.Build.VERSION.SDK_INT >= 30) packageManager.getInstallSourceInfo(packageName).installingPackageName
+        else @Suppress("DEPRECATION") packageManager.getInstallerPackageName(packageName)
+    }.getOrNull()
+    return installWarning(installer, installedAt(), prefs(this).getLong("installIgnoredAt", 0L))
+}
+
+internal fun Context.installedAt() = packageManager.getPackageInfo(packageName, 0).lastUpdateTime
+
 /**
  * Whether a video that [ended] (for [endedForMs]) should start the countdown back to the start page (spec video-end):
  * with autoplay off ([autonav] false) nothing comes next, so at once; on or unknown, only if YouTube opened nothing in
@@ -2492,6 +2503,7 @@ class LoginActivity : Activity() {
     private var web: WebView? = null
     private var bar: RemoteBar? = null
     private var banner: View? = null
+    private var installBanner: View? = null
     // Phone -> car: the same session the steering wheel uses; it opens the video in the car, or keeps it for later.
     private val car by lazy { MediaController(this, mediaSession(this).sessionToken) }
 
@@ -2542,6 +2554,7 @@ class LoginActivity : Activity() {
         }
         setContentView(android.widget.LinearLayout(this).apply {
             orientation = android.widget.LinearLayout.VERTICAL
+            addView(installBanner().also { installBanner = it })
             addView(signInBanner().also { banner = it })
             addView(page, android.widget.LinearLayout.LayoutParams(-1, 0, 1f))
             addView(barBox)
@@ -2552,6 +2565,66 @@ class LoginActivity : Activity() {
             // Audio-only turned on in the car: the car can't ask for location, so the phone does on its next launch.
             if (flag(this, "audioWhileMoving")) requestLocation()
         }
+    }
+
+    // Back from KingInstaller (or the system) after a reinstall: the warning goes away without restarting the app.
+    override fun onResume() {
+        super.onResume()
+        checkSignIn()
+    }
+
+    // Spec install-check: flag icon, "Reinstale pelo KingInstaller" and the effect, open/get KingInstaller and X (Ignorar,
+    // until the app is installed again). Same strip as the sign-in banner, which it replaces while shown.
+    private fun installBanner() = android.widget.LinearLayout(this).apply {
+        val dp = resources.displayMetrics.density
+        gravity = android.view.Gravity.CENTER_VERTICAL
+        setBackgroundColor(0xFF1F1F1F.toInt())
+        setPadding((12 * dp).toInt(), (8 * dp).toInt(), 0, (8 * dp).toInt())
+        val white = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+        addView(android.widget.ImageView(context).apply {
+            setImageResource(R.drawable.ic_flag)
+            imageTintList = white
+        })
+        addView(android.widget.LinearLayout(context).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding((12 * dp).toInt(), 0, (8 * dp).toInt(), 0)
+            addView(android.widget.TextView(context).apply {
+                setText(R.string.install_title)
+                setTextColor(android.graphics.Color.WHITE)
+                typeface = android.graphics.Typeface.DEFAULT_BOLD
+            })
+            addView(android.widget.TextView(context).apply {
+                setText(R.string.install_text)
+                setTextColor(0xB3FFFFFF.toInt())
+            })
+            addView(android.widget.Button(context, null, android.R.attr.borderlessButtonStyle).apply {
+                val king = packageManager.getLaunchIntentForPackage(KING_PACKAGE)
+                when (kingAction(king != null)) {
+                    KingAction.OPEN -> { setText(R.string.install_open_king); setOnClickListener { startActivity(king) } }
+                    KingAction.DOWNLOAD -> {
+                        setText(R.string.install_get_king)
+                        setOnClickListener { startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(KING_RELEASES))) }
+                    }
+                }
+                setPadding(0, 0, 0, 0)
+                minWidth = 0
+                minimumWidth = 0
+            })
+        }, android.widget.LinearLayout.LayoutParams(0, -2, 1f))
+        addView(android.widget.ImageButton(context).apply {
+            setImageResource(R.drawable.ic_close)
+            imageTintList = white
+            contentDescription = getString(R.string.install_ignore)
+            setBackgroundResource(obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackgroundBorderless)).run {
+                getResourceId(0, 0).also { recycle() }
+            })
+            minimumWidth = (48 * dp).toInt()
+            minimumHeight = (48 * dp).toInt()
+            setOnClickListener {
+                prefs(this@LoginActivity).edit().putLong("installIgnoredAt", installedAt()).apply()
+                checkSignIn()
+            }
+        })
     }
 
     // Account icon, "Entre para ver suas inscrições no carro", Entrar (Google's sign-in here) and X (closes until the next change).
@@ -2598,7 +2671,17 @@ class LoginActivity : Activity() {
             android.widget.Toast.makeText(this, R.string.signed_in_toast, android.widget.Toast.LENGTH_LONG).show()
             carLink?.reload()
         }
-        banner?.visibility = if (bannerShown(signedIn, bannerClosed(p))) View.VISIBLE else View.GONE
+        val install = installWarningNow()
+        installBanner?.visibility = if (install) View.VISIBLE else View.GONE
+        // One banner at a time: a wrong install keeps the car from working, signing in does not.
+        banner?.visibility = if (!install && bannerShown(signedIn, bannerClosed(p))) View.VISIBLE else View.GONE
+        // The car notification needs this (Android 13+); asked once, right after the warning it serves shows.
+        if (install && android.os.Build.VERSION.SDK_INT >= 33 && !p.getBoolean("notifAsked", false) &&
+            checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            p.edit().putBoolean("notifAsked", true).apply()
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 2)
+        }
     }
 
     // Offers a newer GitHub release once per launch, until it's installed or skipped. Failures stay silent.

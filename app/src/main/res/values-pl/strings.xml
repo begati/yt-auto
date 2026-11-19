@@ -71,6 +71,12 @@
     <string name="update_skip">Pomiń tę wersję</string>
     <string name="signin_car_title">Zaloguj się na telefonie</string>
     <string name="signin_car_text">Otwórz YT Auto na telefonie i kliknij Zaloguj się. Samochód używa tego samego konta.</string>
+    <string name="install_title">Zainstaluj ponownie przez KingInstaller</string>
+    <string name="install_text">Zainstalowany inaczej YT Auto pokazuje się w samochodzie tylko jako odtwarzacz, bez obrazu.</string>
+    <string name="install_open_king">Otwórz KingInstaller</string>
+    <string name="install_get_king">Pobierz KingInstaller</string>
+    <string name="install_ignore">Ignoruj</string>
+    <string name="install_channel">Instalacja</string>
     <string name="banner_text">Zaloguj się, aby widzieć subskrypcje w samochodzie</string>
     <string name="banner_signin">Zaloguj się</string>
     <string name="close">Zamknij</string>

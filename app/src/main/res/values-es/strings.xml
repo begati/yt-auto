@@ -71,6 +71,12 @@
     <string name="update_skip">Omitir esta versión</string>
     <string name="signin_car_title">Inicia sesión en el teléfono</string>
     <string name="signin_car_text">Abre YT Auto en el teléfono y toca Iniciar sesión. El coche usa la misma cuenta.</string>
+    <string name="install_title">Reinstala con KingInstaller</string>
+    <string name="install_text">Instalado de otra forma, YT Auto aparece en el coche solo como reproductor, sin el video.</string>
+    <string name="install_open_king">Abrir KingInstaller</string>
+    <string name="install_get_king">Descargar KingInstaller</string>
+    <string name="install_ignore">Ignorar</string>
+    <string name="install_channel">Instalación</string>
     <string name="banner_text">Inicia sesión para ver tus suscripciones en el coche</string>
     <string name="banner_signin">Iniciar sesión</string>
     <string name="close">Cerrar</string>

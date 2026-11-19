@@ -71,6 +71,12 @@
     <string name="update_skip">تخطي هذا الإصدار</string>
     <string name="signin_car_title">سجّل الدخول من الهاتف</string>
     <string name="signin_car_text">افتح YT Auto على الهاتف واضغط تسجيل الدخول. تستخدم السيارة الحساب نفسه.</string>
+    <string name="install_title">أعد التثبيت عبر KingInstaller</string>
+    <string name="install_text">عند تثبيته بطريقة أخرى، يظهر YT Auto في السيارة كمشغل فقط، بدون الفيديو.</string>
+    <string name="install_open_king">فتح KingInstaller</string>
+    <string name="install_get_king">تنزيل KingInstaller</string>
+    <string name="install_ignore">تجاهل</string>
+    <string name="install_channel">التثبيت</string>
     <string name="banner_text">سجّل الدخول لترى اشتراكاتك في السيارة</string>
     <string name="banner_signin">تسجيل الدخول</string>
     <string name="close">إغلاق</string>

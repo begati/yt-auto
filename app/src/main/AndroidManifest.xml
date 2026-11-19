@@ -8,6 +8,11 @@
     <!-- GPS speed, for the audio-only cover while the car moves. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Install warning (spec install-check): the notification when the car connects, and seeing KingInstaller. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <queries>
+        <package android:name="com.example.kinginstaller" />
+    </queries>
 
     <!-- The turn card badges the app that sends the route with its icon (see NAV_APPS). -->
     <queries>

@@ -71,6 +71,12 @@
     <string name="update_skip">Pular esta versão</string>
     <string name="signin_car_title">Entre pelo celular</string>
     <string name="signin_car_text">Abra o YT Auto no celular e toque em Entrar. O carro usa a mesma conta.</string>
+    <string name="install_title">Reinstale pelo KingInstaller</string>
+    <string name="install_text">Instalado de outro jeito, o YT Auto aparece no carro só como player, sem o vídeo.</string>
+    <string name="install_open_king">Abrir KingInstaller</string>
+    <string name="install_get_king">Baixar KingInstaller</string>
+    <string name="install_ignore">Ignorar</string>
+    <string name="install_channel">Instalação</string>
     <string name="banner_text">Entre para ver suas inscrições no carro</string>
     <string name="banner_signin">Entrar</string>
     <string name="close">Fechar</string>

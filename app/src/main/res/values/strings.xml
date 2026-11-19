@@ -71,6 +71,12 @@
     <string name="update_skip">Skip this version</string>
     <string name="signin_car_title">Sign in on the phone</string>
     <string name="signin_car_text">Open YT Auto on the phone and tap Sign in. The car uses the same account.</string>
+    <string name="install_title">Reinstall with KingInstaller</string>
+    <string name="install_text">Installed another way, YT Auto shows in the car only as a player, without the video.</string>
+    <string name="install_open_king">Open KingInstaller</string>
+    <string name="install_get_king">Get KingInstaller</string>
+    <string name="install_ignore">Ignore</string>
+    <string name="install_channel">Install</string>
     <string name="banner_text">Sign in to see your subscriptions in the car</string>
     <string name="banner_signin">Sign in</string>
     <string name="close">Close</string>

@@ -71,6 +71,12 @@
     <string name="update_skip">Lewati versi ini</string>
     <string name="signin_car_title">Login di ponsel</string>
     <string name="signin_car_text">Buka YT Auto di ponsel dan ketuk Login. Mobil memakai akun yang sama.</string>
+    <string name="install_title">Instal ulang dengan KingInstaller</string>
+    <string name="install_text">Jika diinstal dengan cara lain, YT Auto muncul di mobil hanya sebagai pemutar, tanpa video.</string>
+    <string name="install_open_king">Buka KingInstaller</string>
+    <string name="install_get_king">Unduh KingInstaller</string>
+    <string name="install_ignore">Abaikan</string>
+    <string name="install_channel">Instalasi</string>
     <string name="banner_text">Login untuk melihat subscription kamu di mobil</string>
     <string name="banner_signin">Login</string>
     <string name="close">Tutup</string>

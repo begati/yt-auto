@@ -71,6 +71,12 @@
     <string name="update_skip">Bu sürümü atla</string>
     <string name="signin_car_title">Telefonda oturum aç</string>
     <string name="signin_car_text">Telefonda YT Auto\'yu aç ve Oturum aç\'a dokun. Araç aynı hesabı kullanır.</string>
+    <string name="install_title">KingInstaller ile yeniden kur</string>
+    <string name="install_text">Başka yolla kurulunca YT Auto araçta videosuz, yalnızca oynatıcı olarak görünür.</string>
+    <string name="install_open_king">KingInstaller\'ı aç</string>
+    <string name="install_get_king">KingInstaller\'ı indir</string>
+    <string name="install_ignore">Yok say</string>
+    <string name="install_channel">Kurulum</string>
     <string name="banner_text">Aboneliklerini araçta görmek için oturum aç</string>
     <string name="banner_signin">Oturum aç</string>
     <string name="close">Kapat</string>

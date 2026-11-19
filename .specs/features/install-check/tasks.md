@@ -77,8 +77,8 @@ T1 → T2 → T3 → T4
 
 **Done when**:
 
-- [ ] Walk no celular: instalado por `adb install`, a faixa aparece com "Abrir KingInstaller"; o botão abre o KingInstaller; X esconde até reinstalar
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk no celular: instalado por `adb install`, a faixa aparece com "Abrir KingInstaller"; o botão abre o KingInstaller; X esconde até reinstalar
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build
@@ -153,7 +153,7 @@ Proof: `grep -q "KingInstaller" README.md && grep -c "Shizuku" README.md README.
 
 **Settled mid-build:** none
 **Dispatched:** none
-**Walked:** none
+**Walked:** 2026-11-19, orchestrator, phone over USB. Reach: `adb install -r` of the debug build (dumpsys: `installerPackageName=null`), KingInstaller installed on the phone, YT Auto opened from the launcher. C4: the strip shows the flag icon, "Reinstale pelo KingInstaller", "Instalado de outro jeito, o YT Auto aparece no carro só como player, sem o vídeo.", "Abrir KingInstaller" and X, with no sign-in banner; Android's "Permitir que o app YT Auto envie notificações?" dialog opened right after (in1) and was answered Permitir for the notification walk. "Abrir KingInstaller" brought `com.example.kinginstaller/.MainActivity` to the front. X saved `installIgnoredAt` = this install's lastUpdateTime and the strip went away (in2).
 
 ---
 
