@@ -1,9 +1,9 @@
 # install-check proofs
 
-**HEAD**: adeb810
+**HEAD**: 0538ff0
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 9 pass, 0 fail
+**Result**: 10 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -15,6 +15,7 @@
 | C6 | `run unit / INST-06 ignoring hides the warning until the app is installed again PASSED` | pass |
 | C7 | `for f in README.md README.pt-BR.md README.es.md; do awk '/^### (The car shows/O carro mostra/El coche muestra)` | pass |
 | C8 | `run unit / INST-07 a car session notifies on a wrong install, at most once per 10 minutes PASSED` | pass |
+| C9 | `run unit / INST-08 with KingInstaller on the phone the warning asks for another method PASSED` | pass |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output
