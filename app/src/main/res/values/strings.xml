@@ -27,6 +27,7 @@
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="search">Search</string>
+    <string name="search_hint">Type or say what you\'re looking for</string>
     <string name="settings">Settings</string>
     <string name="category_video">Video</string>
     <string name="category_navigation">Browsing</string>

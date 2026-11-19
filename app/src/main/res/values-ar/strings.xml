@@ -27,6 +27,7 @@
     <string name="play">تشغيل</string>
     <string name="pause">إيقاف مؤقت</string>
     <string name="search">بحث</string>
+    <string name="search_hint">اكتب أو قل ما تبحث عنه</string>
     <string name="settings">الإعدادات</string>
     <string name="category_video">الفيديو</string>
     <string name="category_navigation">التصفح</string>

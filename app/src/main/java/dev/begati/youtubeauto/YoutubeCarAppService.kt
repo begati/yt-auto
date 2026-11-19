@@ -2053,16 +2053,37 @@ class SignInScreen(ctx: CarContext) : Screen(ctx) {
 
 /** Car keyboard: the virtual display has no IME, so text input goes through the host's SearchTemplate. */
 class SearchScreen(ctx: CarContext, private val onQuery: (String) -> Unit) : Screen(ctx) {
-    override fun onGetTemplate() = SearchTemplate.Builder(object : SearchTemplate.SearchCallback {
-        override fun onSearchSubmitted(searchText: String) {
-            onQuery(searchText)
-            screenManager.pop()
-        }
-    })
-        .setHeaderAction(Action.BACK)
-        .setShowKeyboardByDefault(true)
-        .setItemList(ItemList.Builder().build())
-        .build()
+    private fun search(q: String) {
+        val prefs = prefs(carContext)
+        prefs.edit().putString("recentSearches", addRecentSearch(recentSearches(prefs), q).joinToString("\n")).apply()
+        onQuery(q)
+        screenManager.pop()
+    }
+
+    // Recent searches as one-tap rows: typing on the car keyboard is the slow part. None yet: say what to do.
+    override fun onGetTemplate(): SearchTemplate {
+        val list = ItemList.Builder().setNoItemsMessage(carContext.getString(R.string.search_hint))
+        for (q in recentSearches(prefs(carContext))) list.addItem(
+            Row.Builder().setTitle(q).setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_history)).build())
+                .setOnClickListener { search(q) }.build()
+        )
+        return SearchTemplate.Builder(object : SearchTemplate.SearchCallback {
+            override fun onSearchSubmitted(searchText: String) = search(searchText)
+        })
+            .setHeaderAction(Action.BACK)
+            .setShowKeyboardByDefault(true)
+            .setItemList(list.build())
+            .build()
+    }
+}
+
+private fun recentSearches(prefs: SharedPreferences) = prefs.getString("recentSearches", "").orEmpty().lines().filter { it.isNotBlank() }
+
+/** [recent] with [q] first: blank ignored, an earlier same search (any case) moved up, at most 5 kept. */
+internal fun addRecentSearch(recent: List<String>, q: String): List<String> {
+    val t = q.trim()
+    if (t.isEmpty()) return recent
+    return (listOf(t) + recent.filterNot { it.equals(t, ignoreCase = true) }).take(5)
 }
 
 // GPS speed for the car's audio-only cover (see YoutubeScreen.listenSpeed); only the phone can show the prompt.

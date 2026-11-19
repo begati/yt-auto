@@ -27,6 +27,7 @@
     <string name="play">Riproduci</string>
     <string name="pause">Pausa</string>
     <string name="search">Cerca</string>
+    <string name="search_hint">Scrivi o di\' cosa cerchi</string>
     <string name="settings">Impostazioni</string>
     <string name="category_video">Video</string>
     <string name="category_navigation">Navigazione</string>

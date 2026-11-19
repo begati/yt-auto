@@ -1,5 +1,6 @@
 package dev.begati.youtubeauto
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -36,5 +37,25 @@ class CarPolishTest {
     fun `PLAYBTN-05 leaving the watch page paused hides the button`() {
         assertTrue(playToggleShown(watch, playing = false))
         assertFalse(playToggleShown("https://m.youtube.com/", playing = false))
+    }
+}
+
+/** Recent car searches (impeccable critique 2026-11-19: the search list opened empty). */
+class RecentSearchTest {
+    @Test
+    fun `a new search goes first and the list keeps 5`() {
+        assertEquals(listOf("cats"), addRecentSearch(emptyList(), "  cats "))
+        val five = listOf("a", "b", "c", "d", "e")
+        assertEquals(listOf("f", "a", "b", "c", "d"), addRecentSearch(five, "f"))
+    }
+
+    @Test
+    fun `a repeated search moves up instead of showing twice`() {
+        assertEquals(listOf("Cats", "dogs"), addRecentSearch(listOf("dogs", "cats"), "Cats"))
+    }
+
+    @Test
+    fun `a blank search is not kept`() {
+        assertEquals(listOf("dogs"), addRecentSearch(listOf("dogs"), "   "))
     }
 }

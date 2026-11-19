@@ -27,6 +27,7 @@
     <string name="play">Tocar</string>
     <string name="pause">Pausar</string>
     <string name="search">Pesquisar</string>
+    <string name="search_hint">Digite ou fale o que procura</string>
     <string name="settings">Configurações</string>
     <string name="category_video">Vídeo</string>
     <string name="category_navigation">Navegação</string>
