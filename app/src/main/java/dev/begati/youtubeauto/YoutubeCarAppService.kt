@@ -2296,6 +2296,22 @@ internal fun mapStrip(onWatch: Boolean, hasNext: Boolean) =
  */
 internal fun previousJs(hasPrevious: Boolean) = if (hasPrevious) JS_PREVIOUS else JS_RESTART
 
+// Install check (spec install-check): Android Auto in the car hides the video screen of apps whose recorded installer
+// is not the Play Store, and KingInstaller is what records it; adb or opening the APK over it clears that.
+internal const val KING_PACKAGE = "com.example.kinginstaller"
+internal const val KING_RELEASES = "https://github.com/fcaronte/KingInstaller/releases"
+
+/** Whether to warn: installer not the Play Store, unless ignored for this very install ([updatedAt] = lastUpdateTime). */
+internal fun installWarning(installer: String?, updatedAt: Long, ignoredAt: Long) =
+    installer != "com.android.vending" && ignoredAt != updatedAt
+
+internal enum class KingAction { OPEN, DOWNLOAD }
+
+internal fun kingAction(kingInstalled: Boolean) = if (kingInstalled) KingAction.OPEN else KingAction.DOWNLOAD
+
+/** Notify when Android Auto (the car) binds the media service and the install is wrong. */
+internal fun notifyInstall(client: String, warning: Boolean) = warning && client == "com.google.android.projection.gearhead"
+
 /**
  * Whether a video that [ended] (for [endedForMs]) should start the countdown back to the start page (spec video-end):
  * with autoplay off ([autonav] false) nothing comes next, so at once; on or unknown, only if YouTube opened nothing in
