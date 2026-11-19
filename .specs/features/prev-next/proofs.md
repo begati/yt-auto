@@ -1,7 +1,7 @@
 # prev-next proofs
 
-**HEAD**: 888d667
-**Tree**: clean
+**HEAD**: ff0fee0
+**Tree**: dirty - .impeccable/critique/2026-11-19T14-22-29Z__egati-youtubeauto-youtubecarappservice-kt-7019eb6a.md
 **Shell**: /bin/sh
 **Result**: 8 pass, 0 fail
 
@@ -12,7 +12,7 @@
 | C3 | `walk - DHU + DevTools: toque em próximo num mix muda o v= da URL` | pass (Walked) |
 | C4 | `run unit / PN-04 previous opens the previous video when there is one PASSED` | pass |
 | C5 | `run unit / PN-05 previous restarts the video when there is none PASSED` | pass |
-| C6 | `run unit / PN-06 off a video the side strip is aspect and settings PASSED` | pass |
+| C6 | `run unit / FIX-04 off a video the side strip has settings only PASSED` | pass |
 | C7 | `walk - DHU + DevTools: página reporta neighbors ao trocar de vídeo; screenshots da barra num mix e no Início` | pass (Walked) |
 | Build | `./gradlew assembleDebug` | pass |
 
@@ -35,5 +35,5 @@ VideoFillTest > ASPECT-07 default on a fresh install is cover (fill the screen) 
 VideoFillTest > ASPECT-05 the saved aspect applies PASSED
 
 BUILD SUCCESSFUL in 1s
-22 actionable tasks: 1 executed, 21 up-to-date
+24 actionable tasks: 3 executed, 21 up-to-date
 ```
