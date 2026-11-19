@@ -816,6 +816,16 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // last seen in the page (null: never seen).
     private var endedAt = 0L
     private var autonav: Boolean? = null
+    // Countdown panel back to the start page, and whether it is counting.
+    private var endView: View? = null
+    private var endText: android.widget.TextView? = null
+    private var endFill: View? = null
+    private var endCounting = false
+    private val goHome = Runnable {
+        stopEnd()
+        pageUrl = choice(carContext, HOME_PAGE)
+        webView?.loadUrl(pageUrl)
+    }
     // Whether this car screen already showed the gesture hint (see takeGestureHint).
     private var hintShown = false
     // Whether the last template built had Tocar/Pausar: a page change that flips it rebuilds the template.
@@ -987,6 +997,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private fun setPlaying(p: Boolean) {
         // On screen: the surface is drawn, no audio cover over it, and no list (settings, search) pushed on top.
         val visible = display?.surface != null && cover?.visibility != View.VISIBLE && screenManager.top === this
+        if (p) stopEnd() // playing again: no countdown back to the start page
         if (p && takeGestureHint(prefs(carContext), onWatch, visible, hintShown)) {
             hintShown = true
             CarToast.makeText(carContext, R.string.gesture_hint, CarToast.LENGTH_LONG).show()
@@ -1001,6 +1012,35 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private fun setEnded(e: Boolean, an: Int) {
         autonav = if (an < 0) null else an == 1
         endedAt = if (!e) 0L else endedAt.takeIf { it > 0 } ?: SystemClock.uptimeMillis()
+        val due = flag(carContext, "fullscreen") && endCountdownDue(e, autonav, SystemClock.uptimeMillis() - endedAt)
+        if (!e) stopEnd() else if (due && !endCounting) startEnd()
+    }
+
+    // 5 s with the bar emptying, then the chosen start page (goHome); a tap goes at once (onClick).
+    private fun startEnd() {
+        val view = endView ?: return
+        endCounting = true
+        endText?.text = carContext.getString(R.string.going_home, carContext.getString(homeLabel(prefs(carContext))))
+        endFill?.run {
+            animate().cancel()
+            pivotX = if (layoutDirection == View.LAYOUT_DIRECTION_RTL) width.toFloat() else 0f
+            scaleX = 1f
+            animate().scaleX(0f).setDuration(5000).setInterpolator(android.view.animation.LinearInterpolator()).start()
+        }
+        view.alpha = 0f
+        view.visibility = View.VISIBLE
+        view.animate().alpha(1f).setDuration(200).start()
+        ui.removeCallbacks(goHome)
+        ui.postDelayed(goHome, 5000)
+    }
+
+    // The video plays again or the page left it: no countdown.
+    private fun stopEnd() {
+        if (!endCounting) return
+        endCounting = false
+        ui.removeCallbacks(goHome)
+        endFill?.animate()?.cancel()
+        endView?.visibility = View.GONE
     }
 
     // Off a video page with nothing playing (Início, search): no video is left in the car, so the phone bar and the
@@ -1262,6 +1302,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             frame.addView(offline)
             frame.addView(audioCover(context).also { cover = it })
             frame.addView(navOverlay(context).also { navView = it }) // over the audio cover too: driving is when it matters
+            frame.addView(endIndicator(context).also { endView = it }) // over the audio cover too: same dead end under it
             onNavChanged = navChanged
             prefs(carContext).registerOnSharedPreferenceChangeListener(navPref)
             showNav()
@@ -1293,6 +1334,11 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         ui.removeCallbacks(endDrag)
         dragSeeking = null
         dragView = null
+        ui.removeCallbacks(goHome)
+        endCounting = false
+        endView = null
+        endText = null
+        endFill = null
         dragTime = null
         dragDiff = null
         dragFill = null
@@ -1572,6 +1618,32 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         shownTurn = turn.maneuver
     }
 
+    // Centered panel at the end of a video (spec video-end): "Voltando para Início" and a bar emptying in 5 s; same
+    // family as the drag panel. Never takes touches: a tap reaches onClick, which goes at once.
+    private fun endIndicator(ctx: Context) = FrameLayout(ctx).apply {
+        fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
+        visibility = View.GONE
+        addView(android.widget.LinearLayout(ctx).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            gravity = android.view.Gravity.CENTER_HORIZONTAL
+            setPadding(dp(28), dp(18), dp(28), dp(22))
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = dp(20).toFloat()
+                setColor(0xCC000000.toInt())
+            }
+            addView(android.widget.TextView(ctx).also { endText = it }.apply {
+                setTextColor(android.graphics.Color.WHITE)
+                textSize = 24f
+                typeface = android.graphics.Typeface.DEFAULT_BOLD
+                setPadding(0, 0, 0, dp(14))
+            }, android.widget.LinearLayout.LayoutParams(-2, -2))
+            addView(FrameLayout(ctx).apply {
+                setBackgroundColor(0x4DFFFFFF)
+                addView(View(ctx).also { endFill = it }.apply { setBackgroundColor(android.graphics.Color.WHITE) }, FrameLayout.LayoutParams(-1, -1))
+            }, android.widget.LinearLayout.LayoutParams(dp(240), dp(6)))
+        }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.CENTER))
+    }
+
     // Centered panel while a drag seeks: target / duration, the signed jump and a track at the target.
     private fun dragIndicator(ctx: Context) = FrameLayout(ctx).apply {
         fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
@@ -1640,6 +1712,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Called only on hosts with Car API level >= 5. On a video, a tap on YouTube's visible progress bar seeks there
     // (the player ignores a tap with no movement); any other tap goes to the page.
     override fun onClick(x: Float, y: Float) {
+        if (endCounting) return goHome.run() // the countdown's tap: go now
         if (!onWatch) return tap(x, y)
         geometry { g ->
             val ms = barTapMs(x, y, g.bar, g.durationMs)

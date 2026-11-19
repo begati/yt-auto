@@ -10,6 +10,7 @@
     <string name="speed_175">1,75x</string>
     <string name="home_title">Página de inicio</string>
     <string name="go_to">Ir a</string>
+    <string name="going_home">Volviendo a %1$s</string>
     <string name="home_home">Inicio</string>
     <string name="subscriptions">Suscripciones</string>
     <string name="history">Historial</string>

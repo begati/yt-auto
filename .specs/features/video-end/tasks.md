@@ -95,8 +95,8 @@ T1 → T2 → T3 → T4
 
 **Done when**:
 
-- [ ] Walk DHU HD: contagem conta 5 s e abre a página inicial; toque abre na hora; play esconde
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk DHU HD: contagem conta 5 s e abre a página inicial; toque abre na hora; play esconde
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build

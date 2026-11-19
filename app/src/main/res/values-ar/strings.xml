@@ -10,6 +10,7 @@
     <string name="speed_175">1.75x</string>
     <string name="home_title">الصفحة الرئيسية</string>
     <string name="go_to">انتقل إلى</string>
+    <string name="going_home">العودة إلى %1$s</string>
     <string name="home_home">الرئيسية</string>
     <string name="subscriptions">الاشتراكات</string>
     <string name="history">السجل</string>
