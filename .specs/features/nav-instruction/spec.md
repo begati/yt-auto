@@ -75,7 +75,7 @@ instrução numa notificação no celular. Pedido do usuário: "faz isso" (desen
 13. IF o motorista liga a chave no carro e o app não tem acesso a notificações THEN the app SHALL mostrar um `CarToast` com o texto `nav_access_needed`
 14. WHILE o app não tem acesso a notificações the app SHALL mostrar a chave do celular desligada, e WHEN o usuário a desliga THEN the app SHALL desligá-la sem pedir acesso
 15. WHEN a chave muda no carro ou no celular com a tela do app aberta THEN the app SHALL mostrar ou esconder a instrução na hora, sem esperar outra notificação (Verifier F1)
-16. WHEN a instrução aparece THEN the app SHALL mostrar o ícone do app que mandou a rota (Waze ou Google Maps), 18 dp, como selo no canto inferior do ícone da manobra
+16. WHEN a instrução aparece THEN the app SHALL mostrar o ícone do app que mandou a rota (Waze ou Google Maps), 26 dp, como selo no canto inferior do ícone da manobra
 
 **Independent Test**: no DHU, com a chave ligada e o acesso concedido, iniciar uma rota no Waze e abrir um vídeo no app mostra a instrução no canto superior esquerdo; encerrar a rota a esconde.
 

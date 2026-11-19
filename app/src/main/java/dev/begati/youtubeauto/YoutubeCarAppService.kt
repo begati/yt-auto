@@ -1335,7 +1335,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             gravity = android.view.Gravity.CENTER
             addView(android.widget.ImageView(ctx).also { skipIcon = it }.apply {
                 imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
-            }, android.widget.LinearLayout.LayoutParams(dp(40), dp(40)))
+            }, android.widget.LinearLayout.LayoutParams(dp(56), dp(56)))
             addView(android.widget.TextView(ctx).also { skipText = it }.apply {
                 setTextColor(android.graphics.Color.WHITE)
                 textSize = 18f
@@ -1457,8 +1457,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             }
             elevation = dp(4).toFloat()
             addView(FrameLayout(ctx).apply {
-                addView(android.widget.ImageView(ctx).also { navIcon = it }, FrameLayout.LayoutParams(dp(52), dp(52)))
-                // Source badge: 18 dp app icon in a 2 dp ring of the card's color, so it reads apart from the arrow.
+                addView(android.widget.ImageView(ctx).also { navIcon = it }, FrameLayout.LayoutParams(dp(72), dp(72)))
+                // Source badge: 26 dp app icon in a 2 dp ring of the card's color, so it reads apart from the arrow.
                 addView(android.widget.ImageView(ctx).also { navBadge = it }.apply {
                     visibility = View.GONE
                     setPadding(dp(2), dp(2), dp(2), dp(2))
@@ -1466,9 +1466,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                         shape = android.graphics.drawable.GradientDrawable.OVAL
                         setColor(0xFF000000.toInt())
                     }
-                }, FrameLayout.LayoutParams(dp(22), dp(22), android.view.Gravity.BOTTOM or android.view.Gravity.END))
+                }, FrameLayout.LayoutParams(dp(30), dp(30), android.view.Gravity.BOTTOM or android.view.Gravity.END))
                 // Inside the icon's box: the card clips anything past it (a negative margin cut the badge).
-            }, android.widget.LinearLayout.LayoutParams(dp(52), dp(52)).apply {
+            }, android.widget.LinearLayout.LayoutParams(dp(72), dp(72)).apply {
                 marginEnd = dp(14)
             })
             addView(android.widget.LinearLayout(ctx).apply {
@@ -1905,7 +1905,7 @@ private fun offlineView(ctx: Context): View = FrameLayout(ctx).apply {
                 setImageResource(R.drawable.ic_wifi_off)
                 imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
                 setPadding(0, 0, 0, (16 * dp).toInt())
-            }, android.widget.LinearLayout.LayoutParams((48 * dp).toInt(), (64 * dp).toInt()))
+            }, android.widget.LinearLayout.LayoutParams((72 * dp).toInt(), (88 * dp).toInt()))
             addView(android.widget.ProgressBar(ctx, null, android.R.attr.progressBarStyleLarge).apply {
                 isIndeterminate = true
                 indeterminateTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
