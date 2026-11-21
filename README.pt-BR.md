@@ -89,6 +89,10 @@ ou gerenciador de arquivos).
 2. Deixe os métodos de instalação (Oppo/Realme/OnePlus, Root, Shizuku) **desligados**.
 3. Toque em **Instalar como king** (2) e confirme.
 
+Em alguns celulares (por exemplo Pixel) essa instalação padrão não basta e o carro mostra só o player. Nesse caso,
+reinstale pelo método **Shizuku** do KingInstaller (ou **Root** em celular com root); veja
+[a solução de problemas abaixo](#o-carro-mostra-abra-o-yt-auto-pela-lista-de-apps-do-carro).
+
 <br clear="right">
 
 ### 4. Use

@@ -88,6 +88,10 @@ manager if asked).
 2. Leave the install methods (Oppo/Realme/OnePlus, Root, Shizuku) **off**.
 3. Tap **Install as King** (2) and confirm.
 
+On some phones (for example Pixel) this default install is not enough and the car shows only the player. In that
+case reinstall with KingInstaller's **Shizuku** method (or **Root** on a rooted phone); see
+[the troubleshooting below](#the-car-shows-open-yt-auto-from-the-cars-app-list).
+
 The screenshot shows KingInstaller in Portuguese: "Selecione o APK para instalar" is (1) and
 "Instalar como king" is (2).
 

@@ -90,6 +90,10 @@ navegador o el gestor de archivos).
 2. Deja los métodos de instalación (Oppo/Realme/OnePlus, Root, Shizuku) **desactivados**.
 3. Toca **Instalar como king** (2) y confirma.
 
+En algunos teléfonos (por ejemplo Pixel) esta instalación por defecto no basta y el coche muestra solo el reproductor.
+En ese caso, reinstala con el método **Shizuku** de KingInstaller (o **Root** en un teléfono con root); consulta
+[la solución de problemas más abajo](#el-coche-muestra-abre-yt-auto-desde-la-lista-de-apps-del-coche).
+
 La captura muestra KingInstaller en portugués: "Selecione o APK para instalar" es (1) e
 "Instalar como king" es (2).
 
