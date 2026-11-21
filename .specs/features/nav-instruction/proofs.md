@@ -1,6 +1,6 @@
 # nav-instruction proofs
 
-**HEAD**: 3f4492c
+**HEAD**: 5ff787a
 **Tree**: clean
 **Shell**: /bin/sh
 **Result**: 21 pass, 0 fail

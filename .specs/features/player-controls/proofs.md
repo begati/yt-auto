@@ -1,6 +1,6 @@
 # player-controls proofs
 
-**HEAD**: 03b7b6a
+**HEAD**: df9d960
 **Tree**: clean
 **Shell**: /bin/sh
 **Result**: 4 pass, 0 fail

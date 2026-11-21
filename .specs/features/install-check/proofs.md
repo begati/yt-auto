@@ -1,6 +1,6 @@
 # install-check proofs
 
-**HEAD**: 0538ff0
+**HEAD**: 796a810
 **Tree**: clean
 **Shell**: /bin/sh
 **Result**: 10 pass, 0 fail

@@ -1,7 +1,7 @@
 # prev-next proofs
 
-**HEAD**: 0d112c6
-**Tree**: dirty - .impeccable/critique/2026-11-19T14-22-29Z__egati-youtubeauto-youtubecarappservice-kt-7019eb6a.md
+**HEAD**: 84e8b3f
+**Tree**: clean
 **Shell**: /bin/sh
 **Result**: 8 pass, 0 fail
 

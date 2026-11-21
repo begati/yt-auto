@@ -1,9 +1,9 @@
 # video-controls proofs
 
-**HEAD**: cfc2d26
+**HEAD**: a78ddd0
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 18 pass, 0 fail
+**Result**: 19 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -24,6 +24,7 @@
 | C15 | `walk - DHU: arrasto com o mouse; screenshot com o indicador durante e sem ele depois; DevTools currentTime igu` | pass (Walked) |
 | C16 | `run unit / CTRL-16 a mostly vertical drag scrolls the page PASSED` | pass |
 | C17 | `run unit / CTRL-17 a drag off watch or without a duration scrolls the page PASSED` | pass |
+| C18 | `walk - DHU: DevTools currentTime fixado, arrasto logo em seguida: o "+" do indicador é a distância do tempo fi` | pass (Walked) |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output
