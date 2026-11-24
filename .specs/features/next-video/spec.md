@@ -89,15 +89,15 @@ lost; and outside a playlist, with YouTube's autoplay on, YouTube waits about 10
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| NEXT-01 | P1 (AC 1) | Tasks | Implementing |
-| NEXT-02 | P1 (AC 2) | Tasks | Implementing |
-| NEXT-03 | P1 (AC 3) | Tasks | Implementing |
-| NEXT-04 | P2 (AC 1) | Tasks | Implementing |
-| NEXT-05 | P2 (AC 2) | Tasks | Implementing |
-| NEXT-06 | P2 (AC 3) | Tasks | Implementing |
-| NEXT-07 | P2 (AC 4) | Tasks | Implementing |
-| NEXT-08 | Edge Cases | Tasks | Implementing |
-| NEXT-09 | P2 (AC 5) | Tasks | Implementing |
+| NEXT-01 | P1 (AC 1) | Tasks | Verified |
+| NEXT-02 | P1 (AC 2) | Tasks | Verified |
+| NEXT-03 | P1 (AC 3) | Tasks | Verified |
+| NEXT-04 | P2 (AC 1) | Tasks | Verified |
+| NEXT-05 | P2 (AC 2) | Tasks | Verified |
+| NEXT-06 | P2 (AC 3) | Tasks | Verified |
+| NEXT-07 | P2 (AC 4) | Tasks | Verified |
+| NEXT-08 | Edge Cases | Tasks | Verified |
+| NEXT-09 | P2 (AC 5) | Tasks | Verified |
 
 **Coverage:** 9 total, 9 mapped to tasks, 0 unmapped
 
