@@ -278,6 +278,7 @@ internal val HOME_PAGE = Choice(
         "https://m.youtube.com" to R.string.home_home,
         "https://m.youtube.com/feed/subscriptions" to R.string.subscriptions,
         "https://m.youtube.com/feed/history" to R.string.history,
+        "https://m.youtube.com/feed/playlists" to R.string.playlists,
     ),
     "https://m.youtube.com",
 )

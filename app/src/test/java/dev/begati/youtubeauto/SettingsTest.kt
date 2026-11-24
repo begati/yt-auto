@@ -97,7 +97,7 @@ class SettingsTest {
 
     @Test
     fun `SET-08 home page and text size options in order`() {
-        assertEquals(listOf(R.string.home_home, R.string.subscriptions, R.string.history), HOME_PAGE.options.values.toList())
+        assertEquals(listOf(R.string.home_home, R.string.subscriptions, R.string.history, R.string.playlists), HOME_PAGE.options.values.toList())
         assertEquals(listOf(R.string.zoom_100, R.string.zoom_115, R.string.zoom_130, R.string.zoom_150), TEXT_ZOOM.options.values.toList())
     }
 

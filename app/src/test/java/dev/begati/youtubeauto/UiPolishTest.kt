@@ -114,6 +114,7 @@ class UiPolishTest {
                 "aspect" to ("cover" to listOf("contain", "cover", "fill")),
                 "home" to ("https://m.youtube.com" to listOf(
                     "https://m.youtube.com", "https://m.youtube.com/feed/subscriptions", "https://m.youtube.com/feed/history",
+                    "https://m.youtube.com/feed/playlists",
                 )),
                 "textZoom" to ("130" to listOf("100", "115", "130", "150")),
             ),
