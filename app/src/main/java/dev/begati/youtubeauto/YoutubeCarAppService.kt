@@ -193,7 +193,7 @@ private const val PAGE_JS =
         // the page on some videos, so -1 when it was never seen. Reported while ended and once when that changes.
         "const at=document.querySelector('.ytwAutonavToggleButtonHost');if(at)window.__ytaAn=at.getAttribute('aria-pressed')==='true';" +
         "const en=!!p&&!!p.getPlayerState&&p.getPlayerState()===0&&location.pathname==='/watch';" +
-        "if(en||en!==window.__ytaEn){window.__ytaEn=en;yta.ended(en,window.__ytaAn===undefined?-1:window.__ytaAn?1:0)}" +
+        "if(en||en!==window.__ytaEn){window.__ytaEn=en;yta.ended(en,window.__ytaAn===undefined?-1:window.__ytaAn?1:0,p&&p.getVideoData?p.getVideoData().video_id||'':'')}" +
         // Previous and next of YouTube's player (spec prev-next): its own buttons stay in the page while hidden, the
         // first one previous and the second next; enabled means there is a video to go to. Reported when that changes.
         "const nb=[...document.querySelectorAll('.player-middle-controls-prev-next-button')].map(b=>!b.classList.contains('icon-disable'));" +
@@ -1059,12 +1059,12 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         invalidate() // the side strip shows next only when there is one
     }
 
-    private fun setEnded(e: Boolean, an: Int) {
+    private fun setEnded(e: Boolean, an: Int, video: String) {
         autonav = if (an < 0) null else an == 1
         endedAt = if (!e) 0L else endedAt.takeIf { it > 0 } ?: SystemClock.uptimeMillis()
         // Autoplay outside a playlist: start YouTube's pick now instead of after its ~10 s wait. If nothing starts,
         // the countdown below still goes home.
-        if (earlyNextDue(e, autonav, pageUrl, nextSent)) {
+        if (earlyNextDue(e, autonav, pageUrl, nextSent, video)) {
             nextSent = true
             js(JS_NEXT)
         }
@@ -1340,7 +1340,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                     fun neighbors(prev: Boolean, next: Boolean) = carContext.mainExecutor.execute { setNeighbors(prev, next) }
 
                     @JavascriptInterface
-                    fun ended(e: Boolean, autonav: Int) = carContext.mainExecutor.execute { setEnded(e, autonav) }
+                    fun ended(e: Boolean, autonav: Int, video: String) = carContext.mainExecutor.execute { setEnded(e, autonav, video) }
 
                     @JavascriptInterface
                     fun meta(title: String, artist: String, art: String) =
@@ -2409,10 +2409,11 @@ internal fun endCountdownDue(ended: Boolean, autonav: Boolean?, endedForMs: Long
 /**
  * Whether the car starts the next video itself as a video [ended] on page [url] (spec next-video): only outside a
  * playlist (YouTube already moves a playlist on at once), with autoplay ([autonav]) known to be on (YouTube would wait
- * about 10 s), and once per end ([sent] is whether it already did).
+ * about 10 s), once per end ([sent] is whether it already did), and only when the player's own video ([playerVideo])
+ * is the URL's: during an ad the player holds the ad, whose end is not the video's.
  */
-internal fun earlyNextDue(ended: Boolean, autonav: Boolean?, url: String, sent: Boolean) =
-    ended && autonav == true && !sent && !Regex("[?&]list=").containsMatchIn(url)
+internal fun earlyNextDue(ended: Boolean, autonav: Boolean?, url: String, sent: Boolean, playerVideo: String) =
+    ended && autonav == true && !sent && !Regex("[?&]list=").containsMatchIn(url) && playerVideo == videoIdFromUrl(url)
 
 /** Whether release tag [tag] ("v1.1") is a newer version than [current] ("1.0"), number by number. */
 internal fun isNewer(tag: String, current: String): Boolean {

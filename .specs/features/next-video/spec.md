@@ -73,6 +73,7 @@ lost; and outside a playlist, with YouTube's autoplay on, YouTube waits about 10
 2. IF the video is in a playlist THEN the app SHALL not start the next video itself
 3. IF YouTube's autoplay is off or unknown THEN the app SHALL not start the next video itself
 4. WHILE a video stays ended the app SHALL start the next video at most once for that end
+5. IF the player's own video is not the URL's video (an ad) THEN the app SHALL not start the next video itself  <!-- added by the verification finding -->
 
 **Independent Test**: on the DHU with autoplay on, a video opened without `list=` and seeked near its end: another video starts within 2 s.
 
@@ -96,8 +97,9 @@ lost; and outside a playlist, with YouTube's autoplay on, YouTube waits about 10
 | NEXT-06 | P2 (AC 3) | Tasks | Implementing |
 | NEXT-07 | P2 (AC 4) | Tasks | Implementing |
 | NEXT-08 | Edge Cases | Tasks | Implementing |
+| NEXT-09 | P2 (AC 5) | Tasks | Implementing |
 
-**Coverage:** 8 total, 0 mapped to tasks, 8 unmapped ⚠️
+**Coverage:** 9 total, 9 mapped to tasks, 0 unmapped
 
 ## Sources
 

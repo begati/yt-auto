@@ -5,7 +5,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** NEXT-01..07 (spec next-video). */
+/** NEXT-01..09 (spec next-video). */
 class NextVideoTest {
     private val video = "kXYiU_JCYtU"
 
@@ -39,27 +39,34 @@ class NextVideoTest {
 
     @Test
     fun `NEXT-04 outside a playlist with autoplay on the end starts the next video`() {
-        assertTrue(earlyNextDue(ended = true, autonav = true, url = alone, sent = false))
-        assertTrue(earlyNextDue(ended = true, autonav = true, url = "$alone&t=42s", sent = false))
+        assertTrue(earlyNextDue(ended = true, autonav = true, url = alone, sent = false, playerVideo = video))
+        assertTrue(earlyNextDue(ended = true, autonav = true, url = "$alone&t=42s", sent = false, playerVideo = video))
         // Not before the video ends.
-        assertFalse(earlyNextDue(ended = false, autonav = true, url = alone, sent = false))
+        assertFalse(earlyNextDue(ended = false, autonav = true, url = alone, sent = false, playerVideo = video))
     }
 
     @Test
     fun `NEXT-05 in a playlist the app leaves the next video to YouTube`() {
-        assertFalse(earlyNextDue(ended = true, autonav = true, url = inList, sent = false))
-        assertFalse(earlyNextDue(ended = true, autonav = true, url = "https://m.youtube.com/watch?list=RDkXYiU_JCYtU&v=$video", sent = false))
+        assertFalse(earlyNextDue(ended = true, autonav = true, url = inList, sent = false, playerVideo = video))
+        assertFalse(earlyNextDue(ended = true, autonav = true, url = "https://m.youtube.com/watch?list=RDkXYiU_JCYtU&v=$video", sent = false, playerVideo = video))
     }
 
     @Test
     fun `NEXT-06 with autoplay off or unknown the app does not start the next video`() {
-        assertFalse(earlyNextDue(ended = true, autonav = false, url = alone, sent = false))
-        assertFalse(earlyNextDue(ended = true, autonav = null, url = alone, sent = false))
+        assertFalse(earlyNextDue(ended = true, autonav = false, url = alone, sent = false, playerVideo = video))
+        assertFalse(earlyNextDue(ended = true, autonav = null, url = alone, sent = false, playerVideo = video))
     }
 
     @Test
     fun `NEXT-07 one end starts the next video at most once`() {
-        assertTrue(earlyNextDue(ended = true, autonav = true, url = alone, sent = false))
-        assertFalse(earlyNextDue(ended = true, autonav = true, url = alone, sent = true))
+        assertTrue(earlyNextDue(ended = true, autonav = true, url = alone, sent = false, playerVideo = video))
+        assertFalse(earlyNextDue(ended = true, autonav = true, url = alone, sent = true, playerVideo = video))
+    }
+
+    @Test
+    fun `NEXT-09 the end of an ad does not start the next video`() {
+        assertFalse(earlyNextDue(ended = true, autonav = true, url = alone, sent = false, playerVideo = "AdVideo0001"))
+        assertFalse(earlyNextDue(ended = true, autonav = true, url = alone, sent = false, playerVideo = ""))
+        assertTrue(earlyNextDue(ended = true, autonav = true, url = alone, sent = false, playerVideo = video))
     }
 }
