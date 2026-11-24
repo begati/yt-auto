@@ -98,8 +98,8 @@ T3 → T4
 
 **Done when**:
 
-- [ ] One test per AC, name starting with its ID
-- [ ] Gate check passes: `./gradlew testDebugUnitTest --rerun`
+- [x] One test per AC, name starting with its ID
+- [x] Gate check passes: `./gradlew testDebugUnitTest --rerun`
 
 **Tests**: unit
 **Gate**: quick

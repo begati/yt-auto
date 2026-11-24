@@ -2397,6 +2397,14 @@ internal fun Context.notifyWrongInstall() {
 internal fun endCountdownDue(ended: Boolean, autonav: Boolean?, endedForMs: Long) =
     ended && (autonav == false || endedForMs >= 10_000)
 
+/**
+ * Whether the car starts the next video itself as a video [ended] on page [url] (spec next-video): only outside a
+ * playlist (YouTube already moves a playlist on at once), with autoplay ([autonav]) known to be on (YouTube would wait
+ * about 10 s), and once per end ([sent] is whether it already did).
+ */
+internal fun earlyNextDue(ended: Boolean, autonav: Boolean?, url: String, sent: Boolean) =
+    ended && autonav == true && !sent && !Regex("[?&]list=").containsMatchIn(url)
+
 /** Whether release tag [tag] ("v1.1") is a newer version than [current] ("1.0"), number by number. */
 internal fun isNewer(tag: String, current: String): Boolean {
     fun parts(v: String) = v.trim().trimStart('v', 'V').split('.').map { p -> p.takeWhile(Char::isDigit).toIntOrNull() ?: 0 }
