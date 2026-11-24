@@ -144,6 +144,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: install-check finding 2 (car-install)
 - last seen: 2026-11-19T18:34:37Z
 
+### L-023 - Before acting on a player event, confirm the player holds the URL's video, not an ad
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `webview` · harmful: 0
+- features: next-video
+- evidence: YoutubeCarAppService.kt:195 PAGE_JS ended report (verification finding) (webview)
+- last seen: 2026-11-24T23:40:05Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

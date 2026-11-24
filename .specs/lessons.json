@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 23,
+  "next_id": 24,
   "lessons": [
     {
       "id": "L-001",
@@ -402,6 +402,24 @@
       ],
       "created": "2026-11-19T18:34:37Z",
       "last_seen": "2026-11-19T18:34:37Z"
+    },
+    {
+      "id": "L-023",
+      "key": "ac_gap::before acting on a player event confirm the player holds the url s video not an ad",
+      "text": "Before acting on a player event, confirm the player holds the URL's video, not an ad",
+      "signal": "ac_gap",
+      "scope": "webview",
+      "status": "candidate",
+      "features": [
+        "next-video"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "YoutubeCarAppService.kt:195 PAGE_JS ended report (verification finding) (webview)"
+      ],
+      "created": "2026-11-24T23:40:05Z",
+      "last_seen": "2026-11-24T23:40:05Z"
     }
   ]
 }
