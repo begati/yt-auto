@@ -80,8 +80,8 @@ T3 → T4
 
 **Done when**:
 
-- [ ] Walk: a video played from a playlist in the DHU media browser opens with `list=` and the second item starts in under 1 s after the first ends
-- [ ] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
+- [x] Walk: a video played from a playlist in the DHU media browser opens with `list=` and the second item starts in under 1 s after the first ends
+- [x] Gate check passes: `./gradlew assembleDebug && ./gradlew testDebugUnitTest --rerun`
 
 **Tests**: none
 **Gate**: build
@@ -156,4 +156,4 @@ Proof: walk - DHU + DevTools: with autoplay on and the next call made inert, the
 
 **Settled mid-build:** none
 **Dispatched:** none
-**Walked:** none
+**Walked:** P1 (2026-11-24, DHU + DevTools on the debug build, signed-in account): the DHU does not open the YT Auto media browser (the media bar returns to the video screen), so the walk opened in the car WebView the exact URL `watchUrl(playlistMediaId(...))` builds for the first Watch later video, `watch?v=WPNIY-tnPOk&list=WL`, and seeked 4 s before its end: the player ended and opened `BkARf4pJ37w` (`list=WL&index=2`) about 1 s later, still in `list=WL`. Reach: sign in on the phone, Watch later with at least 2 videos.

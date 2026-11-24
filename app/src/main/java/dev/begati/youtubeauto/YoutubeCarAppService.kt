@@ -617,9 +617,10 @@ internal fun parseFeed(html: String): List<FeedVideo> {
  */
 // ponytail: HTML scrape of ytInitialData, breaks if YouTube changes it; innertube /youtubei/v1/browse with
 // SAPISIDHASH auth is the sturdier upgrade.
-private fun fetchFeed(url: String): List<MediaBrowser.MediaItem> = parseFeed(fetchHtml(url)).map { v ->
+// Videos of browse node [parentId], fetched from [url]; a playlist's videos carry it in their media id.
+private fun fetchFeed(url: String, parentId: String): List<MediaBrowser.MediaItem> = parseFeed(fetchHtml(url)).map { v ->
     MediaBrowser.MediaItem(
-        MediaDescription.Builder().setMediaId(v.id).setTitle(v.title).setSubtitle(v.channel)
+        MediaDescription.Builder().setMediaId(playlistMediaId(v.id, parentId)).setTitle(v.title).setSubtitle(v.channel)
             .setIconUri(Uri.parse("content://$THUMBS_AUTHORITY/${v.id}")).build(),
         MediaBrowser.MediaItem.FLAG_PLAYABLE
     )
@@ -808,7 +809,7 @@ class MediaService : MediaBrowserService() {
             val signedIn = "SAPISID=" in CookieManager.getInstance().getCookie(url).orEmpty()
             val fetched = runCatching {
                 if (parentId == PLAYLISTS) parsePlaylists(fetchHtml(url)).map { (id, title) -> folder(LIST_PREFIX + id, title) }
-                else fetchFeed(url)
+                else fetchFeed(url, parentId)
             }
             val items = fetched.getOrDefault(emptyList()).ifEmpty {
                 val (title, subtitle) = feedNotice(signedIn, fetched.isFailure)
