@@ -854,6 +854,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Video id the neighbors above belong to.
     private var neighborsOf: String? = null
     private var autonav: Boolean? = null
+    // Whether the car already started the next video for the current end (spec next-video).
+    private var nextSent = false
     // Countdown panel back to the start page, and whether it is counting.
     private var endView: View? = null
     private var endText: android.widget.TextView? = null
@@ -1060,6 +1062,13 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private fun setEnded(e: Boolean, an: Int) {
         autonav = if (an < 0) null else an == 1
         endedAt = if (!e) 0L else endedAt.takeIf { it > 0 } ?: SystemClock.uptimeMillis()
+        // Autoplay outside a playlist: start YouTube's pick now instead of after its ~10 s wait. If nothing starts,
+        // the countdown below still goes home.
+        if (earlyNextDue(e, autonav, pageUrl, nextSent)) {
+            nextSent = true
+            js(JS_NEXT)
+        }
+        if (!e) nextSent = false
         val due = flag(carContext, "fullscreen") && endCountdownDue(e, autonav, SystemClock.uptimeMillis() - endedAt)
         // Only while the video screen is in front and drawn: a countdown nobody sees must not change the page. The page
         // keeps reporting the end, so it starts once the driver is back; leaving cancels a running one.
