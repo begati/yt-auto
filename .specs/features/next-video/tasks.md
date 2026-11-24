@@ -155,5 +155,5 @@ Proof: walk - DHU + DevTools: with autoplay on and the next call made inert, the
 ## Handoff
 
 **Settled mid-build:** none
-**Dispatched:** none
+**Dispatched:** Verifier at 317cce3 (diff fab5476..317cce3)
 **Walked:** P1 (2026-11-24, DHU + DevTools on the debug build, signed-in account): the DHU does not open the YT Auto media browser (the media bar returns to the video screen), so the walk opened in the car WebView the exact URL `watchUrl(playlistMediaId(...))` builds for the first Watch later video, `watch?v=WPNIY-tnPOk&list=WL`, and seeked 4 s before its end: the player ended and opened `BkARf4pJ37w` (`list=WL&index=2`) about 1 s later, still in `list=WL`. Reach: sign in on the phone, Watch later with at least 2 videos. P2 (same setup, YouTube autoplay turned on in the player for the walk and off again after): `watch?v=kXYiU_JCYtU` (no `list=`) seeked 4 s before its end ended at 4.5 s and `eVTXPUF4Oz4` was playing at 4.8 s; before the change YouTube showed its own "Próximo vídeo em 10" card and moved on at about 14.5 s. Fallback (C8): with the player's `nextVideo` replaced by a counter (called once for the end) and YouTube's card cancelled, the video stayed ended and the car showed "Voltando para Início" with its bar, then opened `https://m.youtube.com/`.
