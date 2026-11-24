@@ -1,9 +1,9 @@
 # next-video proofs
 
-**HEAD**: 317cce3
+**HEAD**: 6d56ed3
 **Tree**: clean
 **Shell**: /bin/sh
-**Result**: 9 pass, 0 fail
+**Result**: 10 pass, 0 fail
 
 | Check | Proof | Result |
 | --- | --- | --- |
@@ -15,6 +15,7 @@
 | C6 | `run unit / NEXT-06 with autoplay off or unknown the app does not start the next video PASSED` | pass |
 | C7 | `run unit / NEXT-07 one end starts the next video at most once PASSED` | pass |
 | C8 | `walk - DHU + DevTools: with autoplay on and the next call made inert, the video stays ended and the countdown ` | pass (Walked) |
+| C9 | `run unit / NEXT-09 the end of an ad does not start the next video PASSED` | pass |
 | Build | `./gradlew assembleDebug` | pass |
 
 ## Output
