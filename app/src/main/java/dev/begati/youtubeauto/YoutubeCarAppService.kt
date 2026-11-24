@@ -357,7 +357,7 @@ internal fun nextAspect(prefs: SharedPreferences): String {
 // Car aspect button icon for aspect [aspect] (an ASPECT key): Ajustar, Preencher, Esticar.
 internal fun aspectIcon(aspect: String) = when (aspect) {
     "contain" -> R.drawable.ic_fit_screen
-    "cover" -> R.drawable.ic_crop
+    "cover" -> R.drawable.ic_fullscreen // fills the screen; a crop glyph read as "crop the video"
     else -> R.drawable.ic_open_in_full
 }
 
@@ -1632,10 +1632,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             orientation = android.widget.LinearLayout.HORIZONTAL
             gravity = android.view.Gravity.CENTER_VERTICAL
             setPadding(dp(14), dp(12), dp(20), dp(14))
-            // More opaque than the drag panel: it stays up over bright video for the whole drive.
             background = android.graphics.drawable.GradientDrawable().apply {
-                cornerRadius = dp(16).toFloat()
-                setColor(0xE0000000.toInt())
+                cornerRadius = dp(PANEL_CORNER_DP).toFloat()
+                setColor(PANEL_SCRIM)
             }
             elevation = dp(4).toFloat()
             addView(FrameLayout(ctx).apply {
@@ -1733,7 +1732,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             setPadding(dp(28), dp(18), dp(28), dp(22))
             background = android.graphics.drawable.GradientDrawable().apply {
                 cornerRadius = dp(PANEL_CORNER_DP).toFloat()
-                setColor(0xCC000000.toInt())
+                setColor(PANEL_SCRIM)
             }
             addView(android.widget.TextView(ctx).also { endText = it }.apply {
                 setTextColor(android.graphics.Color.WHITE)
@@ -1764,7 +1763,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             setPadding(dp(28), dp(16), dp(28), dp(20))
             background = android.graphics.drawable.GradientDrawable().apply {
                 cornerRadius = dp(PANEL_CORNER_DP).toFloat()
-                setColor(0xCC000000.toInt())
+                setColor(PANEL_SCRIM)
             }
             addView(android.widget.TextView(ctx).also { dragTime = it }.apply {
                 setTextColor(android.graphics.Color.WHITE)
@@ -2313,9 +2312,11 @@ private fun Activity.requestLocation() {
 // Latest release of this app on GitHub: the app isn't on the Play Store, so it checks there for updates.
 private const val RELEASES_API = "https://api.github.com/repos/begati/yt-auto/releases/latest"
 
-// Corners and progress bar of the car's centered panels (drag, end countdown): one look, as the turn card's corners.
+// Corners, background and progress bar of the car's panels (drag, end countdown, turn card): one look. The background
+// keeps white text above 12:1 even over a white video frame.
 internal const val PANEL_CORNER_DP = 16
 internal const val PANEL_BAR_DP = 6
+internal const val PANEL_SCRIM = 0xCC000000.toInt()
 
 /**
  * The car's side strip (spec prev-next): on a video, previous, next (only when YouTube has one), aspect and settings;
