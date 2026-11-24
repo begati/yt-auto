@@ -441,8 +441,14 @@ internal fun webViewBounds(w: Int, h: Int, area: List<Int>?): List<Int> {
     return if (bounds[0] < bounds[2] && bounds[1] < bounds[3]) bounds else full
 }
 
-// Watch page the car opens for a video id (from the phone, the media list or a short).
-internal fun watchUrl(videoId: String) = "https://m.youtube.com/watch?v=" + java.net.URLEncoder.encode(videoId, "UTF-8")
+// Watch page the car opens for a media id (from the phone, the media list or a short): "<video>" or, for a video
+// of a playlist in the media list, "<video>@<playlist>", opened in that playlist so YouTube plays its next item
+// (spec next-video). An invalid playlist id opens the video alone.
+internal fun watchUrl(mediaId: String): String {
+    val videoId = mediaId.substringBefore('@')
+    val list = mediaId.substringAfter('@', "").takeIf { PLAYLIST_ID.matches(it) }
+    return "https://m.youtube.com/watch?v=" + java.net.URLEncoder.encode(videoId, "UTF-8") + (list?.let { "&list=$it" } ?: "")
+}
 
 // Callback while no car screen is alive: the WebView (the actual player) only exists in that screen.
 private val idleCallback = object : MediaSession.Callback() {
@@ -530,6 +536,16 @@ private val PLAYLIST_ID = Regex("[A-Za-z0-9_-]{2,64}")
 internal fun feedUrl(mediaId: String): String? = FEEDS[mediaId]?.second
     ?: mediaId.removePrefix(LIST_PREFIX).takeIf { mediaId.startsWith(LIST_PREFIX) && PLAYLIST_ID.matches(it) }
         ?.let { "https://www.youtube.com/playlist?list=$it" }
+
+/** Media id of video [videoId] listed under browse node [parentId]: "<video>@<playlist>" in a playlist (see watchUrl). */
+internal fun playlistMediaId(videoId: String, parentId: String): String {
+    val list = when (parentId) {
+        "watch_later" -> "WL"
+        "liked" -> "LL"
+        else -> parentId.removePrefix(LIST_PREFIX).takeIf { parentId.startsWith(LIST_PREFIX) }
+    }
+    return if (list == null) videoId else "$videoId@$list"
+}
 
 /** Plain text of a YouTube text object: {simpleText}, {runs:[{text}]} or {content}. */
 private fun ytText(o: Any?): String? = (o as? JSONObject)?.let { t ->
