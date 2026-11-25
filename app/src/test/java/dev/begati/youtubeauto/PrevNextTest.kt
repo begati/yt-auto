@@ -1,19 +1,20 @@
 package dev.begati.youtubeauto
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** PN-01..06 (spec prev-next). */
 class PrevNextTest {
     @Test
-    fun `PN-01 on a video the side strip is previous, next, aspect, settings`() {
-        assertEquals(listOf("previous", "next", "aspect", "settings"), mapStrip(onWatch = true, hasNext = true))
+    fun `PN-01 on a video the side strip is previous, next, settings`() {
+        assertEquals(listOf("previous", "next", "settings"), mapStrip(onWatch = true, hasNext = true))
     }
 
     @Test
     fun `PN-02 without a next video the next button is gone`() {
-        assertEquals(listOf("previous", "aspect", "settings"), mapStrip(onWatch = true, hasNext = false))
+        assertEquals(listOf("previous", "settings"), mapStrip(onWatch = true, hasNext = false))
     }
 
     @Test
@@ -29,11 +30,11 @@ class PrevNextTest {
     }
 
     @Test
-    fun `FIX-04 off a video the side strip has settings only`() {
-        assertEquals(listOf("settings"), mapStrip(onWatch = false, hasNext = true))
-        assertEquals(listOf("settings"), mapStrip(onWatch = false, hasNext = false))
-        // On a video the aspect stays, before settings.
-        assertEquals(listOf("previous", "aspect", "settings"), mapStrip(onWatch = true, hasNext = false))
+    fun `FIX-04 off a video the side strip has Go to and settings`() {
+        assertEquals(listOf("goto", "settings"), mapStrip(onWatch = false, hasNext = true))
+        assertEquals(listOf("goto", "settings"), mapStrip(onWatch = false, hasNext = false))
+        // On a video only the video's verbs and settings: the aspect is in the car settings.
+        assertFalse("aspect" in mapStrip(onWatch = true, hasNext = true))
     }
 }
 

@@ -51,7 +51,6 @@
     <string name="rewind_10">Mundur 10 dtk</string>
     <string name="forward_10">Maju 10 dtk</string>
     <string name="seek_seconds">%d dtk</string>
-    <string name="gesture_hint">Tips: ketuk video dua kali untuk melompat 10 dtk, atau geser ke samping untuk memajukan</string>
     <string name="gestures">Gestur</string>
     <string name="gesture_double_tap">Ketuk dua kali: ±10 dtk</string>
     <string name="gesture_double_tap_text">Sisi kanan maju, sisi kiri mundur</string>

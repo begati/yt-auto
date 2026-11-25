@@ -51,7 +51,6 @@
     <string name="rewind_10">10 sn geri</string>
     <string name="forward_10">10 sn ileri</string>
     <string name="seek_seconds">%d sn</string>
-    <string name="gesture_hint">İpucu: 10 sn atlamak için videoya iki kez dokun veya sarmak için yana kaydır</string>
     <string name="gestures">Hareketler</string>
     <string name="gesture_double_tap">Çift dokunma: ±10 sn</string>
     <string name="gesture_double_tap_text">Sağ yarı ileri, sol yarı geri sarar</string>

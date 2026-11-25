@@ -89,6 +89,13 @@ private const val TITLE_FIT = ".ytLockupMetadataViewModelTitle,.ytLockupMetadata
     ".YtmCompactMediaItemSubhead,.YtmCompactMediaItemMetadataContent,.YtmCompactMediaItemHost," +
     ".video-card-title,.video-card-subhead,.video-card-metadata,.playlist-card-title,.playlist-card-subhead,.playlist-card-metadata" +
     "{max-height:none!important;height:auto!important}"
+// Feed: each item's ⋮ (40 px, beside the title; history rows too) catches arm's-length taps meant for the video, and
+// its sheet is fiddly in a car, as is the chip bar's Explore drawer (compass); the filter chips (32 px) grow to 44 px
+// within their 48 px bar.
+private const val FEED_TOUCH = ".ytLockupMetadataViewModelMenuButton,.shortsLockupViewModelHostInlineMetadataMenu,ytm-menu-renderer," +
+    ".YtmCompactMediaItemMenu,ytm-feed-filter-chip-bar-renderer .more-drawer" +
+    "{display:none!important}ytm-feed-filter-chip-bar-renderer .chip-container" +
+    "{height:44px!important;min-height:44px!important;padding:0 18px!important}"
 private const val SIGN_IN_LINKS = "a[href*=\"accounts.google.com\"],ytm-button-renderer:has(>a[href*=\"accounts.google.com\"])"
 
 // Sets the saved quality on the current video; stamps the time so the resulting change event isn't saved as a pick.
@@ -153,7 +160,7 @@ private const val PAGE_JS =
         "const s=document.createElement('style');" +
         "s.textContent='${PLAYLIST_PANEL}{display:none!important}" +
         "${FEED_ADS}{display:none!important}" +
-        "${YT_NAV},${SIGN_IN_LINKS}{display:none!important}${YT_NAV_GAPS}${TITLE_FIT}" +
+        "${YT_NAV},${SIGN_IN_LINKS}{display:none!important}${YT_NAV_GAPS}${TITLE_FIT}${FEED_TOUCH}" +
         // Fullscreen video: the host's strips sit over the player's top corner and already have play/pause, the media
         // bar and the steering wheel have previous and next, and the car settings have captions and quality. YouTube's
         // top controls and middle buttons would only repeat them, so they hide in every player state (spec
@@ -309,6 +316,7 @@ internal val FLAGS = listOf(
 internal val CAR_SETTINGS = listOf(
     QUALITY.key to R.drawable.ic_high_quality,
     SPEED.key to R.drawable.ic_speed,
+    ASPECT.key to R.drawable.ic_aspect_ratio,
     "captions" to R.drawable.ic_closed_caption,
     "navOverlay" to R.drawable.ic_navigation,
 )
@@ -347,18 +355,11 @@ internal fun flag(prefs: SharedPreferences, key: String) =
     prefs.getBoolean(key, FLAGS.find { it.key == key }?.default ?: true)
 internal fun setFlag(prefs: SharedPreferences, key: String, on: Boolean) = prefs.edit().putBoolean(key, on).apply()
 
-// Aspect button (car and phone): saves the next mode in ASPECT's order (Ajustar -> Preencher -> Esticar -> Ajustar)
+// Aspect button (phone remote): saves the next mode in ASPECT's order (Ajustar -> Preencher -> Esticar -> Ajustar)
 // as the default, so the pick stays for every video and run.
 internal fun nextAspect(prefs: SharedPreferences): String {
     val keys = ASPECT.options.keys.toList()
     return keys[(keys.indexOf(choice(prefs, ASPECT)) + 1) % keys.size].also { setChoice(prefs, ASPECT, it) }
-}
-
-// Car aspect button icon for aspect [aspect] (an ASPECT key): Ajustar, Preencher, Esticar.
-internal fun aspectIcon(aspect: String) = when (aspect) {
-    "contain" -> R.drawable.ic_fit_screen
-    "cover" -> R.drawable.ic_fullscreen // fills the screen; a crop glyph read as "crop the video"
-    else -> R.drawable.ic_open_in_full
 }
 
 // Car home menu (url, title string id, icon): the pages YouTube's hidden tab bar led to. Playlists is its own feed
@@ -410,7 +411,7 @@ private var resumeAt: Pair<String, Int>? = null
 // The live car screen, for what the phone remote controls beyond the media session; null while there's none.
 private var carLink: YoutubeScreen? = null
 
-// Next aspect (car button and phone remote), saved; returns its label. The page picks it up on its next poll.
+// Next aspect (phone remote), saved; returns its label. The page picks it up on its next poll.
 private fun cycleAspect(ctx: Context) = ctx.label(ASPECT, nextAspect(prefs(ctx)))
 
 /** [url] with `t=` set to the saved position when it is a watch page of that same video, else [url]. */
@@ -730,6 +731,13 @@ internal fun barTapMs(x: Float, y: Float, bar: List<Float>?, durationMs: Long): 
 internal fun dragSeeks(onWatch: Boolean, durationMs: Long, dx: Float, dy: Float) =
     onWatch && durationMs > 0 && kotlin.math.abs(dx) > kotlin.math.abs(dy)
 
+// Off a video a sideways drag scrolls the feed's filter chips (the host gives no finger position, and the chip bar is
+// the page's one sideways strip worth reaching); any other drag scrolls the page.
+internal fun dragScrollsChips(onWatch: Boolean, dx: Float, dy: Float) = !onWatch && kotlin.math.abs(dx) > kotlin.math.abs(dy)
+
+// Scrolls the feed's chip bar by [dx] CSS px (positive shows chips further right); nothing on pages without one.
+internal fun jsScrollChips(dx: Int) = "(e=>e&&e.scrollBy($dx,0))(document.querySelector('.chip-bar-contents'))"
+
 // The player's width is the whole video; [fingerDx] is positive to the right.
 internal fun dragTargetMs(startMs: Long, fingerDx: Float, width: Float, durationMs: Long) =
     (startMs + fingerDx / width * durationMs).toLong().coerceIn(0L, durationMs)
@@ -867,8 +875,12 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         pageUrl = choice(carContext, HOME_PAGE)
         webView?.loadUrl(pageUrl)
     }
-    // Whether this car screen already showed the gesture hint (see takeGestureHint).
+    // Whether this car screen already showed the gesture hint (see takeGestureHint), and the panel that shows it.
     private var hintShown = false
+    private var hintView: View? = null
+    private val hideHint = Runnable {
+        hintView?.animate()?.alpha(0f)?.setDuration(200)?.withEndAction { hintView?.visibility = View.GONE }?.start()
+    }
     // Whether the last template built had Tocar/Pausar: a page change that flips it rebuilds the template.
     private var toggleShown = false
     private var positionMs = PlaybackState.PLAYBACK_POSITION_UNKNOWN
@@ -897,6 +909,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     private var dragDiff: android.widget.TextView? = null
     private var dragFill: View? = null
     private var dragSeeking: Boolean? = null
+    private var dragChips = false
     private var dragId: String? = null
     private var dragStartMs = 0L
     private var dragFingerX = 0f
@@ -1043,7 +1056,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         if (p) stopEnd() // playing again: no countdown back to the start page
         if (p && takeGestureHint(prefs(carContext), onWatch, visible, hintShown)) {
             hintShown = true
-            CarToast.makeText(carContext, R.string.gesture_hint, CarToast.LENGTH_LONG).show()
+            showHint()
         }
         playing = p
         published = SystemClock.elapsedRealtime()
@@ -1212,6 +1225,13 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
     private fun icon(id: Int) = CarIcon.Builder(IconCompat.createWithResource(carContext, id)).build()
 
+    // A page picked in Go to: open it and come back to the car screen over settings and the menu.
+    private fun goTo(url: String) {
+        pageUrl = url
+        webView?.loadUrl(url)
+        screenManager.popToRoot()
+    }
+
     // Whether the side strip last built was a video's (with previous/next): a page change that flips it rebuilds.
     private var stripWatch = false
 
@@ -1221,24 +1241,14 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         "previous" -> Action.Builder().setIcon(icon(R.drawable.ic_skip_previous))
             .setOnClickListener { js(previousJs(hasPrevious)) }.build()
         "next" -> Action.Builder().setIcon(icon(R.drawable.ic_skip_next)).setOnClickListener { js(JS_NEXT) }.build()
-        // Video aspect: Ajustar -> Preencher -> Esticar, saved as the default; the icon shows the current one.
-        "aspect" -> Action.Builder()
-            .setIcon(icon(aspectIcon(choice(carContext, ASPECT))))
-            .setOnClickListener {
-                CarToast.makeText(carContext, cycleAspect(carContext), CarToast.LENGTH_SHORT).show()
-                invalidate()
-            }
-            .build()
+        // Go to (Início, Inscrições, Histórico, Playlists) while browsing, one tap from the page.
+        "goto" -> Action.Builder().setIcon(icon(R.drawable.ic_video_library))
+            .setOnClickListener { screenManager.push(HomeMenuScreen(carContext, ::goTo)) }.build()
         else -> Action.Builder()
             .setIcon(icon(R.drawable.ic_settings))
             .setOnClickListener {
                 stopEnd() // a list over the video: the countdown would run unseen
-                screenManager.push(SettingsScreen(carContext, onGo = { url ->
-                    // A page picked in Go to: open it and come back to the car screen over settings and the menu.
-                    pageUrl = url
-                    webView?.loadUrl(url)
-                    screenManager.popToRoot()
-                }) {
+                screenManager.push(SettingsScreen(carContext, onGo = ::goTo) {
                     // Flags are read live by the page; zoom, quality, speed and captions need a push.
                     webView?.settings?.textZoom = choice(carContext, TEXT_ZOOM).toInt()
                     applyPlayback()
@@ -1401,6 +1411,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             // Gesture feedback: over the page, under the offline screen and the audio cover.
             frame.addView(skipBubble(context).also { skipView = it })
             frame.addView(dragIndicator(context).also { dragView = it })
+            frame.addView(gestureHint(context).also { hintView = it })
             frame.addView(offline)
             frame.addView(audioCover(context).also { cover = it })
             frame.addView(navOverlay(context).also { navView = it }) // over the audio cover too: driving is when it matters
@@ -1437,6 +1448,8 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         ui.removeCallbacks(endDrag)
         dragSeeking = null
         dragView = null
+        ui.removeCallbacks(hideHint)
+        hintView = null
         ui.removeCallbacks(goHome)
         endCounting = false
         endView = null
@@ -1500,12 +1513,11 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Half-moon on the tapped side with an arrow and the seconds skipped, like YouTube's own double-tap feedback.
     // Sized per show from the WebView's area (see showSkip); never takes touches.
     private fun skipBubble(ctx: Context) = FrameLayout(ctx).apply {
-        fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
         visibility = View.GONE
         addView(View(ctx).also { skipMoon = it }.apply {
             background = android.graphics.drawable.GradientDrawable().apply {
                 shape = android.graphics.drawable.GradientDrawable.OVAL
-                setColor(0x80000000.toInt())
+                setColor(0x99000000.toInt()) // white label over white video: 5.7:1
             }
         })
         addView(android.widget.LinearLayout(ctx).also { skipLabel = it }.apply {
@@ -1583,6 +1595,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
     // Double tap (the host's onScale with factor 2): 10 s back on the player's left half, forward on its right half.
     override fun onScale(focusX: Float, focusY: Float, scaleFactor: Float) {
+        touched()
         if (scaleFactor != 2f || !onWatch) return // a pinch, or no video: nothing to read
         geometry { g ->
             val skip = doubleTapSkip(onWatch, scaleFactor, focusX, focusY, g.player)
@@ -1595,7 +1608,6 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Black screen with the video's art, title and "Audio only while driving"; swallows taps.
     // Sizes in dp of [ctx]'s display: the car's virtual display.
     private fun audioCover(ctx: Context): View = FrameLayout(ctx).apply {
-        fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
         setBackgroundColor(android.graphics.Color.BLACK)
         visibility = View.GONE
         isClickable = true
@@ -1626,12 +1638,11 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
 
     // Next-turn card, same family as the drag panel: maneuver icon, distance big, maneuver text below. Never takes touches.
     private fun navOverlay(ctx: Context) = FrameLayout(ctx).apply {
-        fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
         visibility = View.GONE
         addView(android.widget.LinearLayout(ctx).also { navCard = it }.apply {
             orientation = android.widget.LinearLayout.HORIZONTAL
             gravity = android.view.Gravity.CENTER_VERTICAL
-            setPadding(dp(14), dp(12), dp(20), dp(14))
+            setPaddingRelative(dp(14), dp(12), dp(20), dp(14))
             background = android.graphics.drawable.GradientDrawable().apply {
                 cornerRadius = dp(PANEL_CORNER_DP).toFloat()
                 setColor(PANEL_SCRIM)
@@ -1724,12 +1735,11 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Centered panel at the end of a video (spec video-end): "Voltando para Início" and a bar emptying in 5 s; same
     // family as the drag panel. Never takes touches: a tap reaches onClick, which goes at once.
     private fun endIndicator(ctx: Context) = FrameLayout(ctx).apply {
-        fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
         visibility = View.GONE
         addView(android.widget.LinearLayout(ctx).also { endPanel = it }.apply {
             orientation = android.widget.LinearLayout.VERTICAL
             gravity = android.view.Gravity.CENTER_HORIZONTAL
-            setPadding(dp(28), dp(18), dp(28), dp(22))
+            setPadding(dp(28), dp(16), dp(28), dp(20))
             background = android.graphics.drawable.GradientDrawable().apply {
                 cornerRadius = dp(PANEL_CORNER_DP).toFloat()
                 setColor(PANEL_SCRIM)
@@ -1737,6 +1747,9 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             addView(android.widget.TextView(ctx).also { endText = it }.apply {
                 setTextColor(android.graphics.Color.WHITE)
                 textSize = 24f
+                gravity = android.view.Gravity.CENTER
+                maxLines = 2
+                maxWidth = dp(420)
                 typeface = android.graphics.Typeface.DEFAULT_BOLD
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
             // What the tap does (onClick goes at once): otherwise nothing on screen says it.
@@ -1744,7 +1757,10 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
                 setText(R.string.going_home_tap)
                 setTextColor(0xB3FFFFFF.toInt())
                 textSize = 20f
-                setPadding(0, dp(2), 0, dp(14))
+                gravity = android.view.Gravity.CENTER
+                maxLines = 2 // "Коснитесь, чтобы перейти сейчас" is 2.4x the English
+                maxWidth = dp(420)
+                setPadding(0, dp(2), 0, dp(12))
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
             addView(FrameLayout(ctx).apply {
                 setBackgroundColor(0x4DFFFFFF)
@@ -1753,9 +1769,72 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
         }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.CENTER))
     }
 
+    // The three video gestures on the first videos (takeGestureHint), at the bottom in the panels' family: icon, what
+    // to do, what it does. Never takes touches; goes after 8 s or at the first touch (the driver is trying them).
+    private fun gestureHint(ctx: Context) = FrameLayout(ctx).apply {
+        visibility = View.GONE
+        addView(android.widget.LinearLayout(ctx).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(24), dp(16), dp(28), dp(16))
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = dp(PANEL_CORNER_DP).toFloat()
+                setColor(PANEL_SCRIM)
+            }
+            GESTURE_ROWS.forEachIndexed { i, (title, text, icon) ->
+                addView(android.widget.LinearLayout(ctx).apply {
+                    orientation = android.widget.LinearLayout.HORIZONTAL
+                    gravity = android.view.Gravity.CENTER_VERTICAL
+                    addView(android.widget.ImageView(ctx).apply {
+                        setImageResource(icon)
+                        imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+                    }, android.widget.LinearLayout.LayoutParams(dp(32), dp(32)).apply { marginEnd = dp(16) })
+                    addView(android.widget.LinearLayout(ctx).apply {
+                        orientation = android.widget.LinearLayout.VERTICAL
+                        addView(android.widget.TextView(ctx).apply {
+                            setText(title)
+                            setTextColor(android.graphics.Color.WHITE)
+                            textSize = 20f
+                            typeface = android.graphics.Typeface.DEFAULT_BOLD
+                            maxLines = 1
+                            ellipsize = android.text.TextUtils.TruncateAt.END
+                        })
+                        addView(android.widget.TextView(ctx).apply {
+                            setText(text)
+                            setTextColor(0xB3FFFFFF.toInt())
+                            textSize = 20f
+                            maxLines = 1
+                            ellipsize = android.text.TextUtils.TruncateAt.END
+                        })
+                    }, android.widget.LinearLayout.LayoutParams(-2, -2))
+                }, android.widget.LinearLayout.LayoutParams(-2, -2).apply { if (i > 0) topMargin = dp(10) })
+            }
+        }, FrameLayout.LayoutParams(-2, -2, android.view.Gravity.BOTTOM or android.view.Gravity.CENTER_HORIZONTAL).apply {
+            bottomMargin = dp(16)
+            marginStart = dp(16)
+            marginEnd = dp(16)
+        })
+    }
+
+    private fun showHint() {
+        val view = hintView ?: return
+        view.animate().cancel()
+        view.alpha = 0f
+        view.translationY = view.resources.displayMetrics.density * 8
+        view.visibility = View.VISIBLE
+        view.animate().alpha(1f).translationY(0f).setDuration(240).setInterpolator(android.view.animation.DecelerateInterpolator(2f)).start()
+        ui.removeCallbacks(hideHint)
+        ui.postDelayed(hideHint, 8000)
+    }
+
+    // Any touch on the car screen: the hint has done its job.
+    private fun touched() {
+        if (hintView?.visibility != View.VISIBLE) return
+        ui.removeCallbacks(hideHint)
+        hideHint.run()
+    }
+
     // Centered panel while a drag seeks: target / duration, the signed jump and a track at the target.
     private fun dragIndicator(ctx: Context) = FrameLayout(ctx).apply {
-        fun dp(n: Int) = (n * ctx.resources.displayMetrics.density).toInt()
         visibility = View.GONE
         addView(android.widget.LinearLayout(ctx).apply {
             orientation = android.widget.LinearLayout.VERTICAL
@@ -1767,7 +1846,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
             }
             addView(android.widget.TextView(ctx).also { dragTime = it }.apply {
                 setTextColor(android.graphics.Color.WHITE)
-                textSize = 28f
+                textSize = 32f
                 typeface = android.graphics.Typeface.DEFAULT_BOLD
                 fontFeatureSettings = "tnum" // digits keep their width while they change
             }, android.widget.LinearLayout.LayoutParams(-2, -2))
@@ -1787,17 +1866,20 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // A drag on a video that starts sideways seeks, the WebView's width being the whole video; any other drag scrolls
     // the page. The seek happens once, when the drag ends (endDrag), not on every scroll.
     override fun onScroll(distanceX: Float, distanceY: Float) {
+        touched()
         ui.removeCallbacks(endDrag)
         ui.postDelayed(endDrag, 300)
         // distanceX is how far the content would scroll: positive when the finger moves left.
         if (dragSeeking == null) {
             dragSeeking = dragSeeks(onWatch, durationMs, -distanceX, distanceY)
+            dragChips = dragScrollsChips(onWatch, distanceX, distanceY)
             dragId = videoIdFromUrl(pageUrl)
             dragStartMs = positionMs.coerceAtLeast(0)
             dragFingerX = 0f
             // positionMs lags up to 500 ms: start from the page's own time as soon as it answers.
             if (dragSeeking == true) geometry { g -> if (dragSeeking == true && g.durationMs > 0) { dragStartMs = g.positionMs; showDrag() } }
         }
+        if (dragChips) return js(jsScrollChips((distanceX / (webView?.resources?.displayMetrics?.density ?: 1f)).toInt()))
         if (dragSeeking != true) {
             webView?.scrollBy(distanceX.toInt(), distanceY.toInt())
             return
@@ -1821,6 +1903,7 @@ class YoutubeScreen(ctx: CarContext) : Screen(ctx), SurfaceCallback {
     // Called only on hosts with Car API level >= 5. On a video, a tap on YouTube's visible progress bar seeks there
     // (the player ignores a tap with no movement); any other tap goes to the page.
     override fun onClick(x: Float, y: Float) {
+        touched()
         if (endCounting) return goHome.run() // the countdown's tap: go now
         if (!onWatch) return tap(x, y)
         geometry { g ->
@@ -2315,6 +2398,8 @@ private const val RELEASES_API = "https://api.github.com/repos/begati/yt-auto/re
 // Corners, background and progress bar of the car's panels (drag, end countdown, turn card): one look. The background
 // keeps white text above 12:1 even over a white video frame.
 internal const val PANEL_CORNER_DP = 16
+// dp in px of this view's display (the car's virtual display for car overlays).
+private fun View.dp(n: Int) = (n * resources.displayMetrics.density).toInt()
 internal const val PANEL_BAR_DP = 6
 internal const val PANEL_SCRIM = 0xCC000000.toInt()
 
@@ -2323,7 +2408,7 @@ internal const val PANEL_SCRIM = 0xCC000000.toInt()
  * elsewhere settings only, as the aspect changes nothing off a video (spec critique-fixes). The host allows four.
  */
 internal fun mapStrip(onWatch: Boolean, hasNext: Boolean) =
-    if (!onWatch) listOf("settings") else listOfNotNull("previous", "next".takeIf { hasNext }, "aspect", "settings")
+    if (!onWatch) listOf("goto", "settings") else listOfNotNull("previous", "next".takeIf { hasNext }, "settings")
 
 /**
  * Script for previous, from the car's side strip and from the steering wheel / media card alike: the previous video
@@ -2431,7 +2516,7 @@ internal fun isNewer(tag: String, current: String): Boolean {
 
 // Phone sign-in banner: shown while signed out, unless closed since the last sign-in state change.
 internal fun bannerShown(signedIn: Boolean, closedWhileSignedOut: Boolean) = !signedIn && !closedWhileSignedOut
-// The car's gestures have no buttons: the first video played on a watch page tells about them, once per install,
+// The car's gestures have no buttons: the first video played on a watch page shows them (gestureHint),
 // while the video is on screen (not behind another app or the audio-only cover).
 internal fun takeGestureHint(prefs: SharedPreferences, onWatch: Boolean, visible: Boolean, shownThisSession: Boolean): Boolean {
     if (!onWatch || !visible || shownThisSession) return false

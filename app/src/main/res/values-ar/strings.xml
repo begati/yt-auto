@@ -51,7 +51,6 @@
     <string name="rewind_10">رجوع 10 ث</string>
     <string name="forward_10">تقديم 10 ث</string>
     <string name="seek_seconds">%d ث</string>
-    <string name="gesture_hint">تلميح: انقر مرتين على الفيديو للتخطي 10 ث، أو اسحب جانبًا للتقديم</string>
     <string name="gestures">الإيماءات</string>
     <string name="gesture_double_tap">نقر مزدوج: ±10 ث</string>
     <string name="gesture_double_tap_text">النصف الأيمن للتقديم، والأيسر للرجوع</string>

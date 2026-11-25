@@ -8,21 +8,13 @@ import org.junit.Test
 /** Requirements of spec ui-polish decided by pure data and functions. */
 class UiPolishTest {
     @Test
-    fun `NAV-05 aspect icon follows the aspect`() {
-        assertEquals(R.drawable.ic_fit_screen, aspectIcon("contain")) // Ajustar
-        assertEquals(R.drawable.ic_fullscreen, aspectIcon("cover")) // Preencher
-        assertEquals(R.drawable.ic_open_in_full, aspectIcon("fill")) // Esticar
-    }
-
-    @Test
-    fun `NAV-06 next aspect has the next icon`() {
+    fun `NAV-06 aspect cycles Ajustar, Preencher, Esticar and saves`() {
         val prefs = MemoryPrefs()
         setChoice(prefs, ASPECT, "contain")
-        assertEquals(R.drawable.ic_fullscreen, aspectIcon(nextAspect(prefs)))
-        assertEquals(R.drawable.ic_fullscreen, aspectIcon(choice(prefs, ASPECT)))
-        assertEquals(R.drawable.ic_open_in_full, aspectIcon(nextAspect(prefs)))
-        assertEquals(R.drawable.ic_fit_screen, aspectIcon(nextAspect(prefs)))
-        assertEquals(R.drawable.ic_fit_screen, aspectIcon(choice(prefs, ASPECT)))
+        assertEquals("cover", nextAspect(prefs))
+        assertEquals("cover", choice(prefs, ASPECT))
+        assertEquals("fill", nextAspect(prefs))
+        assertEquals("contain", nextAspect(prefs))
     }
 
     @Test
@@ -54,6 +46,7 @@ class UiPolishTest {
             listOf(
                 "quality" to R.drawable.ic_high_quality, // Qualidade do vídeo
                 "speed" to R.drawable.ic_speed, // Velocidade
+                "aspect" to R.drawable.ic_aspect_ratio, // Proporção
                 "captions" to R.drawable.ic_closed_caption, // Legendas
                 "navOverlay" to R.drawable.ic_navigation, // Navegação na tela
             ),
@@ -178,5 +171,13 @@ class UiPolishTest {
         signInChanged(prefs, true)
         signInChanged(prefs, false)
         assertTrue(bannerShown(false, bannerClosed(prefs)))
+    }
+
+    @Test
+    fun `sideways drag off a video scrolls the chip bar`() {
+        assertTrue(dragScrollsChips(onWatch = false, dx = 30f, dy = 5f))
+        assertFalse(dragScrollsChips(onWatch = false, dx = 5f, dy = 30f)) // a scroll down the feed
+        assertFalse(dragScrollsChips(onWatch = true, dx = 30f, dy = 5f)) // on a video sideways seeks
+        assertTrue(jsScrollChips(-40).contains("scrollBy(-40,0)"))
     }
 }

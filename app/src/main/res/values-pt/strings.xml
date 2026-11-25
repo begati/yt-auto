@@ -51,7 +51,6 @@
     <string name="rewind_10">Voltar 10 s</string>
     <string name="forward_10">Avançar 10 s</string>
     <string name="seek_seconds">%d s</string>
-    <string name="gesture_hint">Dica: toque duas vezes no vídeo para pular 10 s, ou arraste para o lado para avançar</string>
     <string name="gestures">Gestos</string>
     <string name="gesture_double_tap">Toque duplo: ±10 s</string>
     <string name="gesture_double_tap_text">Metade direita avança, metade esquerda volta</string>

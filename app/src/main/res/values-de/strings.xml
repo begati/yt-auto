@@ -51,7 +51,6 @@
     <string name="rewind_10">10 s zurück</string>
     <string name="forward_10">10 s vor</string>
     <string name="seek_seconds">%d s</string>
-    <string name="gesture_hint">Tipp: Tippe zweimal auf das Video, um 10 s zu springen, oder wische seitlich zum Spulen</string>
     <string name="gestures">Gesten</string>
     <string name="gesture_double_tap">Doppeltippen: ±10 s</string>
     <string name="gesture_double_tap_text">Rechte Hälfte springt vor, linke zurück</string>

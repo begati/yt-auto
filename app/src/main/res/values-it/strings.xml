@@ -51,7 +51,6 @@
     <string name="rewind_10">Indietro 10 s</string>
     <string name="forward_10">Avanti 10 s</string>
     <string name="seek_seconds">%d s</string>
-    <string name="gesture_hint">Suggerimento: tocca due volte il video per saltare 10 s, o trascina di lato per avanzare</string>
     <string name="gestures">Gesti</string>
     <string name="gesture_double_tap">Doppio tocco: ±10 s</string>
     <string name="gesture_double_tap_text">La metà destra va avanti, la sinistra indietro</string>

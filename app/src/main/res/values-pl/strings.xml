@@ -51,7 +51,6 @@
     <string name="rewind_10">10 s do tyłu</string>
     <string name="forward_10">10 s do przodu</string>
     <string name="seek_seconds">%d s</string>
-    <string name="gesture_hint">Wskazówka: kliknij film dwukrotnie, aby przeskoczyć 10 s, albo przeciągnij w bok, aby przewinąć</string>
     <string name="gestures">Gesty</string>
     <string name="gesture_double_tap">Podwójne kliknięcie: ±10 s</string>
     <string name="gesture_double_tap_text">Prawa połowa do przodu, lewa do tyłu</string>

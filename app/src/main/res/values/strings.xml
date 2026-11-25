@@ -51,7 +51,6 @@
     <string name="rewind_10">Back 10 s</string>
     <string name="forward_10">Forward 10 s</string>
     <string name="seek_seconds">%d s</string>
-    <string name="gesture_hint">Tip: double tap the video to skip 10 s, or drag sideways to seek</string>
     <string name="gestures">Gestures</string>
     <string name="gesture_double_tap">Double tap: ±10 s</string>
     <string name="gesture_double_tap_text">Right half skips ahead, left half goes back</string>
