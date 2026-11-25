@@ -40,7 +40,7 @@ with your account, subscriptions and history, and turns your phone into a remote
 - Voice: "Hey Google, play <something> on YT Auto" plays the first search result.
 - Android Auto now-playing card (with 10 s back/forward) and steering wheel buttons (play/pause, next, previous).
 - History, Subscriptions, Watch later, Liked videos and your playlists in Android Auto's media browser.
-- Video fills the car screen by default; the aspect button (fit / fill / stretch) remembers your pick.
+- Video fills the car screen by default; the aspect (fit / fill / stretch) is in the car settings.
 - When a video ends and nothing plays next, a 5 s countdown goes back to your home page.
 - Skips sponsor segments with [SponsorBlock](https://sponsor.ajay.app) (only a 4-character hash prefix of the
   video id is sent).
@@ -107,9 +107,8 @@ Updates: install the new APK with KingInstaller the same way. Your sign-in and s
 ### On the car screen
 
 Tap the page as on a phone. A tap also brings up the car's buttons for a few seconds: back, home (your start page), play/pause
-and search at the top, settings on the side. On a video the side also has **previous**, **next** and the video
-aspect:
-next shows only when YouTube has a next video, and previous goes to the previous one or, with none, back to the start
+and search at the top, **Go to** (Home, Subscriptions, History, Playlists) and settings on the side. On a video the
+side has **previous**, **next** and settings instead: next shows only when YouTube has a next video, and previous goes to the previous one or, with none, back to the start
 of the video. To move within the video, use these gestures:
 
 - **Double tap** the right half of the video to skip 10 s forward, the left half to go 10 s back. Double tap again
@@ -117,10 +116,11 @@ of the video. To move within the video, use these gestures:
 - **Tap the progress bar** (tap the video first to show YouTube's controls) to jump to that point.
 - **Drag sideways** across the video to seek: the screen's width is the whole video. The target time shows while you
   drag, and the video jumps there when you let go.
-- **Drag up or down** to scroll the page.
+- **Drag up or down** to scroll the page; off a video, **drag sideways** to scroll the filter chips at the top of the
+  feed.
 
-The car settings have a **Go to** row (Home, Subscriptions, History, Playlists) and a **Gestures** row that explains
-these again.
+The first videos show these gestures in a panel for a few seconds. The car settings have a **Go to** row, the video
+aspect and a **Gestures** row that explains them again.
 
 The steering wheel buttons (play/pause, next, previous) and the Android Auto media card also control the video.
 

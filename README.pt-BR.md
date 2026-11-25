@@ -41,7 +41,7 @@ com sua conta, inscrições e histórico, e transforma o celular em controle rem
 - Card "tocando agora" do Android Auto (com voltar/avançar 10 s) e botões do volante (tocar/pausar, próximo,
   anterior).
 - Histórico, Inscrições, Assistir mais tarde, Vídeos curtidos e suas playlists no navegador de mídia do Android Auto.
-- O vídeo preenche a tela do carro por padrão; o botão de proporção (ajustar / preencher / esticar) lembra a escolha.
+- O vídeo preenche a tela do carro por padrão; a proporção (ajustar / preencher / esticar) fica nas configurações do carro.
 - Quando um vídeo termina e nada toca em seguida, uma contagem de 5 s volta para a sua página inicial.
 - Pula patrocínios com o [SponsorBlock](https://sponsor.ajay.app) (só um prefixo de 4 caracteres do hash do id do
   vídeo é enviado).
@@ -105,8 +105,8 @@ Atualizações: instale o APK novo pelo KingInstaller do mesmo jeito. Login e co
 ### Na tela do carro
 
 Toque na página como no celular. Um toque também mostra os botões do carro por alguns segundos: voltar, início (a sua
-página inicial), tocar/pausar e busca no topo, configurações na lateral. Num vídeo, a lateral também tem **anterior**, **próximo** e a
-proporção do vídeo: o próximo só aparece quando o YouTube tem um próximo vídeo, e o anterior vai ao vídeo
+página inicial), tocar/pausar e busca no topo, **Ir para** (Início, Inscrições, Histórico, Playlists) e configurações
+na lateral. Num vídeo, a lateral tem **anterior**, **próximo** e configurações: o próximo só aparece quando o YouTube tem um próximo vídeo, e o anterior vai ao vídeo
 anterior ou, se não houver, volta ao início do vídeo. Para andar dentro do vídeo, use estes gestos:
 
 - **Toque duas vezes** na metade direita do vídeo para avançar 10 s, na metade esquerda para voltar 10 s. Repita o
@@ -115,10 +115,11 @@ anterior ou, se não houver, volta ao início do vídeo. Para andar dentro do v�
   ponto.
 - **Arraste para o lado** sobre o vídeo para avançar ou voltar: a largura da tela é o vídeo inteiro. O tempo de
   destino aparece enquanto você arrasta, e o vídeo pula para lá quando você solta.
-- **Arraste para cima ou para baixo** para rolar a página.
+- **Arraste para cima ou para baixo** para rolar a página; fora de um vídeo, **arraste para o lado** para rolar os
+  filtros no topo do feed.
 
-As configurações do carro têm a linha **Ir para** (Início, Inscrições, Histórico, Playlists) e a linha **Gestos**,
-que explica esses gestos de novo.
+Os primeiros vídeos mostram esses gestos num painel por alguns segundos. As configurações do carro têm a linha
+**Ir para**, a proporção do vídeo e a linha **Gestos**, que explica os gestos de novo.
 
 Os botões do volante (tocar/pausar, próximo, anterior) e o card de mídia do Android Auto também controlam o vídeo.
 

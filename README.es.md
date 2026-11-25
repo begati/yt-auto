@@ -41,8 +41,8 @@ del coche, con tu cuenta, suscripciones e historial, y convierte el teléfono en
 - Tarjeta "reproduciendo ahora" de Android Auto (con retroceder/avanzar 10 s) y botones del volante
   (reproducir/pausar, siguiente, anterior).
 - Historial, Suscripciones, Ver más tarde, Videos que me gustan y tus listas en el explorador de medios de Android Auto.
-- El video llena la pantalla del coche por defecto; el botón de proporción (ajustar / rellenar / estirar) recuerda tu
-  elección.
+- El video llena la pantalla del coche por defecto; la proporción (ajustar / rellenar / estirar) está en los ajustes del
+  coche.
 - Cuando un video termina y no sigue otro, una cuenta de 5 s vuelve a tu página principal.
 - Salta los patrocinios con [SponsorBlock](https://sponsor.ajay.app) (solo se envía un prefijo de 4 caracteres del
   hash del id del video).
@@ -110,8 +110,8 @@ Actualizaciones: instala el APK nuevo con KingInstaller de la misma forma. Se ma
 ### En la pantalla del coche
 
 Toca la página como en el teléfono. Un toque también muestra los botones del coche durante unos segundos: atrás, inicio (tu
-página principal), reproducir/pausar y búsqueda arriba, ajustes al lado. En un video, el lateral también tiene **anterior**,
-**siguiente** y la proporción del video: siguiente solo aparece cuando YouTube tiene un video siguiente, y anterior va al
+página principal), reproducir/pausar y búsqueda arriba, **Ir a** (Inicio, Suscripciones, Historial, Listas) y ajustes al
+lado. En un video, el lateral tiene **anterior**, **siguiente** y ajustes: siguiente solo aparece cuando YouTube tiene un video siguiente, y anterior va al
 video anterior o, si no lo hay, vuelve al inicio del video. Para moverte dentro del video, usa estos gestos:
 
 - **Toca dos veces** la mitad derecha del video para avanzar 10 s, la mitad izquierda para retroceder 10 s. Repite el
@@ -119,10 +119,11 @@ video anterior o, si no lo hay, vuelve al inicio del video. Para moverte dentro 
 - **Toca la barra de progreso** (toca antes el video para mostrar los controles de YouTube) para ir directo a ese punto.
 - **Arrastra hacia un lado** sobre el video para avanzar o retroceder: el ancho de la pantalla es el video entero. El
   tiempo de destino aparece mientras arrastras, y el video salta allí cuando sueltas.
-- **Arrastra hacia arriba o hacia abajo** para desplazar la página.
+- **Arrastra hacia arriba o hacia abajo** para desplazar la página; fuera de un video, **arrastra hacia un lado** para
+  desplazar los filtros de arriba del feed.
 
-Los ajustes del coche tienen la fila **Ir a** (Inicio, Suscripciones, Historial, Listas) y la fila **Gestos**, que
-vuelve a explicar estos gestos.
+Los primeros videos muestran estos gestos en un panel durante unos segundos. Los ajustes del coche tienen la fila
+**Ir a**, la proporción del video y la fila **Gestos**, que vuelve a explicarlos.
 
 Los botones del volante (reproducir/pausar, siguiente, anterior) y la tarjeta de medios de Android Auto también
 controlan el video.
